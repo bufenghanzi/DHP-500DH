@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/color_white"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
+
+    <include layout="@layout/activity_task_title"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18px"
+        android:layout_marginRight="18px"
+        android:layout_marginTop="18px"
+        android:background="@drawable/task_bottom_linearlayout_bg"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_canshu"
+            android:layout_width="match_parent"
+            android:layout_height="60px"
+            android:layout_marginBottom="80px"
+            android:layout_marginLeft="36px"
+            android:layout_marginTop="36px"
+            android:gravity="center"
+            android:text="@string/activity_glue_setting"
+            android:textSize="@dimen/activity_download_textsize_sub"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/activity_task_listview_divider"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210px"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px">
+
+            <TextView
+                android:id="@+id/tv_task_number"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_number"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_tasknumber"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_task_number"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="1"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210px"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px">
+
+            <TextView
+                android:id="@+id/tv_nBackSnSpeedFir"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSpeedFir"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSpeedFir"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_nBackSnSpeedFir"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="50"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_mms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/et_download_nBackSnSpeedFir"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <TextView
+                android:id="@+id/tv_xy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_xy_move"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10px"
+                android:layout_toLeftOf="@id/tv_xy"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="200"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_xy_kongzou"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_download_xy_move"
+                android:gravity="center"
+                android:text="@string/activity_task_xy_move_time"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210px"
+            android:layout_marginLeft="18px"
+            android:layout_marginRight="18px">
+
+            <TextView
+                android:id="@+id/tv_nBackSnSumFir"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSumFir"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSumFir"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_nBackSnSumFir"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="0"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_mms2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/et_download_nBackSnSumFir"
+                android:text="@string/activity_mm"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <TextView
+                android:id="@+id/tv_z"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_z_move"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10px"
+                android:layout_toLeftOf="@id/tv_z"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="200"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_z_kongzou"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_download_z_move"
+                android:gravity="center"
+                android:text="@string/activity_task_z_move_time"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210px"
+            android:layout_marginLeft="18px"
+            android:layout_marginRight="18px">
+
+            <TextView
+                android:id="@+id/tv_nBackSnSpeedSec"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSpeedSec"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSpeedSec"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_nBackSnSpeedSec"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="50"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_mms3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/et_download_nBackSnSpeedSec"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <TextView
+                android:id="@+id/tv_mm3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSumSec"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10px"
+                android:layout_toLeftOf="@id/tv_mm3"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="0"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_nBackSnSumSec"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_download_nBackSnSumSec"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSumSec"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210px"
+            android:layout_marginLeft="18px"
+            android:layout_marginRight="18px">
+
+            <TextView
+                android:id="@+id/tv_nBackSnSpeedThird"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSpeedThird"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSpeedThird"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_nBackSnSpeedThird"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="50"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_mms6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/et_download_nBackSnSpeedThird"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <TextView
+                android:id="@+id/tv_mm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSumThird"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10px"
+                android:layout_toLeftOf="@id/tv_mm"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="0"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_nBackSnSumThird"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_download_nBackSnSumThird"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSumThird"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210px"
+            android:layout_marginLeft="18px"
+            android:layout_marginRight="18px">
+
+            <TextView
+                android:id="@+id/tv_nBackSnSpeedFour"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSpeedFour"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSpeedFour"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_nBackSnSpeedFour"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="50"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_mms5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/et_download_nBackSnSpeedFour"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <TextView
+                android:id="@+id/tv_mm4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_download_nBackSnSumSecFour"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10px"
+                android:layout_toLeftOf="@id/tv_mm4"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="0"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_nBackSnSumSecFour"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_download_nBackSnSumSecFour"
+                android:gravity="center"
+                android:text="@string/activity_task_nBackSnSumSecFour"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="180px"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/rl_download"
+                android:layout_width="230px"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="18px"
+                android:layout_marginTop="18px"
+                android:background="@drawable/task_bottom_imagebutton"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_complete"
+                    android:layout_width="45px"
+                    android:layout_height="45px"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_xiazai"/>
+
+                <TextView
+                    android:id="@+id/tv_xiazai"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/iv_complete"
+                    android:layout_toRightOf="@id/iv_complete"
+                    android:gravity="center"
+                    android:text="@string/activity_glue_download"
+                    android:textColor="@color/color_white"
+                    android:textSize="@dimen/activity_task_bottom_text_size"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/rl_cancel"
+                android:layout_width="230px"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="18px"
+                android:layout_marginTop="18px"
+                android:background="@drawable/task_bottom_imagebutton"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_cancel"
+                    android:layout_width="45px"
+                    android:layout_height="45px"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_back"/>
+
+                <TextView
+                    android:id="@+id/tv_quxiao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/iv_cancel"
+                    android:layout_toRightOf="@id/iv_cancel"
+                    android:gravity="center"
+                    android:text="@string/activity_glue_cancel"
+                    android:textColor="@color/color_white"
+                    android:textSize="@dimen/activity_task_bottom_text_size"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
