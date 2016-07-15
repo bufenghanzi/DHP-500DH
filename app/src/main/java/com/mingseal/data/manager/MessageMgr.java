@@ -632,6 +632,8 @@ public enum MessageMgr {
         task.setValue(48, TaskParam.INSTANCE.getnBackSnSumThird());
         task.setValue(49, TaskParam.INSTANCE.getnBackSnSpeedFour());
         task.setValue(50, TaskParam.INSTANCE.getnBackSnSumSecFour());
+        task.setValue(51, TaskParam.INSTANCE.getnSnHeight());
+        task.setValue(52, TaskParam.INSTANCE.getnWorkMode());
 
 		/*=====================  end =====================*/
 
@@ -741,6 +743,8 @@ public enum MessageMgr {
         TaskParam.INSTANCE.setnBackSnSumThird(Protocol_400_1.READ2BYTES(_buf, 96));
         TaskParam.INSTANCE.setnBackSnSpeedFour(Protocol_400_1.READ2BYTES(_buf, 98));
         TaskParam.INSTANCE.setnBackSnSumSecFour(Protocol_400_1.READ2BYTES(_buf, 100));
+        TaskParam.INSTANCE.setnSnHeight(Protocol_400_1.READ2BYTES(_buf, 102));
+        TaskParam.INSTANCE.setnWorkMode(Protocol_400_1.READ2BYTES(_buf, 104));
 //		TaskParam.INSTANCE.setnTurnAccelerateMax(Protocol_400_1.READ2BYTES(_buf, 82));
         if ((val & 0x4000) > 0) {//判断有无基准点0：无基准点，1：有基准点
             if (isDH) {
@@ -1729,7 +1733,7 @@ public enum MessageMgr {
                 } else if (revBuffer[2] == 0x4E) {// 获取下位机参数
                     RobotParam.INSTANCE.InitRobot(revBuffer);
                     cmdDelayFlag = CmdParam.Cmd_Null;
-                } else if (revBuffer[2] == 0x2E) {//获取功能列表参数
+                } else if (revBuffer[2] == 0x32) {//获取功能列表参数
                     OrderParam.INSTANCE.InitFunclist(revBuffer);
 
                 } else if (cmdFlag == 0x7952) {//若是任务下载预处理命令返回成功,开始下载任务数据
@@ -1743,6 +1747,7 @@ public enum MessageMgr {
 //						str+=log[i]+","; 
 //					}
 //					Log.d(TAG, str.toString());
+                    cmdDelayFlag = CmdParam.Cmd_DownLoad;
                     step = 0;
                     writeData(data, data.length);
                 } else if (cmdFlag == 0x793A) {//任务模拟预处理响应

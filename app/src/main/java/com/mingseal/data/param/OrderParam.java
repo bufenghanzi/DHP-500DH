@@ -466,9 +466,9 @@ public enum OrderParam {
      */
 	public void InitFunclist(byte[] revBuffer) {
 		nTaskNum= Protocol_400_1.READ2BYTES_R(revBuffer, 3);
-		nZeroCheck= Protocol_400_1.READ2BYTES_R(revBuffer, 5);
-		nAccelerate= Protocol_400_1.READ2BYTES_R(revBuffer, 7);
-		nDecelerate= Protocol_400_1.READ2BYTES_R(revBuffer, 9);
+		nZeroCheck= Protocol_400_1.READ2BYTES_R(revBuffer, 5);//零点校正
+		nYCheckDis= Protocol_400_1.READ2BYTES_R(revBuffer, 7);//y轴定位校正距离
+		nDecelerate= Protocol_400_1.READ2BYTES_R(revBuffer, 9);//任务自动加载
 		nBaseHeight= Protocol_400_1.READ1BYTE(revBuffer, 11);
 		nBaseUnit= Protocol_400_1.READ1BYTE(revBuffer, 12);
 		nXYNullSpeed= Protocol_400_1.READ2BYTES_R(revBuffer, 13);

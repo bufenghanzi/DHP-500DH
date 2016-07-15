@@ -42,13 +42,12 @@ public enum RobotParam {
 	// private int m_specialConfigExplain; // 特殊配置说明//2015/01/22
 	// private int m_reservedInt01; // 预留1//2015/01/22
 	// private int m_reservedInt02; // 预留2//2015/01/22
-	private long m_BsDis;// 回退距离
 	private int m_nAccelerateMax;// 最大加速度
 	private RobotType m_nRobotType; // 机器人型号名
 	private RobotSeries m_enRobotSeries; // 机器人系列
 	private String strRobotName;
 
-	public int m_softVersion;// 机器版本 2015.7.2
+//	public int m_softVersion;// 机器版本 2015.7.2
 
 	private RobotParam() {
 		m_xJourney = 200;
@@ -67,7 +66,6 @@ public enum RobotParam {
 		m_nAccelerateMax = 10000;
 		m_nRobotType = RobotType.DJ0000;
 		m_enRobotSeries = RobotSeries.Series_400;
-		m_BsDis = 0;
 	}
 	/**
 	 * 获取设备信息
@@ -120,8 +118,7 @@ public enum RobotParam {
 		strRobotName = cb.toString();
 
 		m_nAccelerateMax = 10000;/// *READ2BYTES_R(_buf, 69)*/不再关联最大加速度
-		m_BsDis = Protocol_400_1.READ2BYTES_R(buff, 71);
-		m_softVersion = Protocol_400_1.READ2BYTES_R(buff, 73);// 机器人版本 0:老版本
+//		m_softVersion = Protocol_400_1.READ2BYTES_R(buff, 73);// 机器人版本 0:老版本
 																// 1:新版本(包含清胶点)
 		return true;
 	}
@@ -312,7 +309,7 @@ public enum RobotParam {
 	 * <p>
 	 * Description: 检查速度范围
 	 * 
-	 * @param xSpeed
+	 * @param ySpeed
 	 *            y轴速度值
 	 * @return
 	 */
@@ -330,7 +327,7 @@ public enum RobotParam {
 	 * <p>
 	 * Description: 检查速度范围
 	 * 
-	 * @param xSpeed
+	 * @param zSpeed
 	 *            z轴速度值
 	 * @return
 	 */
@@ -348,7 +345,7 @@ public enum RobotParam {
 	 * <p>
 	 * Description: 检查速度范围
 	 * 
-	 * @param xSpeed
+	 * @param uSpeed
 	 *            u轴速度值
 	 * @return
 	 */
@@ -528,7 +525,7 @@ public enum RobotParam {
 	/**
 	 * 只用于设置圆心时，y轴行程转脉冲
 	 * 
-	 * @param xJourney
+	 * @param yJourney
 	 * @return
 	 */
 	public int YCenterJourney2Pulse(double yJourney) {
@@ -698,9 +695,6 @@ public enum RobotParam {
 		return m_nAxisNum;
 	}
 
-	public long getM_BsDis() {
-		return m_BsDis;
-	}
 
 	public int getM_nAccelerateMax() {
 		return m_nAccelerateMax;

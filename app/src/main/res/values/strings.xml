@@ -144,6 +144,7 @@
     <string name="activity_task_nBackSnSumFir">一次回锡量:</string>
     <string name="activity_task_decelerate">减速度:</string>
     <string name="activity_task_xy_move_time">XY轴空走速度:</string>
+    <string name="activity_task_height">出锡高度:</string>
     <string name="activity_task_z_move_time">Z轴空走速度:</string>
     <string name="activity_task_inflexion_time">拐点速度:</string>
     <string name="activity_task_nBackSnSpeedSec">二次回锡速度:</string>

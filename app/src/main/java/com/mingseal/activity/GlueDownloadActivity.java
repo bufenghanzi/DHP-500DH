@@ -23,14 +23,17 @@ import android.widget.TextView;
 import com.mingseal.application.UserApplication;
 import com.mingseal.communicate.SocketInputThread;
 import com.mingseal.communicate.SocketThreadManager;
+import com.mingseal.communicate.TCPClient;
 import com.mingseal.data.manager.MessageMgr;
 import com.mingseal.data.param.DownloadParam;
 import com.mingseal.data.param.OrderParam;
 import com.mingseal.data.param.TaskParam;
+import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.point.Point;
 import com.mingseal.dhp_500dh.R;
 import com.mingseal.listener.MaxMinEditWatcher;
 import com.mingseal.listener.MaxMinFocusChangeListener;
+import com.mingseal.utils.CustomUploadDialog;
 import com.mingseal.utils.DateUtil;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
@@ -149,6 +152,10 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 	private EditText et_download_nBackSnSumSecFour;
 	private TextView tv_mms5;
 	private TextView tv_mm4;
+	private TextView tv_upHeight;
+	private TextView tv_mm5;
+	private EditText et_upHeight;
+	private CustomUploadDialog progressDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -170,8 +177,50 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		handler = new RevHandler();
 		// 线程管理单例初始化
 		SocketThreadManager.sharedInstance().setInputThreadHandler(handler);
-	}
+		TCPClient.instance().setOnINotifyListener(new TCPClient.INotify() {
+			@Override
+			public void notifyEvent(final int msg) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(msg/10);
+							stopProgressDialog();
+							ToastUtil.displayPromptInfo(GlueDownloadActivity.this, "下载成功！");
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
+			}
 
+		});
+	}
+	/**
+	 * 打开进度条对话框
+	 */
+	private void startProgressDialog() {
+		if (progressDialog == null) {
+			progressDialog = CustomUploadDialog.createDialog(this);
+			progressDialog.setMessage("正在下载..");
+			progressDialog.setCanceledOnTouchOutside(false);
+			progressDialog.show();
+		}
+	}
+	/**
+	 * 关闭进度条对话框
+	 */
+	private void stopProgressDialog() {
+		if (progressDialog != null) {
+			progressDialog.cancel();
+			progressDialog = null;
+		}
+	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		stopProgressDialog();
+	}
 	/**
 	 * 加载自定义组件
 	 */
@@ -184,6 +233,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		rl_cancel = (RelativeLayout) findViewById(R.id.rl_cancel);
 		et_number = (EditText) findViewById(R.id.et_download_tasknumber);
 		et_download_nBackSnSpeedFir = (EditText) findViewById(R.id.et_download_accelerate_time);
+		et_upHeight = (EditText) findViewById(R.id.et_upHeight);
 		et_download_nBackSnSpeedSec = (EditText) findViewById(R.id.et_download_nBackSnSpeedSec);
 		et_download_nBackSnSpeedThird = (EditText) findViewById(R.id.et_download_nBackSnSpeedThird);
 		et_download_nBackSnSpeedFour = (EditText) findViewById(R.id.et_download_nBackSnSpeedFour);
@@ -197,7 +247,9 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_canshu = (TextView) findViewById(R.id.tv_canshu);
 		tv_task_number = (TextView) findViewById(R.id.tv_task_number);
 		tv_nBackSnSpeedFir = (TextView) findViewById(R.id.tv_nBackSnSpeedFir);
+		tv_upHeight = (TextView) findViewById(R.id.tv_upHeight);
 		tv_mms = (TextView) findViewById(R.id.tv_mms);
+		tv_mm5 = (TextView) findViewById(R.id.tv_mm5);
 		tv_mm = (TextView) findViewById(R.id.tv_mm);
 		tv_xy = (TextView) findViewById(R.id.tv_xy);
 		tv_xy_kongzou = (TextView) findViewById(R.id.tv_xy_kongzou);
@@ -227,11 +279,14 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_task_number.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_number.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSpeedFir.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_upHeight.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_download_nBackSnSpeedFir.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		et_upHeight.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_download_nBackSnSpeedSec.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_download_nBackSnSpeedThird.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_download_nBackSnSpeedFour.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_mms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+		tv_mm5.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		tv_xy.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		et_xy_move.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_xy_kongzou.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
@@ -289,6 +344,13 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_download_nBackSnSpeedFir.setOnFocusChangeListener(new MaxMinFocusChangeListener(200, 0, et_download_nBackSnSpeedFir));
 		et_download_nBackSnSpeedFir.setSelectAllOnFocus(true);
 		et_download_nBackSnSpeedFir.setText(TaskParam.INSTANCE.getnBackSnSpeedFir()+"");
+
+		et_upHeight.addTextChangedListener(new MaxMinEditWatcher(RobotParam.INSTANCE.GetZJourney(), 0, et_upHeight));
+		et_upHeight.setOnFocusChangeListener(new MaxMinFocusChangeListener(RobotParam.INSTANCE.GetZJourney(), 0, et_upHeight));
+		et_upHeight.setSelectAllOnFocus(true);
+		et_upHeight.setText(TaskParam.INSTANCE.getnSnHeight()+"");
+
+
 
 		et_download_nBackSnSpeedSec.addTextChangedListener(new MaxMinEditWatcher(200, 0, et_download_nBackSnSpeedSec));
 		et_download_nBackSnSpeedSec.setOnFocusChangeListener(new MaxMinFocusChangeListener(200, 0, et_download_nBackSnSpeedSec));
@@ -383,6 +445,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 			return false;
 		} else if ("".equals(et_download_nBackSnSpeedFir.getText().toString())) {
 			return false;
+		}  else if ("".equals(et_upHeight.getText().toString())) {
+			return false;
 		} else if ("".equals(et_download_nBackSnSpeedSec.getText().toString())) {
 			return false;
 		}else if ("".equals(et_download_nBackSnSpeedThird.getText().toString())) {
@@ -414,6 +478,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		if (Integer.parseInt(et_number.getText().toString()) < 1) {
 			return false;
 		} else if (Integer.parseInt(et_download_nBackSnSpeedFir.getText().toString()) < 0) {
+			return false;
+		}else if (Integer.parseInt(et_upHeight.getText().toString()) < 0) {
 			return false;
 		} else if (Integer.parseInt(et_download_nBackSnSpeedSec.getText().toString()) < 0) {
 			return false;
@@ -460,6 +526,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		TaskParam.INSTANCE.setnStartZ(points.get(0).getZ());
 		TaskParam.INSTANCE.setnStartU(points.get(0).getU());
 		TaskParam.INSTANCE.setnTaskNum(Integer.parseInt(et_number.getText().toString()));
+		TaskParam.INSTANCE.setnSnHeight(Integer.parseInt(et_upHeight.getText().toString()));// 设置出锡高度
+		TaskParam.INSTANCE.setnWorkMode(1);// 设置工作模式默认电机
 		TaskParam.INSTANCE.setnBackSnSpeedFir(Integer.parseInt(et_download_nBackSnSpeedFir.getText().toString()));// 设置一次回锡速度
 		TaskParam.INSTANCE.setnBackSnSpeedSec(Integer.parseInt(et_download_nBackSnSpeedSec.getText().toString()));// 设置二次回锡速度
 		TaskParam.INSTANCE.setnBackSnSpeedThird(Integer.parseInt(et_download_nBackSnSpeedThird.getText().toString()));// 设置三次回锡速度
@@ -623,6 +691,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 					field.set(dialog, true);// true表示要关闭
 					System.out.println("下载的任务点集："+points.get(0).getPointParam().toString());
 					//开启进度框
+					startProgressDialog();
 					MessageMgr.INSTANCE.taskDownload(points);
 				} catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e1) {
 					e1.printStackTrace();
@@ -748,6 +817,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 				if ((revBuffer[5] & 0x00ff) == 0) {
 					Log.d(TAG, "任务不存在");
 					// 任务不存在的话，就可以直接下载
+					startProgressDialog();
 					MessageMgr.INSTANCE.taskDownload(points);
 				}
 			}
@@ -769,7 +839,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 				Log.e(TAG, "询问");
 			} else if (revBuffer[3] == 0x52) {
 				Log.e(TAG, "下载预处理");
-				ToastUtil.displayPromptInfo(this, "正在下载..");
+				startProgressDialog();
 //				Bundle extras = new Bundle();
 //				if (points.size() > TaskActivity.MAX_SIZE) {
 //					extras.putString(TaskActivity.KEY_NUMBER, "0");

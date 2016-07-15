@@ -325,7 +325,7 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 			break;
 		case 1: {
 			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
-			if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
+			if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
 				Log.d(TAG, RobotParam.INSTANCE.GetXJourney() + ",分辨率：x" + RobotParam.INSTANCE.GetXDifferentiate()+",y:"+ RobotParam.INSTANCE.GetYDifferentiate()+",z:"+ RobotParam.INSTANCE.GetZDifferentiate());
 				ToastUtil.displayPromptInfo(LoginActivity.this, "获取参数成功!");
 			}

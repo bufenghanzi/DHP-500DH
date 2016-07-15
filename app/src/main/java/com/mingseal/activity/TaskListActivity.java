@@ -580,7 +580,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		rl_uploading.setOnClickListener(this);
 		rl_setting.setOnClickListener(this);
 		rl_paste.setOnClickListener(this);
-		rl_menu.setOnClickListener(this);
+//		rl_menu.setOnClickListener(this);//暂时不用读写功能列表
 
 //		view_track.setCircle(50);
 //		view_track.setRadius(5);

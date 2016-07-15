@@ -180,7 +180,7 @@ public class Protocol_400_1 extends Protocol {
 
 		case Cmd_Read_Funclist:// 读取功能列表
 			FillHead(buf, P_400_HEAD, P_400_READ_S, 0, cmd, index);
-			FillCommand(buf, P_400_READ_S, 0x7A47, (byte) 0x17, index);
+			FillCommand(buf, P_400_READ_S, 0x7A47, (byte) 0x19, index);
 			FillData(buf, cmd, index);
 			break;
 		case Cmd_Write_Funclist:// 写入功能列表

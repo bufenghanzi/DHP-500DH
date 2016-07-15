@@ -64,6 +64,40 @@
                 android:paddingRight="18px"
                 android:text="1"
                 android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_mm5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
+
+            <EditText
+                android:id="@+id/et_upHeight"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10px"
+                android:layout_toLeftOf="@id/tv_mm5"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="8"
+                android:textSize="@dimen/activity_glue_edittext_textsize"/>
+
+            <TextView
+                android:id="@+id/tv_upHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_upHeight"
+                android:gravity="center"
+                android:text="@string/activity_task_height"
+                android:textSize="@dimen/activity_download_textsize_sub"/>
         </RelativeLayout>
 
         <RelativeLayout
