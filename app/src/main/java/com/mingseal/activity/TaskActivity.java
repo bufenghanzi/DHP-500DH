@@ -2017,7 +2017,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				mAdapter.setData(mPointsCur);
 				mAdapter.notifyDataSetChanged();
 			}
-			else if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
+			else if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
 				ToastUtil.displayPromptInfo(TaskActivity.this, "获取参数成功!");
 			}
 //			sendResetCommand();

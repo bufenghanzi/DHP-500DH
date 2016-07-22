@@ -613,7 +613,7 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 				customView.setPoints(pointListsCur);// 重绘图
 				setCoords();
 
-			} else if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
+			} else if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
 				ToastUtil.displayPromptInfo(GlueViewActivity.this, "获取参数成功!");
 			}
 		}

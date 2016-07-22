@@ -1349,7 +1349,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			case 1: {
 				int cmdFlag = ((revBuffer[2] & 0x00ff) << 8)
 						| (revBuffer[3] & 0x00ff);
-				if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
+				if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
 					ToastUtil.displayPromptInfo(TaskListActivity.this, "获取参数成功!");
 					// userApplication.setWifiConnecting(true);
 					// WifiConnectTools.processWifiConnect(userApplication,
@@ -1361,9 +1361,10 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 							+ RobotParam.INSTANCE.GetZDifferentiate());
 					// myConnection.disconnect();
 					// myConnection = null;
-				}else if (revBuffer[2]==0x2E){//获取功能列表成功
-					ToastUtil.displayPromptInfo(TaskListActivity.this,"获取功能列表成功！");
 				}
+//				else if (revBuffer[2]==0x32){//获取功能列表成功,焊锡机暂时不用
+//					ToastUtil.displayPromptInfo(TaskListActivity.this,"获取功能列表成功！");
+//				}
 
 				sendResetCommand();
 
