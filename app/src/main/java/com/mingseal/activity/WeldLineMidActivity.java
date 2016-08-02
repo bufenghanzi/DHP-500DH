@@ -510,11 +510,9 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
         extend_default = (TextView) extendView.findViewById(R.id.extend_default);
         extend_mms = (TextView) extendView.findViewById(R.id.extend_mms);
         extend_isSn = (TextView) extendView.findViewById(R.id.extend_isSn);
-        tv_radius = (TextView) extendView.findViewById(R.id.tv_radius);
         extend_mm = (TextView) extendView.findViewById(R.id.extend_mm);
         tv_stopSnTime = (TextView) extendView.findViewById(R.id.tv_stopSnTime);
         extend_mm2 = (TextView) extendView.findViewById(R.id.extend_mm2);
-        tv_stopDisNext = (TextView) extendView.findViewById(R.id.tv_stopDisNext);
         extend_mm3 = (TextView) extendView.findViewById(R.id.extend_mm3);
 
 		/*===================== begin =====================*/
@@ -527,11 +525,9 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
         tv_sendSnSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_mms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        tv_radius.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_mm.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         tv_stopSnTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_mm2.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        tv_stopDisNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_mm3.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		/*=====================  end =====================*/
     }

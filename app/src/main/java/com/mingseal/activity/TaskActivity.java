@@ -387,6 +387,10 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 	private int StopRetryTimes=5;//重传次数
 	Timer mTimer;
 	TimerTask mTimerTask;
+	private int mlast_xPulse = 0;
+	private int mlast_yPulse = 0;
+	private int mlast_zPulse = 0;
+	private int mlast_uPulse = 0;
 
 	/**
 	 * 判断是否是第一次打开popwindow
@@ -810,160 +814,196 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				selectRadioIDCur = mPointsCur.size() - 1;
 				mAdapter.setSelectID(selectRadioIDCur);// 选中位置
 			}
-			if (selectRadioIDPrev == selectRadioIDCur && selectRadioIDCur != -1) {
-				if (modeFlagCur == 0) {
-					// 连续
-					switch (v.getId()) {
-					case R.id.nav_x_plus:// x+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 0, 0, speed);
+			if (selectRadioIDCur != -1) {
+				System.out.println("预定位点坐标：" + mPointsCur.get(selectRadioIDCur).getX() + "," +
+						mPointsCur.get(selectRadioIDCur).getY() + "," + mPointsCur.get(selectRadioIDCur).getZ());
+				if (selectRadioIDPrev == selectRadioIDCur && ifInfoChange()) {
+					if (modeFlagCur == 0) {
+						// 连续
+						switch (v.getId()) {
+							case R.id.nav_x_plus:// x+
+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 0, 0, speed);
 //								Log.d(TAG,"X+_DOWN被点击了");
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(0);
-								prepareStopRetry(0);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+									stopTimer();
+									prepareStopRetry(0);
 //								Log.d(TAG,"X+_up被点击了-->发送了第一次停止指令");
-							}
-						break;
-					case R.id.nav_x_minus:// x-
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 0, 0, speed);
-							stopTimer();
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(0);
-							prepareStopRetry(0);
+								}
+								break;
+							case R.id.nav_x_minus:// x-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 0, 0, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+									stopTimer();
+									prepareStopRetry(0);
+								}
+								break;
+							case R.id.nav_y_plus:// y+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 0, 1, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+									stopTimer();
+									prepareStopRetry(1);
+								}
+								break;
+							case R.id.nav_y_minus:// y-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 0, 1, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+									stopTimer();
+									prepareStopRetry(1);
+								}
+								break;
+							case R.id.nav_z_plus:// z+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 0, 2, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+									stopTimer();
+									prepareStopRetry(2);
+								}
+								break;
+							case R.id.nav_z_minus:// z-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 0, 2, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+									stopTimer();
+									prepareStopRetry(2);
+								}
+								break;
+							case R.id.nav_u_plus:// u+
+								if (m_nAxisNum == 4) {
+									if (event.getAction() == MotionEvent.ACTION_DOWN) {
+										MoveUtils.move(0, 0, 3, speed);
+										stopTimer();
+									} else if (event.getAction() == MotionEvent.ACTION_UP) {
+										MoveUtils.stop(3);
+										stopTimer();
+										prepareStopRetry(3);
+									}
+								}
+								break;
+							case R.id.nav_u_minus:// u-
+								if (m_nAxisNum == 4) {
+									if (event.getAction() == MotionEvent.ACTION_DOWN) {
+										MoveUtils.move(1, 0, 3, speed);
+										stopTimer();
+									} else if (event.getAction() == MotionEvent.ACTION_UP) {
+										MoveUtils.stop(3);
+										stopTimer();
+										prepareStopRetry(3);
+									}
+								}
+								break;
 						}
-						break;
-					case R.id.nav_y_plus:// y+
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 0, 1, speed);
-							stopTimer();
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(1);
-							prepareStopRetry(1);
+					} else if (modeFlagCur == 1) {
+						// 单步
+						switch (v.getId()) {
+							case R.id.nav_x_plus:// x+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 1, 0, speedXYZ[0]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+								}
+								break;
+							case R.id.nav_x_minus:// x-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 1, 0, speedXYZ[0]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+								}
+								break;
+							case R.id.nav_y_plus:// y+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 1, 1, speedXYZ[1]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+								}
+								break;
+							case R.id.nav_y_minus:// y-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 1, 1, speedXYZ[1]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+								}
+								break;
+							case R.id.nav_z_plus:// z+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 1, 2, speedXYZ[2]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+								}
+								break;
+							case R.id.nav_z_minus:// z-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 1, 2, speedXYZ[2]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+								}
+							case R.id.nav_u_plus:// u+
+								if (m_nAxisNum == 4) {
+									if (event.getAction() == MotionEvent.ACTION_DOWN) {
+										MoveUtils.move(0, 1, 3, speedXYZ[0]);
+									} else if (event.getAction() == MotionEvent.ACTION_UP) {
+										MoveUtils.stop(3);
+									}
+								}
+								break;
+							case R.id.nav_u_minus:// u-
+								if (m_nAxisNum == 4) {
+									if (event.getAction() == MotionEvent.ACTION_DOWN) {
+										MoveUtils.move(1, 1, 3, speedXYZ[0]);
+									} else if (event.getAction() == MotionEvent.ACTION_UP) {
+										MoveUtils.stop(3);
+									}
+								}
+								break;
 						}
-						break;
-					case R.id.nav_y_minus:// y-
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 0, 1, speed);
-							stopTimer();
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(1);
-							prepareStopRetry(1);
-						}
-						break;
-					case R.id.nav_z_plus:// z+
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 0, 2, speed);
-							stopTimer();
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(2);
-							prepareStopRetry(2);
-						}
-						break;
-					case R.id.nav_z_minus:// z-
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 0, 2, speed);
-							stopTimer();
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(2);
-							prepareStopRetry(2);
-						}
-						break;
-					case R.id.nav_u_plus:// u+
-						if (m_nAxisNum == 4) {
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 0, 3, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(3);
-								prepareStopRetry(3);
-							}
-						}
-						break;
-					case R.id.nav_u_minus:// u-
-						if (m_nAxisNum == 4) {
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 0, 3, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(3);
-								prepareStopRetry(3);
-							}
-						}
-						break;
 					}
-				} else if (modeFlagCur == 1) {
-					// 单步
-					switch (v.getId()) {
-					case R.id.nav_x_plus:// x+
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 1, 0, speedXYZ[0]);
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(0);
+				} else if (selectRadioIDPrev != selectRadioIDCur) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						// 按下定位
+						MoveUtils.locationCoord(mPointsCur.get(selectRadioIDCur));
+						if (m_nAxisNum == 3) {
+							mlast_xPulse = mPointsCur.get(selectRadioIDCur).getX();
+							mlast_yPulse = mPointsCur.get(selectRadioIDCur).getY();
+							mlast_zPulse = mPointsCur.get(selectRadioIDCur).getZ();
+						} else {
+							mlast_xPulse = mPointsCur.get(selectRadioIDCur).getX();
+							mlast_yPulse = mPointsCur.get(selectRadioIDCur).getY();
+							mlast_zPulse = mPointsCur.get(selectRadioIDCur).getZ();
+							mlast_uPulse = mPointsCur.get(selectRadioIDCur).getU();
 						}
-						break;
-					case R.id.nav_x_minus:// x-
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 1, 0, speedXYZ[0]);
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(0);
-						}
-						break;
-					case R.id.nav_y_plus:// y+
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 1, 1, speedXYZ[1]);
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(1);
-						}
-						break;
-					case R.id.nav_y_minus:// y-
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 1, 1, speedXYZ[1]);
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(1);
-						}
-						break;
-					case R.id.nav_z_plus:// z+
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 1, 2, speedXYZ[2]);
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(2);
-						}
-						break;
-					case R.id.nav_z_minus:// z-
-						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 1, 2, speedXYZ[2]);
-						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(2);
-						}
-					case R.id.nav_u_plus:// u+
-						if(m_nAxisNum == 4){
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 1, 3, speedXYZ[0]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(3);
-							}
-						}
-						break;
-					case R.id.nav_u_minus:// u-
-						if(m_nAxisNum == 4){
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 1, 3, speedXYZ[0]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(3);
-							}
-						}
-						break;
+					} else if (event.getAction() == MotionEvent.ACTION_UP) {
+						// 抬起设置上次选中的单选框
+						selectRadioIDPrev = selectRadioIDCur;
 					}
-				}
-			} else if (selectRadioIDPrev != selectRadioIDCur && selectRadioIDCur != -1) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				} else {
 					// 按下定位
 					MoveUtils.locationCoord(mPointsCur.get(selectRadioIDCur));
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					// 抬起设置上次选中的单选框
-					selectRadioIDPrev = selectRadioIDCur;
+					if (m_nAxisNum == 3) {
+						mlast_xPulse = mPointsCur.get(selectRadioIDCur).getX();
+						mlast_yPulse = mPointsCur.get(selectRadioIDCur).getY();
+						mlast_zPulse = mPointsCur.get(selectRadioIDCur).getZ();
+					} else {
+						mlast_xPulse = mPointsCur.get(selectRadioIDCur).getX();
+						mlast_yPulse = mPointsCur.get(selectRadioIDCur).getY();
+						mlast_zPulse = mPointsCur.get(selectRadioIDCur).getZ();
+						mlast_uPulse = mPointsCur.get(selectRadioIDCur).getU();
+					}
 				}
 			}
 			mAdapter.notifyDataSetChanged();
@@ -971,7 +1011,35 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		}
 		
 	}
-
+	/**
+	 * 比较输入框中的内容是否改变了
+	 * @return true:没有改变，false：改变了
+	 */
+	private boolean ifInfoChange() {
+		if (m_nAxisNum == 3) {
+			if (mlast_xPulse != mPointsCur.get(selectRadioIDCur).getX()) {
+				System.out.println("mlast_xPulse："+mlast_xPulse+"mPointsCur.get(selectRadioIDCur).getX():"+mPointsCur.get(selectRadioIDCur).getX());
+				return false;
+			} else if (mlast_yPulse != mPointsCur.get(selectRadioIDCur).getY()) {
+				System.out.println("mlast_yPulse："+mlast_yPulse);
+				return false;
+			} else if (mlast_zPulse != mPointsCur.get(selectRadioIDCur).getZ()) {
+				System.out.println("mlast_zPulse："+mlast_zPulse);
+				return false;
+			}
+		} else {
+			if (mlast_xPulse != mPointsCur.get(selectRadioIDCur).getX()) {
+				return false;
+			} else if (mlast_yPulse != mPointsCur.get(selectRadioIDCur).getY()) {
+				return false;
+			} else if (mlast_zPulse != mPointsCur.get(selectRadioIDCur).getZ()) {
+				return false;
+			} else if (mlast_uPulse != mPointsCur.get(selectRadioIDCur).getU()) {
+				return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * 将之前的定时任务移除队列
 	 */
@@ -993,45 +1061,46 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 	 * @param i
 	 */
 	private void prepareStopRetry(final int i) {
-		StopRetryTimes=5;//重新设置重传次数
-		StopSuccessFlag=false;//重置标记为
-		StopFlag=false;//非重发停止指令状态
-		if (mTimer==null){
-
-			mTimer=new Timer();
+		StopRetryTimes = 5;//重新设置重传次数
+		StopSuccessFlag = false;//重置标记为
+		StopFlag = false;//非重发停止指令状态
+		if (mTimer == null) {
+			System.out.println("新建一个mTimer");
+			mTimer = new Timer();
 		}
-		if (mTimerTask == null){
-			mTimerTask=new TimerTask() {
+		if (mTimerTask == null) {
+			System.out.println("新建一个mTimerTask");
+			mTimerTask = new TimerTask() {
 				@Override
 				public void run() {
-					if (StopSuccessFlag==false) {
+					if (StopSuccessFlag == false) {
 						if (StopRetryTimes > 0) {
 							if (StopSuccessFlag == false) {
 								StopRetryTimes--;
 								MoveUtils.stop(i);
 //								Log.d(TAG, "重发了停止指令");
-								StopFlag=true;
+								StopFlag = true;
 							}
-						}else{
+						} else {
 							//重发失败
 //							Log.d(TAG,"重发失败！");
 							//关闭timer，重置参数
-							StopRetryTimes=5;//重新设置重传次数
-							StopSuccessFlag=false;//重置标记为
-							StopFlag=false;//非重发停止指令状态
+							StopRetryTimes = 5;//重新设置重传次数
+							StopSuccessFlag = false;//重置标记为
+							StopFlag = false;//非重发停止指令状态
 							mTimer.cancel();
 							mTimer = null;
 							mTimerTask.cancel();
 							mTimerTask = null;
 						}
-					}else {
-						if (StopFlag){//重发状态
-								//成功
+					} else {
+						if (StopFlag) {//重发状态
+							//成功
 //								Log.d(TAG, "重发了停止指令成功！");
-								StopSuccessFlag = false;
-							StopRetryTimes=5;//重新设置重传次数
-							StopSuccessFlag=false;//重置标记为
-							StopFlag=false;//非重发停止指令状态
+							StopSuccessFlag = false;
+							StopRetryTimes = 5;//重新设置重传次数
+							StopSuccessFlag = false;//重置标记为
+							StopFlag = false;//非重发停止指令状态
 							mTimer.cancel();
 							mTimer = null;
 							mTimerTask.cancel();
@@ -1041,8 +1110,9 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 			};
 		}
-		if(mTimer != null && mTimerTask != null ){
-			mTimer.schedule(mTimerTask,220,60);
+		if (mTimer != null && mTimerTask != null) {
+			System.out.println("执行了mTimer.schedule");
+			mTimer.schedule(mTimerTask, 220, 60);
 		}
 	}
 
@@ -2007,15 +2077,26 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
 			if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
 				Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
-				 Log.d(TAG, "解析坐标值->:"+coordPoint.toString());
-				StopSuccessFlag=true;//说明下位机成功返回消息
-				StopRetryTimes=5;//重新设置重传次数
+//                    Log.d(TAG, "解析坐标值->:" + coordPoint.toString());
+				System.out.println("解析坐标值");
+				StopSuccessFlag = true;//说明下位机成功返回消息
+				StopRetryTimes = 5;//重新设置重传次数
 				mPointsCur.get(selectRadioIDCur).setX(coordPoint.getX());
 				mPointsCur.get(selectRadioIDCur).setY(coordPoint.getY());
 				mPointsCur.get(selectRadioIDCur).setZ(coordPoint.getZ());
 				mPointsCur.get(selectRadioIDCur).setU(coordPoint.getU());
 				mAdapter.setData(mPointsCur);
 				mAdapter.notifyDataSetChanged();
+				if (m_nAxisNum == 3) {
+					mlast_xPulse = coordPoint.getX();
+					mlast_yPulse = coordPoint.getY();
+					mlast_zPulse = coordPoint.getZ();
+				} else {
+					mlast_xPulse = coordPoint.getX();
+					mlast_yPulse = coordPoint.getY();
+					mlast_zPulse = coordPoint.getZ();
+					mlast_uPulse = coordPoint.getU();
+				}
 			}
 			else if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
 				ToastUtil.displayPromptInfo(TaskActivity.this, "获取参数成功!");

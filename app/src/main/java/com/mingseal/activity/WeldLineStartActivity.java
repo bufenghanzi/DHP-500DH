@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -93,7 +95,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
     /**
      * @Fields preSendSnSum: 预送锡量
      */
-    private int preSendSnSum = 0;
+    private float preSendSnSum = 0;
     /**
      * @Fields moveSpeedInt: 轨迹速度的int值
      */
@@ -165,6 +167,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
     private int preHeatTime;
     private ImageView iv_add;
     private ImageView iv_moren;
+    private static final int DECIMAL_DIGITS = 1;//小数的位数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +219,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
 
         } else {
             et_sendSnSpeed.setText(weldLineStartParam.getSnSpeed() + "");
-            et_preSendSnSum.setText(weldLineStartParam.getPreSendSnSum() + "");
+            et_preSendSnSum.setText((float)weldLineStartParam.getPreSendSnSum()/10 + "");
             et_preSendSnSpeed.setText(weldLineStartParam.getPreSendSnSpeed() + "");
             et_moveSpeed.setText(weldLineStartParam.getMoveSpeed() + "");
             et_preHeatTime.setText(weldLineStartParam.getPreHeatTime() + "");
@@ -592,7 +595,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
             sendSnSpeed = 0;
         }
         try {
-            preSendSnSum = Integer.parseInt(et_preSendSnSum
+            preSendSnSum = Float.parseFloat(et_preSendSnSum
                     .getText().toString());
         } catch (NumberFormatException e) {
             preSendSnSum = 0;
@@ -617,7 +620,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
             preHeatTime = 0;
         }
         weldStart.setPreSendSnSpeed(sendSnSpeed);
-        weldStart.setPreSendSnSum(preSendSnSum);
+        weldStart.setPreSendSnSum((int) preSendSnSum*10);
         weldStart.setPreSendSnSpeed(preSendSnSpeed);
         weldStart.setMoveSpeed(moveSpeed);
         weldStart.setPreHeatTime(preHeatTime);
@@ -915,6 +918,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                                     PointConfigParam.GlueLineStart.SENDSNSPEED,
                                     PointConfigParam.GlueLineStart.GlueLineStartMin,
                                     et_preSendSnSum));
+                    setPoint(et_preSendSnSum);//限制小数
                     et_preSendSnSum
                             .setOnFocusChangeListener(new MaxMinFocusChangeListener(
                                     PointConfigParam.GlueLineStart.SENDSNSPEED,
@@ -1038,5 +1042,44 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         });
         rl_back.setOnClickListener(this);
         iv_loading.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * 限制1位小数
+     * @param editText
+     */
+    public  void setPoint(final EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,int count) {
+                if (s.toString().contains(".")) {
+                    if (s.length() - 1 - s.toString().indexOf(".") > DECIMAL_DIGITS) {
+                        s = s.toString().subSequence(0,
+                                s.toString().indexOf(".") + DECIMAL_DIGITS+1);
+                        editText.setText(s);
+                        editText.setSelection(s.length());
+                    }
+                }
+                if (s.toString().trim().substring(0).equals(".")) {
+                    s = "0" + s;
+                    editText.setText(s);
+                    editText.setSelection(2);
+                }
+                if (s.toString().startsWith("0")
+                        && s.toString().trim().length() > 1) {
+                    if (!s.toString().substring(1, 2).equals(".")) {
+                        editText.setText(s.subSequence(0, 1));
+                        editText.setSelection(1);
+                        return;
+                    }
+                }
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 }

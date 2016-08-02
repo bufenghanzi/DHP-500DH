@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -54,7 +56,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private TextView tv_title;// 标题栏的标题
 
     /**
-     * @Fields et_yure: 点胶延时
+     * @Fields et_yure: 预送锡量
      */
     private EditText et_yure;
     /**
@@ -83,8 +85,8 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private int mFlag;// 0代表增加数据，1代表更新数据
     private int mType;// 1表示要更新数据
     private int preHeatTime = 0;
-    private int sendSnSumFir = 0;
-    private int sendSnSumSec = 0;
+    private float sendSnSumFir = 0;
+    private float sendSnSumSec = 0;
 
     /**
      * @Fields isNull: 判断数据库中是否有次方案，默认没有
@@ -174,8 +176,8 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private ToggleButton switch_isSus;
     private TextView extend_isPause;
     private ToggleButton switch_isPause;
-    private int sendSnSumThird;
-    private int sendSnSumFourth;
+    private float sendSnSumThird;
+    private float sendSnSumFourth;
     private int dipDistance;
     private int upHeight;
     private int sendSnSpeedFir;
@@ -185,6 +187,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private int stopSnTimeFourth;
     private int sendSnSpeedThird;
     private int sendSnSpeedFourth;
+    private static final int DECIMAL_DIGITS = 1;//小数的位数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -468,10 +471,10 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
             et_sendSnSpeedFourth.setText("");
         } else {
             et_yure.setText(pointWeldWorkParam.getPreHeatTime() + "");
-            et_sendSnSumFir.setText(pointWeldWorkParam.getSendSnSumFir()+ "");
-            et_sendSnSumSec.setText(pointWeldWorkParam.getSendSnSumSec() + "");
-            et_sendSnSumThird.setText(pointWeldWorkParam.getSendSnSumThird() + "");
-            et_sendSnSumFourth.setText(pointWeldWorkParam.getSendSnSumFourth() + "");
+            et_sendSnSumFir.setText((float)pointWeldWorkParam.getSendSnSumFir()/10+ "");
+            et_sendSnSumSec.setText((float)pointWeldWorkParam.getSendSnSumSec()/10 + "");
+            et_sendSnSumThird.setText((float)pointWeldWorkParam.getSendSnSumThird()/10 + "");
+            et_sendSnSumFourth.setText((float)pointWeldWorkParam.getSendSnSumFourth()/10 + "");
             et_dipDistance.setText(pointWeldWorkParam.getDipDistance() + "");
             et_upHeight.setText(pointWeldWorkParam.getUpHeight() + "");
             et_sendSnSpeedFir.setText(pointWeldWorkParam.getSendSnSpeedFir() + "");
@@ -734,24 +737,24 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
             preHeatTime = 0;
         }
         try {
-            sendSnSumFir = Integer.parseInt(et_sendSnSumFir.getText()
+            sendSnSumFir = Float.parseFloat(et_sendSnSumFir.getText()
                     .toString());
         } catch (NumberFormatException e) {
             sendSnSumFir = 0;
         }
         try {
-            sendSnSumSec = Integer.parseInt(et_sendSnSumSec.getText().toString());
+            sendSnSumSec = Float.parseFloat(et_sendSnSumSec.getText().toString());
         } catch (NumberFormatException e) {
             sendSnSumSec = 0;
         }
 
         try {
-            sendSnSumThird = Integer.parseInt(et_sendSnSumThird.getText().toString());
+            sendSnSumThird = Float.parseFloat(et_sendSnSumThird.getText().toString());
         } catch (NumberFormatException e) {
             sendSnSumThird = 0;
         }
         try {
-            sendSnSumFourth = Integer.parseInt(et_sendSnSumFourth.getText().toString());
+            sendSnSumFourth = Float.parseFloat(et_sendSnSumFourth.getText().toString());
         } catch (NumberFormatException e) {
             sendSnSumFourth = 0;
         }
@@ -802,15 +805,15 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
         }
         weldWork.setPreHeatTime(preHeatTime);
         weldWork.setSendSnSpeedFir(sendSnSpeedFir);
-        weldWork.setSendSnSumFir(sendSnSumFir);
+        weldWork.setSendSnSumFir((int) sendSnSumFir*10);
         weldWork.setSendSnSpeedSec(sendSnSpeedSec);
-        weldWork.setSendSnSumSec(sendSnSumSec);
+        weldWork.setSendSnSumSec((int) sendSnSumSec*10);
         weldWork.setStopSnStimeSec(stopSnStimeSec);
         weldWork.setSendSnSpeedThird(sendSnSpeedThird);
-        weldWork.setSendSnSumThird(sendSnSumThird);
+        weldWork.setSendSnSumThird((int) sendSnSumThird*10);
         weldWork.setStopSnTimeThird(stopSnTimeThird);
         weldWork.setSendSnSpeedFourth(sendSnSpeedFourth);
-        weldWork.setSendSnSumFourth(sendSnSumFourth);
+        weldWork.setSendSnSumFourth((int) sendSnSumFourth*10);
         weldWork.setStopSnTimeFourth(stopSnTimeFourth);
         weldWork.setDipDistance(dipDistance);
         weldWork.setUpHeight(upHeight);
@@ -832,7 +835,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
      * @author wj
      */
     private boolean isEditClean(View extendView) {
-        et_yure = (EditText) extendView.findViewById(R.id.et_alone_dianjiao);
+        et_yure = (EditText) extendView.findViewById(R.id.et_yure);
         et_sendSnSumFir = (EditText) extendView.findViewById(R.id.et_sendSnSumFir);
         et_sendSnSumSec = (EditText) extendView.findViewById(R.id.et_sendSnSumSec);
         et_sendSnSumThird = (EditText) extendView.findViewById(R.id.et_sendSnSumThird);
@@ -1105,7 +1108,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
 
                 @Override
                 public void initViewAndListener(View extendView) {
-                    et_yure = (EditText) extendView.findViewById(R.id.et_alone_dianjiao);
+                    et_yure = (EditText) extendView.findViewById(R.id.et_yure);
                     switch_isSn = (ToggleButton) extendView.findViewById(R.id.switch_isSn);
                     et_sendSnSumFir = (EditText) extendView.findViewById(R.id.et_sendSnSumFir);
                     switch_isOut = (ToggleButton) extendView.findViewById(R.id.switch_isOut);
@@ -1135,18 +1138,22 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                             .addTextChangedListener(new MaxMinEditWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumFir));
+                    setPoint(et_sendSnSumFir);//限制小数
                     et_sendSnSumSec
                             .addTextChangedListener(new MaxMinEditWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumSec));
+                    setPoint(et_sendSnSumSec);//限制小数
                     et_sendSnSumThird
                             .addTextChangedListener(new MaxMinEditWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumThird));
+                    setPoint(et_sendSnSumThird);//限制小数
                     et_sendSnSumFourth
                             .addTextChangedListener(new MaxMinEditWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumFourth));
+                    setPoint(et_sendSnSumFourth);//限制小数
                     et_dipDistance
                             .addTextChangedListener(new MaxMinEditWatcher(
                                     PointConfigParam.GlueAlone.DipSpeed,
@@ -1309,5 +1316,44 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
         });
         rl_back.setOnClickListener(this);
         iv_loading.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * 限制1位小数
+     * @param editText
+     */
+    public  void setPoint(final EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,int count) {
+                if (s.toString().contains(".")) {
+                    if (s.length() - 1 - s.toString().indexOf(".") > DECIMAL_DIGITS) {
+                        s = s.toString().subSequence(0,
+                                s.toString().indexOf(".") + DECIMAL_DIGITS+1);
+                        editText.setText(s);
+                        editText.setSelection(s.length());
+                    }
+                }
+                if (s.toString().trim().substring(0).equals(".")) {
+                    s = "0" + s;
+                    editText.setText(s);
+                    editText.setSelection(2);
+                }
+                if (s.toString().startsWith("0")
+                        && s.toString().trim().length() > 1) {
+                    if (!s.toString().substring(1, 2).equals(".")) {
+                        editText.setText(s.subSequence(0, 1));
+                        editText.setSelection(1);
+                        return;
+                    }
+                }
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 }
