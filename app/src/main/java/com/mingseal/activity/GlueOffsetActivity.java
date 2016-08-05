@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mingseal.activity;
 
@@ -33,6 +33,8 @@ import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.point.Point;
 import com.mingseal.data.point.PointType;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.listener.MaxMinEditDoubleWatcher;
+import com.mingseal.listener.MaxMinEditWatcher;
 import com.mingseal.utils.FloatUtil;
 import com.mingseal.utils.MoveUtils;
 import com.mingseal.utils.SharePreferenceUtils;
@@ -48,7 +50,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @author wangjian
+ * @author 商炎炳
  *
  */
 public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickListener {
@@ -120,11 +122,17 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	private double position_y;
 	private double position_z;
 	private double position_u;
-	//临时保存页面初始化坐标
-	private double tem_position_x;
-	private double tem_position_y;
-	private double tem_position_z;
-	private double tem_position_u;
+	//临时保存页面初始化坐标,绝对偏移量
+	private double tem_position_x=-1;
+	private double tem_position_y=-1;
+	private double tem_position_z=-1;
+	private double tem_position_u=-1;
+
+	//临时保存页面初始化坐标,相对偏移量
+	private double relative_position_x;
+	private double relative_position_y;
+	private double relative_position_z;
+	private double relative_position_u;
 
 	private int number = 1;// 按下相对/绝对的次数
 
@@ -152,7 +160,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	private final static int KEY_Y = 1;
 	private final static int KEY_Z = 2;
 	private final static int KEY_U = 3;
-	
+
 	private UserApplication userApplication;
 	/**
 	 * @Fields m_nAxisNum : 机器轴数
@@ -216,6 +224,24 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	private int StopRetryTimes=5;//重传次数
 	Timer mTimer;
 	TimerTask mTimerTask;
+	private int offset_x_min;
+	private int offset_y_min;
+	private int offset_z_min;
+	private int offset_x_max;
+	private int offset_y_max;
+	private int offset_z_max;
+	private int offset_u_min;
+	private int offset_u_max;
+	private Point mPoint;//基准点
+	private EditText et_abs_offset_x;
+	private EditText et_abs_offset_y;
+	private EditText et_abs_offset_z;
+	private EditText et_abs_offset_u;
+	private int mOffset_x_plus;
+	private int mOffset_y_plus;
+	private int mOffset_z_plus;
+	private int mOffset_u_plus;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 //		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -230,6 +256,9 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 			points = intent.getParcelableArrayListExtra(TaskActivity.ARRAY_KEY);
 		}
 		settingParam = SharePreferenceUtils.readFromSharedPreference(this);
+		mPoint=points.get(0);
+		//计算x/y/z/u边界
+		calculateBorder(points);
 		initView();
 
 		handler = new RevHandler();
@@ -241,6 +270,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 		// 进入偏移界面，先定位到坐标圆点?
 		//应该改为基准点或者第一个点
 		MoveUtils.locationCoord(points.get(0));
+
 		m_nAxisNum = RobotParam.INSTANCE.getM_nAxisNum();
 		if(m_nAxisNum == 3){
 			et_offset_u.setEnabled(false);
@@ -252,6 +282,80 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 			but_u_minus.setVisibility(View.VISIBLE);
 		}
 
+
+	}
+
+	/**
+	 * 计算x/y/z/u允许偏移最大距离
+	 * @param points
+	 */
+	private void calculateBorder(final List<Point> points) {
+		if (m_nAxisNum==3){
+
+			offset_x_max=offset_x_min =points.get(0).getX();//初始化默认第一个点的x脉冲最小和最大
+			offset_y_max=offset_y_min =points.get(0).getY();
+			offset_z_max=offset_z_min =points.get(0).getZ();
+			for (Point point:points){
+				if (point.getX() <= offset_x_min){
+					offset_x_min =point.getX();
+				}
+				if (point.getY()<= offset_y_min){
+					offset_y_min =point.getY();
+				}
+				if (point.getZ()<= offset_z_min){
+					offset_z_min =point.getZ();
+				}
+				if (point.getX()>=offset_x_max){
+					offset_x_max=point.getX();
+				}
+				if (point.getY()>=offset_y_max){
+					offset_y_max=point.getY();
+				}
+				if (point.getZ()>=offset_z_max){
+					offset_z_max=point.getZ();
+				}
+			}
+//			System.out.println("offset_x_min:"+RobotParam.INSTANCE.XPulse2Journey(offset_x_min)+","+"offset_x_max:"+RobotParam.INSTANCE.XPulse2Journey(offset_x_max));
+//			int i=RobotParam.INSTANCE.XJourney2Pulse(RobotParam.INSTANCE.GetXJourney())-offset_x_max;
+//			System.out.println("x/y/z分别向左向右偏移范围："+"-"+RobotParam.INSTANCE.XPulse2Journey(offset_x_min)+"-"+RobotParam.INSTANCE.XPulse2Journey(i));
+		}else {
+			offset_x_max=offset_x_min =points.get(0).getX();//初始化默认第一个点的x脉冲最小和最大
+			offset_y_max=offset_y_min =points.get(0).getY();
+			offset_z_max=offset_z_min =points.get(0).getZ();
+			offset_u_max=offset_u_min =points.get(0).getU();
+			for (Point point:points){
+				if (point.getX() <= offset_x_min){
+					offset_x_min =point.getX();
+				}
+				if (point.getY()<= offset_y_min){
+					offset_y_min =point.getY();
+				}
+				if (point.getZ()<= offset_z_min){
+					offset_z_min =point.getZ();
+				}
+				if (point.getU()<=offset_u_min){
+					offset_u_min=point.getU();
+				}
+				if (point.getX()>=offset_x_max){
+					offset_x_max=point.getX();
+				}
+				if (point.getY()>=offset_y_max){
+					offset_y_max=point.getY();
+				}
+				if (point.getZ()>=offset_z_max){
+					offset_z_max=point.getZ();
+				}
+				if (point.getU()>=offset_u_max){
+					offset_u_max=point.getU();
+				}
+			}
+		}
+		System.out.println("offset_x_min:"+RobotParam.INSTANCE.XPulse2Journey(offset_x_min)+","+"offset_x_max:"+RobotParam.INSTANCE.XPulse2Journey(offset_x_max));
+		mOffset_x_plus = RobotParam.INSTANCE.XJourney2Pulse(RobotParam.INSTANCE.GetXJourney())-offset_x_max;
+		mOffset_y_plus = RobotParam.INSTANCE.YJourney2Pulse(RobotParam.INSTANCE.GetYJourney())-offset_y_max;
+		mOffset_z_plus = RobotParam.INSTANCE.ZJourney2Pulse(RobotParam.INSTANCE.GetZJourney())-offset_z_max;
+		mOffset_u_plus = RobotParam.INSTANCE.UJourney2Pulse(RobotParam.INSTANCE.GetUJourney())-offset_u_max;
+		System.out.println("x/y/z分别向左向右偏移范围："+"-"+RobotParam.INSTANCE.XPulse2Journey(offset_x_min)+"-"+RobotParam.INSTANCE.XPulse2Journey(mOffset_x_plus));
 
 	}
 
@@ -273,7 +377,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 		//设置初值
 		image_speed.setBackgroundResource(R.drawable.icon_speed_high);
 		image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
-		
+
 
 		rl_back = (RelativeLayout) findViewById(R.id.rl_back);
 		rl_speed = (RelativeLayout) findViewById(R.id.rl_sudu);
@@ -303,6 +407,11 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 		et_offset_z = (EditText) findViewById(R.id.et_offset_z);
 		tv_offset_u = (TextView) findViewById(R.id.tv_offset_u);
 		et_offset_u = (EditText) findViewById(R.id.et_offset_u);
+		et_abs_offset_x = (EditText) findViewById(R.id.et_abs_offset_x);
+		et_abs_offset_y = (EditText) findViewById(R.id.et_abs_offset_y);
+		et_abs_offset_z = (EditText) findViewById(R.id.et_abs_offset_z);
+		et_abs_offset_u = (EditText) findViewById(R.id.et_abs_offset_u);
+
 		tv_offset_speed = (TextView) findViewById(R.id.tv_offset_speed);
 		tv_offset_moshi = (TextView) findViewById(R.id.tv_offset_moshi);
 		tv_exchange = (TextView) findViewById(R.id.tv_exchange);
@@ -343,7 +452,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 		but_z_minus.setOnTouchListener(moveListener);
 		but_u_plus.setOnTouchListener(moveListener);
 		but_u_minus.setOnTouchListener(moveListener);
-		
+
 		et_offset_x.setSelectAllOnFocus(true);
 		et_offset_y.setSelectAllOnFocus(true);
 		et_offset_z.setSelectAllOnFocus(true);
@@ -355,27 +464,64 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 		rl_exchange.setOnClickListener(this);
 		rl_complete.setOnClickListener(this);
 
+		et_offset_x
+				.addTextChangedListener(new MaxMinEditDoubleWatcher(
+						RobotParam.INSTANCE.XPulse2Journey(mOffset_x_plus),
+						-RobotParam.INSTANCE.XPulse2Journey(offset_x_min), et_offset_x));
+		et_offset_y
+				.addTextChangedListener(new MaxMinEditDoubleWatcher(
+						RobotParam.INSTANCE.GetYJourney()-RobotParam.INSTANCE.YPulse2Journey(offset_y_max),
+						-RobotParam.INSTANCE.YPulse2Journey(offset_y_min), et_offset_y));
+		et_offset_z
+				.addTextChangedListener(new MaxMinEditDoubleWatcher(
+						RobotParam.INSTANCE.GetZJourney()-RobotParam.INSTANCE.ZPulse2Journey(offset_z_max),
+						-RobotParam.INSTANCE.ZPulse2Journey(offset_z_min), et_offset_z));
+		et_offset_u
+				.addTextChangedListener(new MaxMinEditDoubleWatcher(
+						RobotParam.INSTANCE.GetUJourney()-RobotParam.INSTANCE.UPulse2Journey(offset_u_max),
+						-RobotParam.INSTANCE.UPulse2Journey(offset_u_min), et_offset_u));
+		et_abs_offset_x
+				.addTextChangedListener(new MaxMinEditWatcher(
+						RobotParam.INSTANCE.GetXJourney(),
+						0, et_abs_offset_x));
+		et_abs_offset_y
+				.addTextChangedListener(new MaxMinEditWatcher(
+						RobotParam.INSTANCE.GetYJourney(),
+						0, et_abs_offset_y));
+		et_abs_offset_z
+				.addTextChangedListener(new MaxMinEditWatcher(
+						RobotParam.INSTANCE.GetZJourney(),
+						0, et_abs_offset_z));
+		et_abs_offset_u
+				.addTextChangedListener(new MaxMinEditWatcher(
+						RobotParam.INSTANCE.GetUJourney(),
+						0, et_abs_offset_u));
+
 		et_offset_x.setOnFocusChangeListener(new OnKeyFocusChangeListener(et_offset_x, KEY_X));
 		et_offset_y.setOnFocusChangeListener(new OnKeyFocusChangeListener(et_offset_y, KEY_Y));
 		et_offset_z.setOnFocusChangeListener(new OnKeyFocusChangeListener(et_offset_z, KEY_Z));
 		et_offset_u.setOnFocusChangeListener(new OnKeyFocusChangeListener(et_offset_u, KEY_U));
 
+		et_abs_offset_x.setOnFocusChangeListener(new OnAbsKeyFocusChangeListener(et_abs_offset_x,KEY_X));
+		et_abs_offset_y.setOnFocusChangeListener(new OnAbsKeyFocusChangeListener(et_abs_offset_y,KEY_Y));
+		et_abs_offset_z.setOnFocusChangeListener(new OnAbsKeyFocusChangeListener(et_abs_offset_z,KEY_Z));
+		et_abs_offset_u.setOnFocusChangeListener(new OnAbsKeyFocusChangeListener(et_abs_offset_u,KEY_U));
 		//初始化x/y/z/u
-		et_offset_x.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.XPulse2Journey(points.get(0).getX())));
-		tem_position_x = Double.parseDouble(et_offset_x.getText().toString());
-		et_offset_y.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.YPulse2Journey(points.get(0).getY())));
-		tem_position_y = Double.parseDouble(et_offset_y.getText().toString());
-		et_offset_z.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.ZPulse2Journey(points.get(0).getZ())));
-		tem_position_z = Double.parseDouble(et_offset_z.getText().toString());
-		et_offset_u.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.UPulse2Journey(points.get(0).getU())));
-		tem_position_u = Double.parseDouble(et_offset_u.getText().toString());
+		et_offset_x.setText(FloatUtil.getFloatToString(0.0));
+		et_abs_offset_x.setText("");
+		et_offset_y.setText(FloatUtil.getFloatToString(0.0));
+		et_abs_offset_y.setText("");
+		et_offset_z.setText(FloatUtil.getFloatToString(0.0));
+		et_abs_offset_z.setText("");
+		et_offset_u.setText(FloatUtil.getFloatToString(0.0));
+		et_abs_offset_u.setText("");
 		speed = settingParam.getHighSpeed();
 		speedXYZ = new int[3];
 		speedXYZ[0] = 4 * settingParam.getxStepDistance();
 		speedXYZ[1] = 4 * settingParam.getyStepDistance();
 		speedXYZ[2] = 4 * settingParam.getzStepDistance();
 	}
-	
+
 	/**
 	 * @ClassName MoveListener
 	 * @Description x,y,z,u控制移动
@@ -383,157 +529,157 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	 * @date 2016年1月28日 下午3:07:15
 	 *
 	 */
-	private class MoveListener implements OnTouchListener {
+	private class MoveListener implements OnTouchListener{
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			if (modeFlag == 0) {
 				// 连续
 				switch (v.getId()) {
-				case R.id.nav_x_plus:// x+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 0, 0, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-						prepareStopRetry(0);
-					}
-					break;
-				case R.id.nav_x_minus:// x-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 0, 0, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-						prepareStopRetry(0);
-					}
-					break;
-				case R.id.nav_y_plus:// y+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 0, 1, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-						prepareStopRetry(1);
-					}
-					break;
-				case R.id.nav_y_minus:// y-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 0, 1, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-						prepareStopRetry(1);
-					}
-					break;
-				case R.id.nav_z_plus:// z+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 0, 2, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-						prepareStopRetry(2);
-					}
-					break;
-				case R.id.nav_z_minus:// z-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 0, 2, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-						prepareStopRetry(2);
-					}
-					break;
-				case R.id.nav_u_plus:// u+
-					if (m_nAxisNum == 4) {
+					case R.id.nav_x_plus:// x+
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 0, 3, speed);
+							MoveUtils.move(0, 0, 0, speed);
 							stopTimer();
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
-							prepareStopRetry(3);
+							MoveUtils.stop(0);
+							prepareStopRetry(0);
 						}
-					}
-					break;
-				case R.id.nav_u_minus:// u-
-					if (m_nAxisNum == 4) {
+						break;
+					case R.id.nav_x_minus:// x-
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 0, 3, speed);
+							MoveUtils.move(1, 0, 0, speed);
 							stopTimer();
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
-							prepareStopRetry(3);
+							MoveUtils.stop(0);
+							prepareStopRetry(0);
 						}
-					}
-					break;
+						break;
+					case R.id.nav_y_plus:// y+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 0, 1, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+							prepareStopRetry(1);
+						}
+						break;
+					case R.id.nav_y_minus:// y-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 0, 1, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+							prepareStopRetry(1);
+						}
+						break;
+					case R.id.nav_z_plus:// z+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 0, 2, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+							prepareStopRetry(2);
+						}
+						break;
+					case R.id.nav_z_minus:// z-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 0, 2, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+							prepareStopRetry(2);
+						}
+						break;
+					case R.id.nav_u_plus:// u+
+						if (m_nAxisNum == 4) {
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(0, 0, 3, speed);
+								stopTimer();
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+								prepareStopRetry(3);
+							}
+						}
+						break;
+					case R.id.nav_u_minus:// u-
+						if (m_nAxisNum == 4) {
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(1, 0, 3, speed);
+								stopTimer();
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+								prepareStopRetry(3);
+							}
+						}
+						break;
 				}
 			} else if (modeFlag == 1) {
 				// 单步
 				switch (v.getId()) {
-				case R.id.nav_x_plus:// x+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 1, 0, speedXYZ[0]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-					}
-					break;
-				case R.id.nav_x_minus:// x-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 1, 0, speedXYZ[0]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-					}
-					break;
-				case R.id.nav_y_plus:// y+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 1, 1, speedXYZ[1]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-					}
-					break;
-				case R.id.nav_y_minus:// y-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 1, 1, speedXYZ[1]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-					}
-					break;
-				case R.id.nav_z_plus:// z+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 1, 2, speedXYZ[2]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-					}
-					break;
-				case R.id.nav_z_minus:// z-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 1, 2, speedXYZ[2]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-					}
-				case R.id.nav_u_plus:// u+
-					if(m_nAxisNum == 4){
+					case R.id.nav_x_plus:// x+
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 1, 3, speedXYZ[0]);
+							MoveUtils.move(0, 1, 0, speedXYZ[0]);
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
+							MoveUtils.stop(0);
 						}
-					}
-					break;
-				case R.id.nav_u_minus:// u-
-					if(m_nAxisNum == 4){
+						break;
+					case R.id.nav_x_minus:// x-
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 1, 3, speedXYZ[0]);
+							MoveUtils.move(1, 1, 0, speedXYZ[0]);
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
+							MoveUtils.stop(0);
 						}
-					}
-					break;
+						break;
+					case R.id.nav_y_plus:// y+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 1, 1, speedXYZ[1]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+						}
+						break;
+					case R.id.nav_y_minus:// y-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 1, 1, speedXYZ[1]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+						}
+						break;
+					case R.id.nav_z_plus:// z+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 1, 2, speedXYZ[2]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+						}
+						break;
+					case R.id.nav_z_minus:// z-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 1, 2, speedXYZ[2]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+						}
+					case R.id.nav_u_plus:// u+
+						if(m_nAxisNum == 4){
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(0, 1, 3, speedXYZ[0]);
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+							}
+						}
+						break;
+					case R.id.nav_u_minus:// u-
+						if(m_nAxisNum == 4){
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(1, 1, 3, speedXYZ[0]);
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+							}
+						}
+						break;
 				}
 			}
 			return false;
 		}
-		
+
 	}
 	/**
 	 * 将之前的定时任务移除队列
@@ -606,9 +752,9 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 			mTimer.schedule(mTimerTask,220,60);
 		}
 	}
-	
+
 	/**
-	 * 失去焦点事件
+	 * 失去焦点事件,允许负值
 	 *
 	 */
 	private class OnKeyFocusChangeListener implements OnFocusChangeListener {
@@ -619,11 +765,70 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 
 		/**
 		 * 当失去焦点时,如果为空的话，要设置为0
-		 * 
+		 *
 		 * @param et
 		 *            Edittext
 		 */
 		public OnKeyFocusChangeListener(EditText et, int key) {
+			this.et = et;
+			this.key = key;
+		}
+
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (!hasFocus) {
+				if (et.getText().toString().equals("")) {
+					et.setText("0");
+				}
+				((EditText) v).setCursorVisible(false);
+				value = Double.parseDouble(et.getText().toString());
+				if (key == KEY_X) {
+					if (value > RobotParam.INSTANCE.XPulse2Journey(mOffset_x_plus)) {
+						value = RobotParam.INSTANCE.XPulse2Journey(mOffset_x_plus);
+					}else if (value<-RobotParam.INSTANCE.XPulse2Journey(offset_x_min)){
+						value=-RobotParam.INSTANCE.XPulse2Journey(offset_x_min);
+					}
+				} else if (key == KEY_Y) {
+					if (value > RobotParam.INSTANCE.YPulse2Journey(mOffset_y_plus)) {
+						value = RobotParam.INSTANCE.YPulse2Journey(mOffset_y_plus);
+					}else if (value< -RobotParam.INSTANCE.XPulse2Journey(offset_y_min)){
+						value=-RobotParam.INSTANCE.XPulse2Journey(offset_y_min);
+					}
+				} else if (key == KEY_Z) {
+					if (value > RobotParam.INSTANCE.ZPulse2Journey(mOffset_z_plus)) {
+						value = RobotParam.INSTANCE.ZPulse2Journey(mOffset_z_plus);
+					}else if (value<-RobotParam.INSTANCE.XPulse2Journey(offset_z_min)){
+						value=-RobotParam.INSTANCE.XPulse2Journey(offset_z_min);
+					}
+				} else if (key == KEY_U) {
+					if (value > RobotParam.INSTANCE.UPulse2Journey(mOffset_u_plus)) {
+						value = RobotParam.INSTANCE.UPulse2Journey(mOffset_u_plus);
+					}else if (value<-RobotParam.INSTANCE.XPulse2Journey(offset_u_min)){
+						value=-RobotParam.INSTANCE.XPulse2Journey(offset_u_min);
+					}
+				}
+				et.setText(value + "");
+			}
+		}
+
+	}
+	/**
+	 * 失去焦点事件,不允许负值
+	 *
+	 */
+	private class OnAbsKeyFocusChangeListener implements OnFocusChangeListener {
+
+		private EditText et;
+		private double value;
+		private int key;
+
+		/**
+		 * 当失去焦点时,如果为空的话，要设置为0
+		 *
+		 * @param et
+		 *            Edittext
+		 */
+		public OnAbsKeyFocusChangeListener(EditText et, int key) {
 			this.et = et;
 			this.key = key;
 		}
@@ -672,11 +877,30 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	 */
 	private void saveBackActivity() {
 		if (checkAllComponents()) {
-			
-			position_x = Double.parseDouble(et_offset_x.getText().toString())-tem_position_x;
-			position_y = Double.parseDouble(et_offset_y.getText().toString())-tem_position_y;
-			position_z = Double.parseDouble(et_offset_z.getText().toString())-tem_position_z;
-			position_u = Double.parseDouble(et_offset_u.getText().toString())-tem_position_u;
+			try {
+				tem_position_x=Double.parseDouble(et_abs_offset_x.getText().toString());
+			} catch (NumberFormatException e) {
+				tem_position_x=-1;
+			}
+			try {
+				tem_position_y=Double.parseDouble(et_abs_offset_y.getText().toString());
+			} catch (NumberFormatException e) {
+				tem_position_y=-1;
+			}
+			try {
+				tem_position_z=Double.parseDouble(et_abs_offset_z.getText().toString());
+			} catch (NumberFormatException e) {
+				tem_position_z=-1;
+			}
+			try {
+				tem_position_u=Double.parseDouble(et_abs_offset_u.getText().toString());
+			} catch (NumberFormatException e) {
+				tem_position_u=-1;
+			}
+			relative_position_x=Double.parseDouble(et_offset_x.getText().toString());
+			relative_position_y=Double.parseDouble(et_offset_y.getText().toString());
+			relative_position_z=Double.parseDouble(et_offset_z.getText().toString());
+			relative_position_u=Double.parseDouble(et_offset_u.getText().toString());
 			if (tv_exchange.getText().toString().equals(getResources().getString(R.string.relative))) {
 				// 相对偏移,点坐标=基准点偏移后位置-基准点原位置+点的原位置
 				for (Point point : points) {
@@ -685,13 +909,13 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 						Log.d(TAG, "相对偏移（没偏移之前）基准点不操作");
 					}else {
 						point.setX(RobotParam.INSTANCE
-								.XJourney2Pulse(RobotParam.INSTANCE.XPulse2Journey(point.getX()) +position_x));
+								.XJourney2Pulse(RobotParam.INSTANCE.XPulse2Journey(point.getX()) +relative_position_x));
 						point.setY(RobotParam.INSTANCE
-								.YJourney2Pulse(RobotParam.INSTANCE.YPulse2Journey(point.getY()) + position_y));
+								.YJourney2Pulse(RobotParam.INSTANCE.YPulse2Journey(point.getY()) + relative_position_y));
 						point.setZ(RobotParam.INSTANCE
-								.ZJourney2Pulse(RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) + position_z));
+								.ZJourney2Pulse(RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) + relative_position_z));
 						point.setU(RobotParam.INSTANCE
-								.UJourney2Pulse(RobotParam.INSTANCE.UPulse2Journey(point.getU()) + position_u));
+								.UJourney2Pulse(RobotParam.INSTANCE.UPulse2Journey(point.getU()) + relative_position_u));
 					}
 				}
 				Log.d(TAG, "相对偏移：" + points.toString());
@@ -701,10 +925,18 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 					if (point.getPointParam().getPointType().equals(PointType.POINT_WELD_BASE)){
 						Log.d(TAG, "绝对偏移（没偏移之前）基准点不操作");
 					}else {
-						point.setX(RobotParam.INSTANCE.XJourney2Pulse(position_x));
-						point.setY(RobotParam.INSTANCE.YJourney2Pulse(position_y));
-						point.setZ(RobotParam.INSTANCE.ZJourney2Pulse(position_z));
-						point.setU(RobotParam.INSTANCE.UJourney2Pulse(position_u));
+						if (tem_position_x!=-1){//说明想改变x轴坐标
+							point.setX(RobotParam.INSTANCE.XJourney2Pulse(tem_position_x));
+						}
+						if (tem_position_y!=-1){
+							point.setY(RobotParam.INSTANCE.YJourney2Pulse(tem_position_y));
+						}
+						if (tem_position_z!=-1){
+							point.setZ(RobotParam.INSTANCE.ZJourney2Pulse(tem_position_z));
+						}
+						if (tem_position_u!=-1){
+							point.setU(RobotParam.INSTANCE.UJourney2Pulse(tem_position_u));
+						}
 					}
 				}
 				Log.d(TAG, "绝对偏移：" + points.toString());
@@ -728,7 +960,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 
 	/**
 	 * 检查所有输入框是否为空
-	 * 
+	 *
 	 * @return true代表正常,false代表有异常
 	 */
 	private boolean checkAllComponents() {
@@ -788,97 +1020,97 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 		int retValue = MessageMgr.INSTANCE.managingMessage(revBuffer);
 //		Log.d(TAG, "retValue:"+retValue);
 		switch (retValue) {
-		case 0:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "校验失败");
-			break;
-		case 1: {
-			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
+			case 0:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "校验失败");
+				break;
+			case 1: {
+				int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
 //			Log.d(TAG, "cmdFlag:"+cmdFlag);
-			if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
-				Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
-				Log.d(TAG, "返回的Point:"+coordPoint.toString()+","+ RobotParam.INSTANCE.XPulse2Journey(coordPoint.getX()));
-				StopSuccessFlag=true;//说明下位机成功返回消息
-				StopRetryTimes=5;//重新设置重传次数
-				et_offset_x.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.XPulse2Journey(coordPoint.getX())));
-				et_offset_y.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.YPulse2Journey(coordPoint.getY())));
-				et_offset_z.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.ZPulse2Journey(coordPoint.getZ())));
-				et_offset_u.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.UPulse2Journey(coordPoint.getU())));
-				
+				if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
+					Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
+					Log.d(TAG, "返回的Point:"+coordPoint.toString()+","+RobotParam.INSTANCE.XPulse2Journey(coordPoint.getX()));
+					StopSuccessFlag=true;//说明下位机成功返回消息
+					StopRetryTimes=5;//重新设置重传次数
+					et_offset_x.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.XCenterPulse2Journey(coordPoint.getX()-mPoint.getX())));
+					et_offset_y.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.YCenterPulse2Journey(coordPoint.getY()-mPoint.getY())));
+					et_offset_z.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.ZCenterPulse2Journey(coordPoint.getZ()-mPoint.getZ())));
+					et_offset_u.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.UCenterPulse2Journey(coordPoint.getU()-mPoint.getU())));
+
+				}
 			}
-		}
 			break;
-		case 40101:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "非法功能");
-			break;
-		case 40102:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "非法数据地址");
-			break;
-		case 40103:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "非法数据");
-			break;
-		case 40105:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "设备忙");
-			break;
-		case 40109:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "急停中");
-			break;
-		case 40110:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "X轴光电报警");
-			break;
-		case 40111:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "Y轴光电报警");
-			break;
-		case 40112:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "Z轴光电报警");
-			break;
-		case 40113:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "U轴光电报警");
-			break;
-		case 40114:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "行程超限报警");
-			break;
-		case 40115:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务上传失败");
-			break;
-		case 40116:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务下载失败");
-			break;
-		case 40117:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务模拟失败");
-			break;
-		case 40118:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "示教指令错误");
-			break;
-		case 40119:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "循迹定位失败");
-			break;
-		case 40120:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务号不可用");
-			break;
-		case 40121:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "初始化失败");
-			break;
-		case 40122:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "API版本错误");
-			break;
-		case 40123:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "程序升级失败");
-			break;
-		case 40124:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "系统损坏");
-			break;
-		case 40125:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务未加载");
-			break;
-		case 40126:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "(Z轴)基点抬起高度过高");
-			break;
-		case 40127:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "等待输入超时");
-			break;
-		default:
-			ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "未知错误");
-			break;
+			case 40101:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "非法功能");
+				break;
+			case 40102:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "非法数据地址");
+				break;
+			case 40103:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "非法数据");
+				break;
+			case 40105:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "设备忙");
+				break;
+			case 40109:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "急停中");
+				break;
+			case 40110:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "X轴光电报警");
+				break;
+			case 40111:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "Y轴光电报警");
+				break;
+			case 40112:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "Z轴光电报警");
+				break;
+			case 40113:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "U轴光电报警");
+				break;
+			case 40114:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "行程超限报警");
+				break;
+			case 40115:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务上传失败");
+				break;
+			case 40116:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务下载失败");
+				break;
+			case 40117:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务模拟失败");
+				break;
+			case 40118:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "示教指令错误");
+				break;
+			case 40119:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "循迹定位失败");
+				break;
+			case 40120:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务号不可用");
+				break;
+			case 40121:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "初始化失败");
+				break;
+			case 40122:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "API版本错误");
+				break;
+			case 40123:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "程序升级失败");
+				break;
+			case 40124:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "系统损坏");
+				break;
+			case 40125:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "任务未加载");
+				break;
+			case 40126:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "(Z轴)基点抬起高度过高");
+				break;
+			case 40127:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "等待输入超时");
+				break;
+			default:
+				ToastUtil.displayPromptInfo(GlueOffsetActivity.this, "未知错误");
+				break;
 		}
 	}
 
@@ -894,7 +1126,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 				buffer = temp.array();
 				// byte[] revBuffer = (byte[]) msg.obj;
 				DisPlayInfoAfterGetMsg(buffer);
-			}else if (msg.what== SocketInputThread.SocketError){
+			}else if (msg.what==SocketInputThread.SocketError){
 				//wifi中断
 				System.out.println("wifi连接断开。。");
 				SocketThreadManager.releaseInstance();
@@ -906,7 +1138,7 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 			}
 		}
 	}
-	
+
 	/**
 	 * @Title saveMediumSpeed
 	 * @Description 单步和连续的速度都改成中速的，且将文本提示设置成中速
@@ -954,46 +1186,131 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.rl_back:// 返回
-			showBackDialog();
+			case R.id.rl_back:// 返回
+				showBackDialog();
 
-			break;
-		case R.id.rl_sudu:// 速度
-			speedFlag++;
-			if (speedFlag % 3 == 1) {
-				saveMediumSpeed(settingParam);
-			} else if (speedFlag % 3 == 2) {
-				saveLowSpeed(settingParam);
-			} else if (speedFlag % 3 == 0) {
-				saveHighSpeed(settingParam);
-			}
-			break;
-		case R.id.rl_moshi:// 模式
-			if (modeFlag == 0) {
-				modeFlag = 1;// 点击一次变为单步
-				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
-				image_moshi.setBackgroundResource(R.drawable.icon_step_single);
-				tv_moshi.setText(getResources().getString(R.string.step_single));
-			} else {
-				modeFlag = 0;// 默认为0
-				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_serious));
-				image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
-				tv_moshi.setText(getResources().getString(R.string.step_serious));
-			}
-			break;
-		case R.id.rl_exchange:// 交换相对还是绝对
-			number++;
-			if (number % 2 == 1) {
-				tv_exchange.setText(getResources().getString(R.string.relative));
-				tv_absolute.setText(getResources().getString(R.string.relative));
-			} else {
-				tv_exchange.setText(getResources().getString(R.string.absolute));
-				tv_absolute.setText(getResources().getString(R.string.absolute));
-			}
-			break;
-		case R.id.rl_complete:// 完成
-			showBackDialog();
-			break;
+				break;
+			case R.id.rl_sudu:// 速度
+				speedFlag++;
+				if (speedFlag % 3 == 1) {
+					saveMediumSpeed(settingParam);
+				} else if (speedFlag % 3 == 2) {
+					saveLowSpeed(settingParam);
+				} else if (speedFlag % 3 == 0) {
+					saveHighSpeed(settingParam);
+				}
+				break;
+			case R.id.rl_moshi:// 模式
+				if (modeFlag == 0) {
+					modeFlag = 1;// 点击一次变为单步
+					ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
+					image_moshi.setBackgroundResource(R.drawable.icon_step_single);
+					tv_moshi.setText(getResources().getString(R.string.step_single));
+				} else {
+					modeFlag = 0;// 默认为0
+					ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_serious));
+					image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
+					tv_moshi.setText(getResources().getString(R.string.step_serious));
+				}
+				break;
+			case R.id.rl_exchange:// 交换相对还是绝对
+				number++;
+				if (number % 2 == 1) {
+					tv_exchange.setText(getResources().getString(R.string.relative));
+					tv_absolute.setText(getResources().getString(R.string.relative));
+					but_x_plus.setEnabled(true);
+					but_x_minus.setEnabled(true);
+					but_y_plus.setEnabled(true);
+					but_y_minus.setEnabled(true);
+					but_z_plus.setEnabled(true);
+					but_z_minus.setEnabled(true);
+					but_u_plus.setEnabled(true);
+					but_u_minus.setEnabled(true);
+					//解析记录绝对偏移量,隐藏绝对ui
+					try {
+						tem_position_x=Double.parseDouble(et_abs_offset_x.getText().toString());
+					} catch (NumberFormatException e) {
+						tem_position_x=-1;
+					}
+					try {
+						tem_position_y=Double.parseDouble(et_abs_offset_y.getText().toString());
+					} catch (NumberFormatException e) {
+						tem_position_y=-1;
+					}
+					try {
+						tem_position_z=Double.parseDouble(et_abs_offset_z.getText().toString());
+					} catch (NumberFormatException e) {
+						tem_position_z=-1;
+					}
+					try {
+						tem_position_u=Double.parseDouble(et_abs_offset_u.getText().toString());
+					} catch (NumberFormatException e) {
+						tem_position_u=-1;
+					}
+					et_abs_offset_x.setVisibility(View.INVISIBLE);
+					et_abs_offset_y.setVisibility(View.INVISIBLE);
+					et_abs_offset_z.setVisibility(View.INVISIBLE);
+					et_abs_offset_u.setVisibility(View.INVISIBLE);
+					//显示相对ui，设置相对偏移值
+					et_offset_x.setVisibility(View.VISIBLE);
+					et_offset_y.setVisibility(View.VISIBLE);
+					et_offset_z.setVisibility(View.VISIBLE);
+					et_offset_u.setVisibility(View.VISIBLE);
+					et_offset_x.setText(FloatUtil.getFloatToString(relative_position_x));
+					et_offset_y.setText(FloatUtil.getFloatToString(relative_position_y));
+					et_offset_z.setText(FloatUtil.getFloatToString(relative_position_z));
+					et_offset_u.setText(FloatUtil.getFloatToString(relative_position_u));
+				} else {
+					tv_exchange.setText(getResources().getString(R.string.absolute));
+					tv_absolute.setText(getResources().getString(R.string.absolute));
+					but_x_plus.setEnabled(false);
+					but_x_minus.setEnabled(false);
+					but_y_plus.setEnabled(false);
+					but_y_minus.setEnabled(false);
+					but_z_plus.setEnabled(false);
+					but_z_minus.setEnabled(false);
+					but_u_plus.setEnabled(false);
+					but_u_minus.setEnabled(false);
+					//记录相对偏移量,隐藏相对ui
+					relative_position_x=Double.parseDouble(et_offset_x.getText().toString());
+					relative_position_y=Double.parseDouble(et_offset_y.getText().toString());
+					relative_position_z=Double.parseDouble(et_offset_z.getText().toString());
+					relative_position_u=Double.parseDouble(et_offset_u.getText().toString());
+					et_offset_x.setVisibility(View.INVISIBLE);
+					et_offset_y.setVisibility(View.INVISIBLE);
+					et_offset_z.setVisibility(View.INVISIBLE);
+					et_offset_u.setVisibility(View.INVISIBLE);
+					//显示绝对偏移量，显示ui
+					et_abs_offset_x.setVisibility(View.VISIBLE);
+					et_abs_offset_y.setVisibility(View.VISIBLE);
+					et_abs_offset_z.setVisibility(View.VISIBLE);
+					et_abs_offset_u.setVisibility(View.VISIBLE);
+					if (tem_position_x!=-1){
+						et_abs_offset_x.setText(FloatUtil.getFloatToString(tem_position_x));
+					}else {
+						et_abs_offset_x.setText("");
+					}
+					if (tem_position_y!=-1){
+						et_abs_offset_y.setText(FloatUtil.getFloatToString(tem_position_y));
+					}else {
+						et_abs_offset_y.setText("");
+					}
+					if (tem_position_z!=-1){
+						et_abs_offset_z.setText(FloatUtil.getFloatToString(tem_position_z));
+					}else {
+						et_abs_offset_z.setText("");
+					}
+					if (tem_position_u!=-1){
+						et_abs_offset_u.setText(FloatUtil.getFloatToString(tem_position_u));
+					}else {
+						et_abs_offset_u.setText("");
+					}
+
+				}
+				break;
+			case R.id.rl_complete:// 完成
+				showBackDialog();
+				break;
 		}
 	}
 }
