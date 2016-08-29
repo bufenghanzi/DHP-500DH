@@ -99,7 +99,13 @@ public class PointWeldBlowParam extends PointParam {
 				", outputPort=" + Arrays.toString(outputPort) +
 				'}';
 	}
-
+	public String getString(){
+		return "PoinWeldBlowParam{" +
+				"goTimePrev=" + goTimePrev +
+				", goTimeNext=" + goTimeNext +
+				", outputPort=" + Arrays.toString(outputPort) +
+				'}';
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

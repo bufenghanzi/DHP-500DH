@@ -155,6 +155,8 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
     private ViewStub stub_glue;
     private int Activity_Init_View = 6;
     private ImageView iv_loading;
+    private String taskname;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -168,19 +170,20 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 .getParcelableExtra(MyPopWindowClickListener.POPWINDOW_KEY);
         mFlag = intent.getIntExtra(MyPopWindowClickListener.FLAG_KEY, 0);
         mType = intent.getIntExtra(MyPopWindowClickListener.TYPE_KEY, 0);
+        taskname=intent.getStringExtra("taskname");
         defaultNum = SharePreferenceUtils.getParamNumberFromPref(
                 WeldBlowActivity.this,
                 SettingParam.DefaultNum.ParamGlueInputNumber);
 
         weldBlowDao = new WeldBlowDao(this);
-        weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+        weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
         if (weldBlowLists == null || weldBlowLists.isEmpty()) {
             weldBlow = new PointWeldBlowParam();
             weldBlow.set_id(param_id);
-            weldBlowDao.insertWeldOutput(weldBlow);
+            weldBlowDao.insertWeldOutput(weldBlow,taskname);
             // 插入主键id
         }
-        weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+        weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
         // 初始化数组
         ioBoolean = new boolean[IOPort.IO_NO_ALL.ordinal()];
         popupViews = new ArrayList<>();
@@ -310,7 +313,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
      * @author wj
      */
     protected void SetDateAndRefreshUI() {
-        weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+        weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
         ArrayList<Integer> list = new ArrayList<>();
         for (PointWeldBlowParam pointWeldBlowParam : weldBlowLists) {
             list.add(pointWeldBlowParam.get_id());
@@ -341,7 +344,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
     protected void save() {
         View extendView = popupListView.getItemViews().get(currentClickNum)
                 .getExtendView();
-        weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+        weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
         ArrayList<Integer> list = new ArrayList<>();
         for (PointWeldBlowParam pointWeldBlowParam : weldBlowLists) {
             list.add(pointWeldBlowParam.get_id());
@@ -372,7 +375,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 }
                 if (flag) {
                     // 更新数据
-                    int rowid = weldBlowDao.upDateWeldOutput(upInputIOParam);
+                    int rowid = weldBlowDao.upDateWeldOutput(upInputIOParam,taskname);
                     // System.out.println("影响的行数"+rowid);
                     update_id.put(upInputIOParam.get_id(), upInputIOParam);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
@@ -380,9 +383,9 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                     // System.out.println(glueAloneDao.getPointGlueAloneParamById(currentTaskNum).toString());
                 } else {
                     // 插入一条数据
-                    long rowid = weldBlowDao.insertWeldOutput(upInputIOParam);
+                    long rowid = weldBlowDao.insertWeldOutput(upInputIOParam,taskname);
                     firstExist = true;
-                    weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+                    weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
                     Log.i(TAG, "保存之后新方案-->" + weldBlowLists.toString());
                     ToastUtil.displayPromptInfo(WeldBlowActivity.this,
                             getResources().getString(R.string.save_success));
@@ -406,7 +409,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
     }
 
     private void refreshTitle() {
-        weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+        weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
         // popupListView->pupupview->title
         for (PointWeldBlowParam pointWeldBlowParam : weldBlowLists) {
 
@@ -549,7 +552,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
             }
         }
         System.out.println("返回的方案号为================》" + mIndex);
-        point.setPointParam(weldBlowDao.getOutPutPointByID(mIndex));
+        point.setPointParam(weldBlowDao.getOutPutPointByID(mIndex,taskname));
         System.out.println("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldBlowParam>> list = new ArrayList<Map<Integer, PointWeldBlowParam>>();
@@ -613,7 +616,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
             PopupView popupView = new PopupView(this, R.layout.popup_view_item_input) {
                 @Override
                 public void setViewsElements(View view) {
-                    weldBlowLists = weldBlowDao.findAllWeldOutputParams();
+                    weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
                     ImageView title_num = (ImageView) view
                             .findViewById(R.id.title_num);
                     if (p == 1) {// 方案列表第一位对应一号方案

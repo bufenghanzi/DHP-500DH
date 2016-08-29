@@ -26,6 +26,7 @@
     <android:uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
+        android:name="com.mingseal.application.UserApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon_logo"
@@ -57,28 +58,13 @@
             android:name="com.mingseal.activity.TaskListActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name="com.mingseal.activity.TaskListUserActivity"
-            android:screenOrientation="portrait">
-        </activity>
+
         <activity
             android:name="com.mingseal.activity.TaskActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.mingseal.activity.WeldWorkActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name="com.mingseal.activity.GlueFaceStartActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name="com.mingseal.activity.GlueFaceEndActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name="com.mingseal.activity.GlueClearActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity

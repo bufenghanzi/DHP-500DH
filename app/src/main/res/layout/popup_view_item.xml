@@ -24,11 +24,11 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="80px"
+            android:layout_height="40px"
              >
 
             <TextView
-                android:id="@+id/title_dianjiao"
+                android:id="@+id/title_yure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -37,20 +37,19 @@
                  />
 
             <TextView
-                android:id="@+id/title_et_dianjiao"
+                android:id="@+id/title_et_yure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_dianjiao"
+                android:layout_toRightOf="@id/title_yure"
                  />
 
             <TextView
                 android:id="@+id/activity_ms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_dianjiao"
+                android:layout_toRightOf="@id/title_et_yure"
                  />
 
             <TextView
@@ -62,7 +61,7 @@
                  />
 
             <TextView
-                android:id="@+id/title_alone_stopGlueTime"
+                android:id="@+id/title_sendSnSpeedFir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -70,20 +69,19 @@
                 />
 
             <TextView
-                android:id="@+id/title_et_tingjiao"
+                android:id="@+id/title_et_sendSnSpeedFir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_alone_stopGlueTime"
+                android:layout_toRightOf="@id/title_sendSnSpeedFir"
             />
 
             <TextView
                 android:id="@+id/activity_second_ms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_tingjiao"
+                android:layout_toRightOf="@id/title_et_sendSnSpeedFir"
                  />
 
             <TextView
@@ -95,7 +93,7 @@
                 />
 
             <TextView
-                android:id="@+id/title_alone_upHeight"
+                android:id="@+id/title_sendSnSumFir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -103,20 +101,19 @@
                 />
 
             <TextView
-                android:id="@+id/title_et_upHeight"
+                android:id="@+id/title_et_sendSnSumFir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_alone_upHeight"
+                android:layout_toRightOf="@id/title_sendSnSumFir"
                 />
 
             <TextView
                 android:id="@+id/activity_mm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_upHeight"
+                android:layout_toRightOf="@id/title_et_sendSnSumFir"
                 />
 
             <TextView
@@ -127,35 +124,34 @@
                 android:layout_toRightOf="@id/activity_mm"
                 />
             <TextView
-                android:id="@+id/title_y_xiecha"
+                android:id="@+id/title_sendSnSpeedSec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
                 android:layout_toRightOf="@id/activity_third_fenghao"/>
 
             <TextView
-                android:id="@+id/title_et_y_xiecha"
+                android:id="@+id/title_et_sendSnSpeedSec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_y_xiecha"/>
+                android:layout_toRightOf="@id/title_sendSnSpeedSec"/>
             <TextView
                 android:id="@+id/activity_four_mm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_y_xiecha"
+                android:layout_toRightOf="@id/title_et_sendSnSpeedSec"
                 />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="80px"
+            android:layout_height="40px"
              >
 
             <TextView
-                android:id="@+id/title_activity_glue_alone_isOutGlue"
+                android:id="@+id/title_sendSnSumSec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -164,23 +160,29 @@
                 />
 
             <TextView
-                android:id="@+id/title_et_isOutGlue"
+                android:id="@+id/title_et_sendSnSumSec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_activity_glue_alone_isOutGlue"
+                android:layout_toRightOf="@id/title_sendSnSumSec"
                  />
-
+            <TextView
+                android:id="@+id/activity_nine_mm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_sendSnSumSec"
+                />
             <TextView
                 android:id="@+id/activity_four_fenghao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_isOutGlue"
+                android:layout_toRightOf="@id/activity_nine_mm"
                  />
 
             <TextView
-                android:id="@+id/title_activity_glue_alone_isPause"
+                android:id="@+id/title_stopSnStimeSec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -188,23 +190,29 @@
                 />
 
             <TextView
-                android:id="@+id/title_et_isPause"
+                android:id="@+id/title_et_stopSnStimeSec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_activity_glue_alone_isPause"
+                android:layout_toRightOf="@id/title_stopSnStimeSec"
                  />
-
+            <TextView
+                android:id="@+id/activity_third_ms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_stopSnStimeSec"
+                />
             <TextView
                 android:id="@+id/activity_five_fenghao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_isPause"
+                android:layout_toRightOf="@id/activity_third_ms"
                 />
 
             <TextView
-                android:id="@+id/activity_glue_port"
+                android:id="@+id/title_sendSnSpeedThird"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -212,38 +220,44 @@
                  />
 
             <TextView
-                android:id="@+id/title_et_glue_port"
+                android:id="@+id/title_et_sendSnSpeedThird"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_glue_port"
+                android:layout_toRightOf="@id/title_sendSnSpeedThird"
                  />
+            <TextView
+                android:id="@+id/activity_third_mms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_sendSnSpeedThird"
+                />
             <TextView
                 android:id="@+id/activity_six_fenghao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_glue_port"/>
+                android:layout_toRightOf="@id/activity_third_mms"/>
 
             <TextView
-                android:id="@+id/title_z_xiecha"
+                android:id="@+id/title_sendSnSumThird"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
                 android:layout_toRightOf="@id/activity_six_fenghao"/>
             <TextView
-                android:id="@+id/title_et_z_xiecha"
+                android:id="@+id/title_et_sendSnSumThird"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_z_xiecha"/>
+                android:layout_toRightOf="@id/title_sendSnSumThird"/>
             <TextView
                 android:id="@+id/activity_five_mm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_centerInParent="true"
-                android:layout_toRightOf="@id/title_et_z_xiecha"/>
+                android:layout_toRightOf="@id/title_et_sendSnSumThird"/>
             <TextView
                 android:id="@+id/activity_seven_fenghao"
                 android:layout_width="wrap_content"
@@ -252,26 +266,248 @@
                 android:layout_toRightOf="@id/activity_five_mm"
                 />
             <TextView
-                android:id="@+id/title_speed_xiecha"
+                android:id="@+id/title_stopSnTimeThird"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
                 android:layout_toRightOf="@id/activity_seven_fenghao"
                 />
             <TextView
-                android:id="@+id/title_et_speed_xiecha"
+                android:id="@+id/title_et_stopSnTimeThird"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_speed_xiecha"/>
+                android:layout_toRightOf="@id/title_stopSnTimeThird"/>
             <TextView
                 android:id="@+id/activity_mm_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_speed_xiecha"
+                android:layout_toRightOf="@id/title_et_stopSnTimeThird"
                 />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40px"
+            >
+
+            <TextView
+                android:id="@+id/title_sendSnSpeedFourth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:gravity="center_vertical"
+                android:paddingLeft="13px"
+                />
+
+            <TextView
+                android:id="@+id/title_et_sendSnSpeedFourth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_sendSnSpeedFourth"
+                />
+            <TextView
+                android:id="@+id/activity_four_mms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_sendSnSpeedFourth"
+                />
+            <TextView
+                android:id="@+id/activity_eight_fenghao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_four_mms"
+                />
+
+            <TextView
+                android:id="@+id/title_sendSnSumFourth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_eight_fenghao"
+                />
+
+            <TextView
+                android:id="@+id/title_et_sendSnSumFourth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_sendSnSumFourth"
+                />
+            <TextView
+                android:id="@+id/activity_six_mm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_sendSnSumFourth"
+                />
+            <TextView
+                android:id="@+id/activity_nine_fenghao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_six_mm"
+                />
+
+            <TextView
+                android:id="@+id/title_stopSnTimeFourth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_nine_fenghao"
+                />
+
+            <TextView
+                android:id="@+id/title_et_stopSnTimeFourth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_stopSnTimeFourth"
+                />
+            <TextView
+                android:id="@+id/activity_six_ms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_stopSnTimeFourth"/>
+            <TextView
+                android:id="@+id/activity_ten_fenghao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_six_ms"/>
+
+            <TextView
+                android:id="@+id/title_dipDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_ten_fenghao"/>
+            <TextView
+                android:id="@+id/title_et_dipDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_dipDistance"/>
+            <TextView
+                android:id="@+id/activity_seven_mm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_dipDistance"/>
+            <TextView
+                android:id="@+id/activity_eleven_fenghao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_seven_mm"
+                />
+            <TextView
+                android:id="@+id/title_upHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_eleven_fenghao"
+                />
+            <TextView
+                android:id="@+id/title_et_upHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_upHeight"/>
+            <TextView
+                android:id="@+id/activity_eight_mm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_upHeight"
+                />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40px"
+            >
+
+            <TextView
+                android:id="@+id/title_xiecha_angle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:gravity="center_vertical"
+                android:paddingLeft="13px"
+                />
+
+            <TextView
+                android:id="@+id/title_et_xiecha_angle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_xiecha_angle"
+                />
+            <TextView
+                android:id="@+id/activity_jiaodu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_xiecha_angle"
+                />
+            <TextView
+                android:id="@+id/activity_twelve_fenghao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_jiaodu"
+                />
+
+            <TextView
+                android:id="@+id/title_isSn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/activity_twelve_fenghao"
+                />
+
+            <TextView
+                android:id="@+id/title_et_isSn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_isSn"
+                />
+
+            <TextView
+                android:id="@+id/title_isSus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_isSn"
+                />
+
+            <TextView
+                android:id="@+id/title_et_isSus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_isSus"
+                />
+
+            <TextView
+                android:id="@+id/title_isPause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_isSus"/>
+            <TextView
+                android:id="@+id/title_et_isPause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_isPause"/>
 
         </RelativeLayout>
     </LinearLayout>

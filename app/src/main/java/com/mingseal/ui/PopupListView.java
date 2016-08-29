@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
 import com.zhy.autolayout.AutoRelativeLayout;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
 import com.zhy.autolayout.utils.AutoUtils;

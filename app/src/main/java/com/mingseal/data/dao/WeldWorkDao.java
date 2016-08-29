@@ -19,10 +19,9 @@ public class WeldWorkDao {
     private DBHelper dbHelper = null;
     private SQLiteDatabase db = null;
     private ContentValues values = null;
-    String[] columns = {DBInfo.TableWork._ID, DBInfo.TableWork.PREHEATTIME, DBInfo.TableWork.SENDSNSPEEDFIR, DBInfo.TableWork.SENDSNSUMFIR,
-            DBInfo.TableWork.SENDSNSPEEDSEC, DBInfo.TableWork.SENDSNSUMSEC, DBInfo.TableWork.STOPSNSTIMESEC, DBInfo.TableWork.SENDSNSPEEDTHIRD, DBInfo.TableWork.SENDSNSUMTHIRD, DBInfo.TableWork.STOPSNTIMETHIRD, DBInfo.TableWork.SENDSNSPEEDFOURTH
+    String[] columns = {DBInfo.TableWork._ID, DBInfo.TableWork.PREHEATTIME, DBInfo.TableWork.SENDSNSPEEDFIR, DBInfo.TableWork.SENDSNSUMFIR, DBInfo.TableWork.SENDSNSPEEDSEC, DBInfo.TableWork.SENDSNSUMSEC, DBInfo.TableWork.STOPSNSTIMESEC, DBInfo.TableWork.SENDSNSPEEDTHIRD, DBInfo.TableWork.SENDSNSUMTHIRD, DBInfo.TableWork.STOPSNTIMETHIRD, DBInfo.TableWork.SENDSNSPEEDFOURTH
             , DBInfo.TableWork.SENDSNSUMFOURTH, DBInfo.TableWork.STOPSNTIMEFOURTH, DBInfo.TableWork.DIPDISTANCE, DBInfo.TableWork.UPHEIGHT, DBInfo.TableWork.ISSN, DBInfo.TableWork.ISPAUSE
-            , DBInfo.TableWork.ISOUT, DBInfo.TableWork.ISSUS};
+            , DBInfo.TableWork.DIPDISTANCE_ANGLE, DBInfo.TableWork.ISSUS};
 
     public WeldWorkDao(Context context) {
         dbHelper = new DBHelper(context);
@@ -35,7 +34,7 @@ public class WeldWorkDao {
      * @Description 更新一条独立点数据
      * @author wj
      */
-    public int upDateGlueAlone(PointWeldWorkParam pointWeldWorkParam) {
+    public int upDateGlueAlone(PointWeldWorkParam pointWeldWorkParam,String taskname) {
         int rowid = 0;
         try {
             db = dbHelper.getWritableDatabase();
@@ -57,9 +56,9 @@ public class WeldWorkDao {
             values.put(DBInfo.TableWork.UPHEIGHT, pointWeldWorkParam.getUpHeight());
             values.put(DBInfo.TableWork.ISSN,  pointWeldWorkParam.isSn() ? 1 : 0);
             values.put(DBInfo.TableWork.ISPAUSE,  pointWeldWorkParam.isPause() ? 1 : 0);
-            values.put(DBInfo.TableWork.ISOUT,  pointWeldWorkParam.isOut() ? 1 : 0);
+            values.put(DBInfo.TableWork.DIPDISTANCE_ANGLE,  pointWeldWorkParam.getDipDistance_angle());
             values.put(DBInfo.TableWork.ISSUS,  pointWeldWorkParam.isSus() ? 1 : 0);
-            rowid = db.update(DBInfo.TableWork.WORK_TABLE, values, DBInfo.TableWork._ID + "=?", new String[]{String.valueOf(pointWeldWorkParam.get_id())});
+            rowid = db.update(DBInfo.TableWork.WORK_TABLE+taskname, values, DBInfo.TableWork._ID + "=?", new String[]{String.valueOf(pointWeldWorkParam.get_id())});
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +75,7 @@ public class WeldWorkDao {
      * @param pointWeldWorkParam
      * @return
      */
-    public long insertWeldWork(PointWeldWorkParam pointWeldWorkParam) {
+    public long insertWeldWork(PointWeldWorkParam pointWeldWorkParam,String taskname) {
         long rowID = 0;
         db = dbHelper.getWritableDatabase();
         try {
@@ -99,9 +98,9 @@ public class WeldWorkDao {
             values.put(DBInfo.TableWork.UPHEIGHT, pointWeldWorkParam.getUpHeight());
             values.put(DBInfo.TableWork.ISSN,  pointWeldWorkParam.isSn() ? 1 : 0);
             values.put(DBInfo.TableWork.ISPAUSE,  pointWeldWorkParam.isPause() ? 1 : 0);
-            values.put(DBInfo.TableWork.ISOUT,  pointWeldWorkParam.isOut() ? 1 : 0);
+            values.put(DBInfo.TableWork.DIPDISTANCE_ANGLE,  pointWeldWorkParam.getDipDistance_angle());
             values.put(DBInfo.TableWork.ISSUS,  pointWeldWorkParam.isSus() ? 1 : 0);
-            rowID = db.insert(DBInfo.TableWork.WORK_TABLE, null, values);
+            rowID = db.insert(DBInfo.TableWork.WORK_TABLE+taskname, null, values);
             db.setTransactionSuccessful();
 
         } catch (Exception e) {
@@ -119,13 +118,13 @@ public class WeldWorkDao {
      *
      * @return
      */
-    public List<PointWeldWorkParam> findAllWeldWorkParams() {
+    public List<PointWeldWorkParam> findAllWeldWorkParams(String taskname) {
         db = dbHelper.getReadableDatabase();
         List<PointWeldWorkParam> aloneLists = null;
         PointWeldWorkParam alone = null;
         Cursor cursor = null;
         try {
-            cursor = db.query(DBInfo.TableWork.WORK_TABLE, columns, null, null, null, null, null);
+            cursor = db.query(DBInfo.TableWork.WORK_TABLE+taskname, columns, null, null, null, null, null);
             if (cursor != null && cursor.getCount() > 0) {
                 aloneLists = new ArrayList<PointWeldWorkParam>();
                 while (cursor.moveToNext()) {
@@ -147,7 +146,7 @@ public class WeldWorkDao {
                     alone.setUpHeight(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.UPHEIGHT)));
                     alone.setSn(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISSN)) == 0 ? false : true);
                     alone.setPause(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISPAUSE)) == 0 ? false : true);
-                    alone.setOut(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISOUT)) == 0 ? false : true);
+                    alone.setDipDistance_angle(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.DIPDISTANCE_ANGLE)));
                     alone.setSus(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISSUS)) == 0 ? false : true);
                     aloneLists.add(alone);
                 }
@@ -169,9 +168,9 @@ public class WeldWorkDao {
      * @param pointWeldWorkParam
      * @return 1为成功删除，0为未成功删除
      */
-    public Integer deleteGlueAlone(PointWeldWorkParam pointWeldWorkParam) {
+    public Integer deleteGlueAlone(PointWeldWorkParam pointWeldWorkParam,String taskname) {
         db = dbHelper.getWritableDatabase();
-        int rowID = db.delete(DBInfo.TableWork.WORK_TABLE, DBInfo.TableWork._ID + "=?",
+        int rowID = db.delete(DBInfo.TableWork.WORK_TABLE+taskname, DBInfo.TableWork._ID + "=?",
                 new String[]{String.valueOf(pointWeldWorkParam.get_id())});
 
         db.close();
@@ -184,12 +183,12 @@ public class WeldWorkDao {
      * @param id 主键
      * @return PointGlueAloneParam
      */
-    public PointWeldWorkParam getPointWeldWorkParamById(int id) {
+    public PointWeldWorkParam getPointWeldWorkParamById(int id,String taskname) {
         PointWeldWorkParam param = new PointWeldWorkParam();
         db = dbHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = db.query(DBInfo.TableWork.WORK_TABLE, columns, DBInfo.TableWork._ID + "=?",
+            cursor = db.query(DBInfo.TableWork.WORK_TABLE+taskname, columns, DBInfo.TableWork._ID + "=?",
                     new String[]{String.valueOf(id)}, null, null, null);
             db.beginTransaction();
             if (cursor != null && cursor.getCount() > 0) {
@@ -211,7 +210,7 @@ public class WeldWorkDao {
                     param.setUpHeight(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.UPHEIGHT)));
                     param.setSn(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISSN)) == 0 ? false : true);
                     param.setPause(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISPAUSE)) == 0 ? false : true);
-                    param.setOut(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISOUT)) == 0 ? false : true);
+                    param.setDipDistance_angle(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.DIPDISTANCE_ANGLE)));
                     param.setSus(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISSUS)) == 0 ? false : true);
                 }
             }
@@ -234,7 +233,7 @@ public class WeldWorkDao {
      * @param ids
      * @return List<PointWeldWorkParam>
      */
-    public List<PointWeldWorkParam> getWeldWorkParamsByIDs(List<Integer> ids) {
+    public List<PointWeldWorkParam> getWeldWorkParamsByIDs(List<Integer> ids,String taskname) {
         db = dbHelper.getReadableDatabase();
         List<PointWeldWorkParam> params = new ArrayList<>();
         PointWeldWorkParam param = null;
@@ -242,7 +241,7 @@ public class WeldWorkDao {
         try {
             db.beginTransaction();
             for (Integer id : ids) {
-                cursor = db.query(DBInfo.TableWork.WORK_TABLE, columns, DBInfo.TableWork._ID + "=?",
+                cursor = db.query(DBInfo.TableWork.WORK_TABLE+taskname, columns, DBInfo.TableWork._ID + "=?",
                         new String[]{String.valueOf(id)}, null, null, null);
                 if (cursor != null && cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
@@ -264,7 +263,7 @@ public class WeldWorkDao {
                         param.setUpHeight(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.UPHEIGHT)));
                         param.setSn(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISSN)) == 0 ? false : true);
                         param.setPause(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISPAUSE)) == 0 ? false : true);
-                        param.setOut(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISOUT)) == 0 ? false : true);
+                        param.setDipDistance_angle(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.DIPDISTANCE_ANGLE)));
                         param.setSus(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWork.ISSUS)) == 0 ? false : true);
                         params.add(param);
                     }
@@ -289,15 +288,15 @@ public class WeldWorkDao {
      * @param pointWeldWorkParam
      * @return 当前方案的主键
      */
-    public int getAloneParamIdByParam(PointWeldWorkParam pointWeldWorkParam) {
+    public int getAloneParamIdByParam(PointWeldWorkParam pointWeldWorkParam,String taskname) {
         int id = -1;
         db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DBInfo.TableWork.WORK_TABLE, columns,
+        Cursor cursor = db.query(DBInfo.TableWork.WORK_TABLE+taskname, columns,
                 DBInfo.TableWork.PREHEATTIME + "=? and " + DBInfo.TableWork.SENDSNSPEEDFIR + "=? and " + DBInfo.TableWork.SENDSNSUMFIR
                         + "=? and " + DBInfo.TableWork.SENDSNSPEEDSEC + "=? and " + DBInfo.TableWork.SENDSNSUMSEC + "=? and "
                         + DBInfo.TableWork.STOPSNSTIMESEC + "=? and " + DBInfo.TableWork.SENDSNSPEEDTHIRD + "=? and " + DBInfo.TableWork.SENDSNSUMTHIRD + "=? and " + DBInfo.TableWork.STOPSNTIMETHIRD + "=? and"+ DBInfo.TableWork.SENDSNSPEEDFOURTH + "=? and"
                         + DBInfo.TableWork.SENDSNSUMFOURTH + "=? and"+ DBInfo.TableWork.STOPSNTIMEFOURTH + "=? and"+ DBInfo.TableWork.DIPDISTANCE + "=? and"+ DBInfo.TableWork.UPHEIGHT + "=? and"+ DBInfo.TableWork.ISSN + "=? and"
-                        + DBInfo.TableWork.ISPAUSE + "=? and"+ DBInfo.TableWork.ISOUT + "=? and"+ DBInfo.TableWork.ISSUS + "=?",
+                        + DBInfo.TableWork.ISPAUSE + "=? and"+ DBInfo.TableWork.DIPDISTANCE_ANGLE + "=? and"+ DBInfo.TableWork.ISSUS + "=?",
                 new String[]{String.valueOf(pointWeldWorkParam.getPreHeatTime()),
                         String.valueOf(pointWeldWorkParam.getSendSnSpeedFir()),
                         String.valueOf(pointWeldWorkParam.getSendSnSumFir()),
@@ -314,7 +313,7 @@ public class WeldWorkDao {
                         String.valueOf(pointWeldWorkParam.getUpHeight()),
                         String.valueOf(pointWeldWorkParam.isSn() ? 1 : 0),
                         String.valueOf(pointWeldWorkParam.isPause() ? 1 : 0),
-                        String.valueOf(pointWeldWorkParam.isOut() ? 1 : 0),
+                        String.valueOf(pointWeldWorkParam.getDipDistance_angle()),
                         String.valueOf(pointWeldWorkParam.isSus() ? 1 : 0)},
                 null, null, null);
         if (cursor != null && cursor.getCount() > 0) {
@@ -325,12 +324,12 @@ public class WeldWorkDao {
         db.close();
         if (-1 == id) {
             db = dbHelper.getReadableDatabase();
-            cursor = db.query(DBInfo.TableWork.WORK_TABLE, columns,
+            cursor = db.query(DBInfo.TableWork.WORK_TABLE+taskname, columns,
                     DBInfo.TableWork.PREHEATTIME + "=? and " + DBInfo.TableWork.SENDSNSPEEDFIR + "=? and " + DBInfo.TableWork.SENDSNSUMFIR
                             + "=? and " + DBInfo.TableWork.SENDSNSPEEDSEC + "=? and " + DBInfo.TableWork.SENDSNSUMSEC + "=? and "
                             + DBInfo.TableWork.STOPSNSTIMESEC + "=? and " + DBInfo.TableWork.SENDSNSPEEDTHIRD + "=? and " + DBInfo.TableWork.SENDSNSUMTHIRD + "=? and " + DBInfo.TableWork.STOPSNTIMETHIRD + "=? and"+ DBInfo.TableWork.SENDSNSPEEDFOURTH + "=? and"
                             + DBInfo.TableWork.SENDSNSUMFOURTH + "=? and"+ DBInfo.TableWork.STOPSNTIMEFOURTH + "=? and"+ DBInfo.TableWork.DIPDISTANCE + "=? and"+ DBInfo.TableWork.UPHEIGHT + "=? and"+ DBInfo.TableWork.ISSN + "=? and"
-                            + DBInfo.TableWork.ISPAUSE + "=? and"+ DBInfo.TableWork.ISOUT + "=? and"+ DBInfo.TableWork.ISSUS + "=?",
+                            + DBInfo.TableWork.ISPAUSE + "=? and"+ DBInfo.TableWork.DIPDISTANCE_ANGLE + "=? and"+ DBInfo.TableWork.ISSUS + "=?",
                     new String[]{String.valueOf(pointWeldWorkParam.getPreHeatTime()),
                             String.valueOf(pointWeldWorkParam.getSendSnSpeedFir()),
                             String.valueOf(pointWeldWorkParam.getSendSnSumFir()),
@@ -347,7 +346,7 @@ public class WeldWorkDao {
                             String.valueOf(pointWeldWorkParam.getUpHeight()),
                             String.valueOf(pointWeldWorkParam.isSn() ? 1 : 0),
                             String.valueOf(pointWeldWorkParam.isPause() ? 1 : 0),
-                            String.valueOf(pointWeldWorkParam.isOut() ? 1 : 0),
+                            String.valueOf(pointWeldWorkParam.getDipDistance_angle()),
                             String.valueOf(pointWeldWorkParam.isSus() ? 1 : 0)},
                     null, null, null);
             if (cursor != null && cursor.getCount() > 0) {
@@ -356,10 +355,7 @@ public class WeldWorkDao {
                 }
             }
             db.close();
-            if (-1 == id) {
-                // 说明源方案里面没有，需要重新添加
-                id = (int) insertWeldWork(pointWeldWorkParam);
-            }
+
         }
         if (cursor != null && cursor.getCount() > 0) {
             cursor.close();

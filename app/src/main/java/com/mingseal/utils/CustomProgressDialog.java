@@ -8,11 +8,11 @@ import android.content.Context;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
 import com.mingseal.view.RoundProgressBar;
 
 /**
- * @author 商炎炳
+ * @author wj
  * @description 自定义的圆形对话框
  */
 public class CustomProgressDialog extends Dialog {

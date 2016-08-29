@@ -37,7 +37,7 @@ public class WeldLineMidDao {
 	 * @param
 	 * @return  影响的行数，0表示错误
 	 */
-	public int upDateWeldLineMid(PointWeldLineMidParam pointWeldLineMidParam){
+	public int upDateWeldLineMid(PointWeldLineMidParam pointWeldLineMidParam,String taskname){
 		int rowid = 0;
 		try {
 			db = dbHelper.getWritableDatabase();
@@ -47,7 +47,7 @@ public class WeldLineMidDao {
 			values.put(TableLineMid.SENDSNSPEED, pointWeldLineMidParam.getSendSnSpeed());
 			values.put(TableLineMid.STOPSNTIME, pointWeldLineMidParam.getStopSnTime());
 			values.put(TableLineMid.ISSN, (boolean) pointWeldLineMidParam.isSn() ? 1 : 0);
-			rowid = db.update(TableLineMid.LINE_MID_TABLE, values, TableLineMid._ID +"=?", new String[]{String.valueOf(pointWeldLineMidParam.get_id())});
+			rowid = db.update(TableLineMid.LINE_MID_TABLE+taskname, values, TableLineMid._ID +"=?", new String[]{String.valueOf(pointWeldLineMidParam.get_id())});
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,7 +63,7 @@ public class WeldLineMidDao {
 	 * @param pointWeldLineMidParam
 	 * @return 刚增加的这条数据的主键
 	 */
-	public long insertWeldLineMid(PointWeldLineMidParam pointWeldLineMidParam) {
+	public long insertWeldLineMid(PointWeldLineMidParam pointWeldLineMidParam,String taskname) {
 		long rowID = 0;
 		db = dbHelper.getWritableDatabase();
 		try {
@@ -74,7 +74,7 @@ public class WeldLineMidDao {
 			values.put(TableLineMid.SENDSNSPEED, pointWeldLineMidParam.getSendSnSpeed());
 			values.put(TableLineMid.STOPSNTIME, pointWeldLineMidParam.getStopSnTime());
 			values.put(TableLineMid.ISSN, (boolean) pointWeldLineMidParam.isSn() ? 1 : 0);
-			rowID = db.insert(TableLineMid.LINE_MID_TABLE, TableLineMid._ID, values);
+			rowID = db.insert(TableLineMid.LINE_MID_TABLE+taskname, TableLineMid._ID, values);
 
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -92,14 +92,14 @@ public class WeldLineMidDao {
 	 *
 	 * @return
 	 */
-	public List<PointWeldLineMidParam> findAllWeldLineMidParams() {
+	public List<PointWeldLineMidParam> findAllWeldLineMidParams(String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldLineMidParam> midLists = null;
 		PointWeldLineMidParam mid = null;
 
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TableLineMid.LINE_MID_TABLE, columns, null, null, null, null, null);
+			cursor = db.query(TableLineMid.LINE_MID_TABLE+taskname, columns, null, null, null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
                 midLists = new ArrayList<PointWeldLineMidParam>();
                 while (cursor.moveToNext()) {
@@ -131,12 +131,12 @@ public class WeldLineMidDao {
 	 * @param id
 	 * @return PointWeldLineMidParam
 	 */
-	public PointWeldLineMidParam getPointWeldLineMidParam(int id) {
+	public PointWeldLineMidParam getPointWeldLineMidParam(int id,String taskname) {
 		PointWeldLineMidParam param = new PointWeldLineMidParam();
 		db = dbHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TableLineMid.LINE_MID_TABLE, columns, TableLineMid._ID + "=?",
+			cursor = db.query(TableLineMid.LINE_MID_TABLE+taskname, columns, TableLineMid._ID + "=?",
 					new String[] { String.valueOf(id) }, null, null, null);
 			db.beginTransaction();
 			if (cursor != null && cursor.getCount() > 0) {
@@ -167,14 +167,14 @@ public class WeldLineMidDao {
 	 * @param ids
 	 * @return List<PointGlueLineMidParam>
 	 */
-	public List<PointWeldLineMidParam> getPointWeldLineMidParamsByIDs(List<Integer> ids) {
+	public List<PointWeldLineMidParam> getPointWeldLineMidParamsByIDs(List<Integer> ids,String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldLineMidParam> params = new ArrayList<>();
 		PointWeldLineMidParam param = null;
 		try {
 			db.beginTransaction();
 			for (Integer id : ids) {
-				Cursor cursor = db.query(TableLineMid.LINE_MID_TABLE, columns, TableLineMid._ID + "=?",
+				Cursor cursor = db.query(TableLineMid.LINE_MID_TABLE+taskname, columns, TableLineMid._ID + "=?",
 						new String[] { String.valueOf(id) }, null, null, null);
 				if (cursor != null && cursor.getCount() > 0) {
 					while (cursor.moveToNext()) {
@@ -206,10 +206,10 @@ public class WeldLineMidDao {
 	 * @param pointWeldLineMidParam
 	 * @return 当前方案的主键
 	 */
-	public int getLineMidParamIDByParam(PointWeldLineMidParam pointWeldLineMidParam) {
+	public int getLineMidParamIDByParam(PointWeldLineMidParam pointWeldLineMidParam,String taskname) {
 		int id = -1;
 		db = dbHelper.getReadableDatabase();
-		Cursor cursor = db.query(TableLineMid.LINE_MID_TABLE, columns,
+		Cursor cursor = db.query(TableLineMid.LINE_MID_TABLE+taskname, columns,
 				TableLineMid.MOVESPEED + "=? and " + TableLineMid.SENDSNSPEED + "=? and " + TableLineMid.STOPSNTIME
 						+ "=? and " + TableLineMid.ISSN + "=?",
 				new String[] { String.valueOf(pointWeldLineMidParam.getMoveSpeed()),
@@ -225,7 +225,7 @@ public class WeldLineMidDao {
 		db.close();
 		if (-1 == id) {
 			db = dbHelper.getReadableDatabase();
-			cursor = db.query(TableLineMid.LINE_MID_TABLE, columns,
+			cursor = db.query(TableLineMid.LINE_MID_TABLE+taskname, columns,
 					TableLineMid.MOVESPEED + "=? and " + TableLineMid.SENDSNSPEED + "=? and " + TableLineMid.STOPSNTIME
 							+ "=? and " + TableLineMid.ISSN + "=?",
 					new String[] { String.valueOf(pointWeldLineMidParam.getMoveSpeed()),
@@ -239,9 +239,7 @@ public class WeldLineMidDao {
 				}
 			}
 			db.close();
-			if (-1 == id) {
-				id = (int) insertWeldLineMid(pointWeldLineMidParam);
-			}
+
 		}
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.close();
@@ -257,9 +255,9 @@ public class WeldLineMidDao {
 	 * @param pointWeldLineMidParam
 	 * @return
 	 */
-	public int deleteParam(PointWeldLineMidParam pointWeldLineMidParam) {
+	public int deleteParam(PointWeldLineMidParam pointWeldLineMidParam,String taskname) {
 		db = dbHelper.getWritableDatabase();
-		int rowID = db.delete(TableLineMid.LINE_MID_TABLE, TableLineMid._ID + "=?",
+		int rowID = db.delete(TableLineMid.LINE_MID_TABLE+taskname, TableLineMid._ID + "=?",
 				new String[] { String.valueOf(pointWeldLineMidParam.get_id()) });
 		db.close();
 		return rowID;

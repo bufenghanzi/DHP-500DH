@@ -11,7 +11,7 @@ import com.mingseal.data.point.SMatrix1_4;
 import com.mingseal.data.point.SMatrix_4_4;
 
 /**
- * @author 商炎炳
+ * @author wj
  *
  */
 public class CommonArithmetic {
@@ -58,20 +58,20 @@ public class CommonArithmetic {
 	*/
 	public static double getTurnV(Point[] _pt, int _idx) {
 		SMatrix1_4 n1, n2;
-		SMatrix1_4 m1 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx - 1].getX()),
-				RobotParam.INSTANCE.YPulse2Journey(_pt[_idx - 1].getY()),
-				RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx - 1].getZ()));
-		SMatrix1_4 m2 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx].getX()),
-				RobotParam.INSTANCE.YPulse2Journey(_pt[_idx].getY()),
-				RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx].getZ()));
-		SMatrix1_4 m3 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx + 1].getX()),
-				RobotParam.INSTANCE.YPulse2Journey(_pt[_idx + 1].getY()),
-				RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx + 1].getZ()));
+		SMatrix1_4 m1 = new SMatrix1_4((_pt[_idx - 1].getX()),
+				_pt[_idx - 1].getY(),
+				_pt[_idx - 1].getZ());
+		SMatrix1_4 m2 = new SMatrix1_4(_pt[_idx].getX(),
+				_pt[_idx].getY(),
+				_pt[_idx].getZ());
+		SMatrix1_4 m3 = new SMatrix1_4(_pt[_idx + 1].getX(),
+				_pt[_idx + 1].getY(),
+				_pt[_idx + 1].getZ());
 		PointType type = _pt[_idx - 1].getPointParam().getPointType();
 		if (type == PointType.POINT_GLUE_LINE_ARC || type == PointType.POINT_WELD_LINE_ARC) {
-			SMatrix1_4 m11 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx - 2].getX()),
-					RobotParam.INSTANCE.YPulse2Journey(_pt[_idx - 2].getY()),
-					RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx - 2].getZ()));
+			SMatrix1_4 m11 = new SMatrix1_4(_pt[_idx - 2].getX(),
+					_pt[_idx - 2].getY(),
+					_pt[_idx - 2].getZ());
 			SMatrix1_4 m22 = m1;
 			SMatrix1_4 m33 = m2;
 			n1 = getArcV(m11, m22, m33, false);
@@ -83,9 +83,9 @@ public class CommonArithmetic {
 		if (type == PointType.POINT_GLUE_LINE_ARC || type == PointType.POINT_WELD_LINE_ARC) {
 			SMatrix1_4 m11 = m2;
 			SMatrix1_4 m22 = m3;
-			SMatrix1_4 m33 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx + 2].getX()),
-					RobotParam.INSTANCE.YPulse2Journey(_pt[_idx + 2].getY()),
-					RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx + 2].getZ()));
+			SMatrix1_4 m33 = new SMatrix1_4(_pt[_idx + 2].getX(),
+					_pt[_idx + 2].getY(),
+					_pt[_idx + 2].getZ());
 			n2 = getArcV(m11, m22, m33, true);
 		} else {
 			n2 = SMatrix1_4.operator_minus(m3, m2);
@@ -330,20 +330,20 @@ public class CommonArithmetic {
 	 * @return
 	 */
 	public static int getTurnAngle(Point[] _pt, int _idx) {
-		SMatrix1_4 m1 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx - 1].getX()),
-				RobotParam.INSTANCE.YPulse2Journey(_pt[_idx - 1].getY()),
-				RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx - 1].getZ()));
-		SMatrix1_4 m2 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx].getX()),
-				RobotParam.INSTANCE.YPulse2Journey(_pt[_idx].getY()),
-				RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx].getZ()));
-		SMatrix1_4 m3 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx + 1].getX()),
-				RobotParam.INSTANCE.YPulse2Journey(_pt[_idx + 1].getY()),
-				RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx + 1].getZ()));
+		SMatrix1_4 m1 = new SMatrix1_4(_pt[_idx - 1].getX(),
+				_pt[_idx - 1].getY(),
+				_pt[_idx - 1].getZ());
+		SMatrix1_4 m2 = new SMatrix1_4(_pt[_idx].getX(),
+				_pt[_idx].getY(),
+				_pt[_idx].getZ());
+		SMatrix1_4 m3 = new SMatrix1_4(_pt[_idx + 1].getX(),
+				_pt[_idx + 1].getY(),
+				_pt[_idx + 1].getZ());
 		PointType type = _pt[_idx - 1].getPointParam().getPointType();
 		if (type == PointType.POINT_GLUE_LINE_ARC || type == PointType.POINT_WELD_LINE_ARC) {
-			SMatrix1_4 m11 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx - 2].getX()),
-					RobotParam.INSTANCE.YPulse2Journey(_pt[_idx - 2].getY()),
-					RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx - 2].getZ()));
+			SMatrix1_4 m11 = new SMatrix1_4(_pt[_idx - 2].getX(),
+					_pt[_idx - 2].getY(),
+					_pt[_idx - 2].getZ());
 //			SMatrix1_4 m22 = m1;
 //			SMatrix1_4 m33 = m2;
 			SMatrix1_4 m22 = new SMatrix1_4(m1.getX(), m1.getY(), m1.getZ(), m1.getU());
@@ -355,9 +355,9 @@ public class CommonArithmetic {
 		if (type == PointType.POINT_GLUE_LINE_ARC || type == PointType.POINT_WELD_LINE_ARC) {
 			SMatrix1_4 m11 = new SMatrix1_4(m2.getX(),m2.getY(),m2.getZ(),m2.getU());
 			SMatrix1_4 m22 = new SMatrix1_4(m3.getX(),m3.getY(),m3.getZ(),m3.getU());
-			SMatrix1_4 m33 = new SMatrix1_4(RobotParam.INSTANCE.XPulse2Journey(_pt[_idx + 2].getX()),
-					RobotParam.INSTANCE.YPulse2Journey(_pt[_idx + 2].getY()),
-					RobotParam.INSTANCE.ZPulse2Journey(_pt[_idx + 2].getZ()));
+			SMatrix1_4 m33 = new SMatrix1_4(_pt[_idx + 2].getX(),
+					_pt[_idx + 2].getY(),
+					_pt[_idx + 2].getZ());
 			SMatrix1_4 n = getArcV(m11, m22, m33, true);
 			m3 = SMatrix1_4.operator_plus(m2, n);
 		}

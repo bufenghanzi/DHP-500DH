@@ -57,6 +57,10 @@ public class PointConfigParam {
 		 * @Fields 斜插速度
 		 */
 		public static final int DipSpeed=100;
+		/*
+		 * @Fields 斜插jiaodu
+		 */
+		public static final int DipAngle=360;
 	}
 
 	/**

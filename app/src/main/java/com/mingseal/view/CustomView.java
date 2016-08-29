@@ -266,13 +266,15 @@ public class CustomView extends View {
 		paint.setAntiAlias(true);
 		canvas.scale(scaleXY, scaleXY);
 		canvas.translate(distanceX, distanceY);
-		
+
 		double xDiff = RobotParam.INSTANCE.GetXDifferentiate();
+		double yDiff = RobotParam.INSTANCE.GetYDifferentiate();
 		float xMax = (float) ((double)(RobotParam.INSTANCE.GetXJourney()/xDiff)/fold);
+		float yMax = (float) ((double)(RobotParam.INSTANCE.GetYJourney()/yDiff)/fold);
 		//画框
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setColor(borderColor);
-		canvas.drawRect(new RectF(0, 0, xMax, xMax), paint);
+		canvas.drawRect(new RectF(0, 0, xMax, yMax), paint);
 		
 		// 画出所有点
 		for (Point point : points) {

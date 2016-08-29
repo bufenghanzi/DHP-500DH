@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mingseal.data.point.Point;
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
 
 import java.lang.reflect.Field;
 

@@ -168,6 +168,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
     private ImageView iv_add;
     private ImageView iv_moren;
     private static final int DECIMAL_DIGITS = 1;//小数的位数
+    private String taskname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,19 +183,20 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                 .getParcelableExtra(MyPopWindowClickListener.POPWINDOW_KEY);
         mFlag = intent.getIntExtra(MyPopWindowClickListener.FLAG_KEY, 0);
         mType = intent.getIntExtra(MyPopWindowClickListener.TYPE_KEY, 0);
+        taskname=intent.getStringExtra("taskname");
         defaultNum = SharePreferenceUtils.getParamNumberFromPref(
                 WeldLineStartActivity.this,
                 SettingParam.DefaultNum.ParamGlueLineStartNumber);
         Log.d(TAG, point.toString());
 
         weldStartDao = new WeldLineStartDao(WeldLineStartActivity.this);
-        weldStartLists = weldStartDao.findAllWeldLineStartParams();
+        weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
         if (weldStartLists == null || weldStartLists.isEmpty()) {
             weldStart = new PointWeldLineStartParam();
             weldStart.set_id(param_id);
-            weldStartDao.insertWeldLineStart(weldStart);
+            weldStartDao.insertWeldLineStart(weldStart,taskname);
         }
-        weldStartLists = weldStartDao.findAllWeldLineStartParams();
+        weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
 //        // 初始化数组
 //        glueBoolean = new boolean[GWOutPort.USER_O_NO_ALL.ordinal()];
 //        GluePort = new String[5];
@@ -399,7 +401,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
      * @author wj
      */
     protected void SetDateAndRefreshUI() {
-        weldStartLists = weldStartDao.findAllWeldLineStartParams();
+        weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
         ArrayList<Integer> list = new ArrayList<>();
         for (PointWeldLineStartParam pointWeldLineStartParam : weldStartLists) {
             list.add(pointWeldLineStartParam.get_id());
@@ -435,7 +437,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
     protected void save() {
         View extendView = popupListView.getItemViews().get(currentClickNum)
                 .getExtendView();
-        weldStartLists = weldStartDao.findAllWeldLineStartParams();
+        weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
         ArrayList<Integer> list = new ArrayList<>();
         for (PointWeldLineStartParam pointWeldLineStartParam : weldStartLists) {
             list.add(pointWeldLineStartParam.get_id());
@@ -467,15 +469,15 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                 if (flag) {
                     // 更新数据
                     int rowid = weldStartDao
-                            .upDateWeldLineStart(upglueStartParam);
+                            .upDateWeldLineStart(upglueStartParam,taskname);
                     update_id.put(upglueStartParam.get_id(), upglueStartParam);
                     // System.out.println("修改的方案号为："+upglueAlone.get_id());
                 } else {
                     // 插入一条数据
                     long rowid = weldStartDao
-                            .insertWeldLineStart(upglueStartParam);
+                            .insertWeldLineStart(upglueStartParam,taskname);
                     firstExist = true;
-                    weldStartLists = weldStartDao.findAllWeldLineStartParams();
+                    weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
                     Log.i(TAG, "保存之后新方案-->" + weldStartLists.toString());
                     ToastUtil.displayPromptInfo(WeldLineStartActivity.this,
                             getResources().getString(R.string.save_success));
@@ -504,7 +506,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
      * @author wj
      */
     private void refreshTitle() {
-        weldStartLists = weldStartDao.findAllWeldLineStartParams();
+        weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
         // popupListView->pupupview->title
         for (PointWeldLineStartParam pointWeldLineStartParam : weldStartLists) {
 
@@ -713,7 +715,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
             }
         }
         System.out.println("返回的方案号为================》" + mIndex);
-        point.setPointParam(weldStartDao.getPointWeldLineStartParamByID(mIndex));
+        point.setPointParam(weldStartDao.getPointWeldLineStartParamByID(mIndex,taskname));
         System.out.println("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldLineStartParam>> list = new ArrayList<Map<Integer, PointWeldLineStartParam>>();
@@ -763,7 +765,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                 public void setViewsElements(View view) {
                     // TextView textView = (TextView) view
                     // .findViewById(R.id.title);
-                    weldStartLists = weldStartDao.findAllWeldLineStartParams();
+                    weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
                     ImageView title_num = (ImageView) view
                             .findViewById(R.id.title_num);
                     if (p == 1) {// 方案列表第一位对应一号方案

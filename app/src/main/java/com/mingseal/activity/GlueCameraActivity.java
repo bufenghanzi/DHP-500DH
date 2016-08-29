@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mingseal.activity;
 
@@ -55,7 +55,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @author wangjian
+ * @author wj
  *
  */
 public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOverCallback, OnClickListener {
@@ -202,6 +202,8 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 //		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		userApplication = (UserApplication) getApplication();
 		setContentView(R.layout.activity_glue_camera);
+
+
 		intent = getIntent();
 		point = intent.getParcelableExtra(TaskActivity.ARRAY_KEY);
 		Log.d(TAG, "任务点：之前：" + point.toString());
@@ -290,7 +292,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 		et_y = (EditText) findViewById(R.id.et_y);
 		et_z = (EditText) findViewById(R.id.et_z);
 		et_u = (EditText) findViewById(R.id.et_u);
-		
+
 		but_x_plus = (Button) findViewById(R.id.nav_x_plus);
 		but_x_minus = (Button) findViewById(R.id.nav_x_minus);
 		but_y_plus = (Button) findViewById(R.id.nav_y_plus);
@@ -325,10 +327,10 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 		et_z.setOnFocusChangeListener(new OnKeyFocusChangeListener(et_z, KEY_Z));
 		et_u.setOnFocusChangeListener(new OnKeyFocusChangeListener(et_u, KEY_U));
 
-		et_x.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.XPulse2Journey(point.getX())));
-		et_y.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.YPulse2Journey(point.getY())));
-		et_z.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.ZPulse2Journey(point.getZ())));
-		et_u.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.UPulse2Journey(point.getU())));
+		et_x.setText(FloatUtil.getFloatToString(point.getX()));
+		et_y.setText(FloatUtil.getFloatToString(point.getY()));
+		et_z.setText(FloatUtil.getFloatToString(point.getZ()));
+		et_u.setText(FloatUtil.getFloatToString(point.getU()));
 
 		rl_title_speed = (RelativeLayout) findViewById(R.id.rl_title_speed);
 		rl_title_moshi = (RelativeLayout) findViewById(R.id.rl_title_moshi);
@@ -363,7 +365,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 
 		surfaceView.setLayoutParams(params);
 	}
-	
+
 	/**
 	 * @ClassName MoveListener
 	 * @Description x,y,z,u移动
@@ -371,7 +373,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 	 * @date 2016年1月28日 下午2:39:53
 	 *
 	 */
-	private class MoveListener implements OnTouchListener {
+	private class MoveListener implements OnTouchListener{
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -379,151 +381,151 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 			if (modeFlag == 0) {
 				// 连续
 				switch (v.getId()) {
-				case R.id.nav_x_plus:// x+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 0, 0, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-						prepareStopRetry(0);
-					}
-					break;
-				case R.id.nav_x_minus:// x-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 0, 0, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-						prepareStopRetry(0);
-					}
-					break;
-				case R.id.nav_y_plus:// y+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 0, 1, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-						prepareStopRetry(1);
-					}
-					break;
-				case R.id.nav_y_minus:// y-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 0, 1, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-						prepareStopRetry(1);
-					}
-					break;
-				case R.id.nav_z_plus:// z+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 0, 2, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-						prepareStopRetry(2);
-					}
-					break;
-				case R.id.nav_z_minus:// z-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 0, 2, speed);
-						stopTimer();
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-						prepareStopRetry(2);
-					}
-					break;
-				case R.id.nav_u_plus:// u+
-					if (m_nAxisNum == 4) {
+					case R.id.nav_x_plus:// x+
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 0, 3, speed);
+							MoveUtils.move(0, 0, 0, speed);
 							stopTimer();
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
-							prepareStopRetry(3);
+							MoveUtils.stop(0);
+							prepareStopRetry(0);
 						}
-					}
-					break;
-				case R.id.nav_u_minus:// u-
-					if (m_nAxisNum == 4) {
+						break;
+					case R.id.nav_x_minus:// x-
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 0, 3, speed);
+							MoveUtils.move(1, 0, 0, speed);
 							stopTimer();
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
-							prepareStopRetry(3);
+							MoveUtils.stop(0);
+							prepareStopRetry(0);
 						}
-					}
-					break;
+						break;
+					case R.id.nav_y_plus:// y+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 0, 1, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+							prepareStopRetry(1);
+						}
+						break;
+					case R.id.nav_y_minus:// y-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 0, 1, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+							prepareStopRetry(1);
+						}
+						break;
+					case R.id.nav_z_plus:// z+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 0, 2, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+							prepareStopRetry(2);
+						}
+						break;
+					case R.id.nav_z_minus:// z-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 0, 2, speed);
+							stopTimer();
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+							prepareStopRetry(2);
+						}
+						break;
+					case R.id.nav_u_plus:// u+
+						if (m_nAxisNum == 4) {
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(0, 0, 3, speed);
+								stopTimer();
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+								prepareStopRetry(3);
+							}
+						}
+						break;
+					case R.id.nav_u_minus:// u-
+						if (m_nAxisNum == 4) {
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(1, 0, 3, speed);
+								stopTimer();
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+								prepareStopRetry(3);
+							}
+						}
+						break;
 				}
 			} else if (modeFlag == 1) {
 				// 单步
 				switch (v.getId()) {
-				case R.id.nav_x_plus:// x+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 1, 0, speedXYZ[0]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-					}
-					break;
-				case R.id.nav_x_minus:// x-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 1, 0, speedXYZ[0]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(0);
-					}
-					break;
-				case R.id.nav_y_plus:// y+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 1, 1, speedXYZ[1]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-					}
-					break;
-				case R.id.nav_y_minus:// y-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 1, 1, speedXYZ[1]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(1);
-					}
-					break;
-				case R.id.nav_z_plus:// z+
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(0, 1, 2, speedXYZ[2]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-					}
-					break;
-				case R.id.nav_z_minus:// z-
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						MoveUtils.move(1, 1, 2, speedXYZ[2]);
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						MoveUtils.stop(2);
-					}
-				case R.id.nav_u_plus:// u+
-					if(m_nAxisNum == 4){
+					case R.id.nav_x_plus:// x+
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(0, 1, 3, speedXYZ[0]);
+							MoveUtils.move(0, 1, 0, speedXYZ[0]);
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
+							MoveUtils.stop(0);
 						}
-					}
-					break;
-				case R.id.nav_u_minus:// u-
-					if(m_nAxisNum == 4){
+						break;
+					case R.id.nav_x_minus:// x-
 						if (event.getAction() == MotionEvent.ACTION_DOWN) {
-							MoveUtils.move(1, 1, 3, speedXYZ[0]);
+							MoveUtils.move(1, 1, 0, speedXYZ[0]);
 						} else if (event.getAction() == MotionEvent.ACTION_UP) {
-							MoveUtils.stop(3);
+							MoveUtils.stop(0);
 						}
-					}
-					break;
+						break;
+					case R.id.nav_y_plus:// y+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 1, 1, speedXYZ[1]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+						}
+						break;
+					case R.id.nav_y_minus:// y-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 1, 1, speedXYZ[1]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(1);
+						}
+						break;
+					case R.id.nav_z_plus:// z+
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(0, 1, 2, speedXYZ[2]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+						}
+						break;
+					case R.id.nav_z_minus:// z-
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							MoveUtils.move(1, 1, 2, speedXYZ[2]);
+						} else if (event.getAction() == MotionEvent.ACTION_UP) {
+							MoveUtils.stop(2);
+						}
+					case R.id.nav_u_plus:// u+
+						if(m_nAxisNum == 4){
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(0, 1, 3, speedXYZ[0]);
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+							}
+						}
+						break;
+					case R.id.nav_u_minus:// u-
+						if(m_nAxisNum == 4){
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								MoveUtils.move(1, 1, 3, speedXYZ[0]);
+							} else if (event.getAction() == MotionEvent.ACTION_UP) {
+								MoveUtils.stop(3);
+							}
+						}
+						break;
 				}
 			}
-		
+
 			return false;
 		}
-		
+
 	}
 
 	/**
@@ -610,7 +612,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 
 		/**
 		 * 当失去焦点时,如果为空的话，要设置为0
-		 * 
+		 *
 		 * @param et
 		 *            Edittext
 		 */
@@ -667,7 +669,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 
 	/**
 	 * 检查所有输入框是否为空
-	 * 
+	 *
 	 * @return true代表正常,false代表有异常
 	 */
 	private boolean checkAllComponents() {
@@ -795,133 +797,133 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.imageButtonTake:
-			Log.d(TAG, "点击ImageButton");
-			CameraInterface.getInstance(GlueCameraActivity.this).doTakePicture();
-			break;
-		case R.id.rl_back:
-			showBackDialog();
-			break;
-		case R.id.rl_sudu:
-			speedFlag++;
-			if (speedFlag % 3 == 1) {
-				saveMediumSpeed(settingParam);
-			} else if (speedFlag % 3 == 2) {
-				saveLowSpeed(settingParam);
-			} else if (speedFlag % 3 == 0) {
-				saveHighSpeed(settingParam);
-			}
-			break;
-		case R.id.rl_moshi:
-			if (modeFlag == 0) {
-				modeFlag = 1;// 点击一次变为单步
-				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
-				image_moshi.setBackgroundResource(R.drawable.icon_step_single);
-				tv_moshi.setText(getResources().getString(R.string.step_single));
-			} else {
-				modeFlag = 0;// 默认为0
-				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_serious));
-				image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
-				tv_moshi.setText(getResources().getString(R.string.step_serious));
-			}
-			break;
-		case R.id.rl_complete:
-			saveBackActivity();
-			break;
+			case R.id.imageButtonTake:
+				Log.d(TAG, "点击ImageButton");
+				CameraInterface.getInstance(GlueCameraActivity.this).doTakePicture();
+				break;
+			case R.id.rl_back:
+				showBackDialog();
+				break;
+			case R.id.rl_sudu:
+				speedFlag++;
+				if (speedFlag % 3 == 1) {
+					saveMediumSpeed(settingParam);
+				} else if (speedFlag % 3 == 2) {
+					saveLowSpeed(settingParam);
+				} else if (speedFlag % 3 == 0) {
+					saveHighSpeed(settingParam);
+				}
+				break;
+			case R.id.rl_moshi:
+				if (modeFlag == 0) {
+					modeFlag = 1;// 点击一次变为单步
+					ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
+					image_moshi.setBackgroundResource(R.drawable.icon_step_single);
+					tv_moshi.setText(getResources().getString(R.string.step_single));
+				} else {
+					modeFlag = 0;// 默认为0
+					ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_serious));
+					image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
+					tv_moshi.setText(getResources().getString(R.string.step_serious));
+				}
+				break;
+			case R.id.rl_complete:
+				saveBackActivity();
+				break;
 		}
 	}
 
 	private void DisPlayInfoAfterGetMsg(byte[] revBuffer) {
 		switch (MessageMgr.INSTANCE.managingMessage(revBuffer)) {
-		case 0:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "校验失败");
-			break;
-		case 1: {
-			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
-			if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
-				Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
-				StopSuccessFlag=true;//说明下位机成功返回消息
-				StopRetryTimes=5;//重新设置重传次数
-				et_x.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.XPulse2Journey(coordPoint.getX())));
-				et_y.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.YPulse2Journey(coordPoint.getY())));
-				et_z.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.ZPulse2Journey(coordPoint.getZ())));
-				et_u.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.UPulse2Journey(coordPoint.getU())));
+			case 0:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "校验失败");
+				break;
+			case 1: {
+				int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
+				if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
+					Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
+					StopSuccessFlag=true;//说明下位机成功返回消息
+					StopRetryTimes=5;//重新设置重传次数
+					et_x.setText(FloatUtil.getFloatToString(coordPoint.getX()));
+					et_y.setText(FloatUtil.getFloatToString(coordPoint.getY()));
+					et_z.setText(FloatUtil.getFloatToString(coordPoint.getZ()));
+					et_u.setText(FloatUtil.getFloatToString(coordPoint.getU()));
 
+				}
 			}
-		}
 			break;
-		case 40101:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "非法功能");
-			break;
-		case 40102:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "非法数据地址");
-			break;
-		case 40103:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "非法数据");
-			break;
-		case 40105:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "设备忙");
-			break;
-		case 40109:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "急停中");
-			break;
-		case 40110:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "X轴光电报警");
-			break;
-		case 40111:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "Y轴光电报警");
-			break;
-		case 40112:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "Z轴光电报警");
-			break;
-		case 40113:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "U轴光电报警");
-			break;
-		case 40114:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "行程超限报警");
-			break;
-		case 40115:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务上传失败");
-			break;
-		case 40116:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务下载失败");
-			break;
-		case 40117:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务模拟失败");
-			break;
-		case 40118:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "示教指令错误");
-			break;
-		case 40119:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "循迹定位失败");
-			break;
-		case 40120:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务号不可用");
-			break;
-		case 40121:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "初始化失败");
-			break;
-		case 40122:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "API版本错误");
-			break;
-		case 40123:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "程序升级失败");
-			break;
-		case 40124:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "系统损坏");
-			break;
-		case 40125:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务未加载");
-			break;
-		case 40126:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "(Z轴)基点抬起高度过高");
-			break;
-		case 40127:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "等待输入超时");
-			break;
-		default:
-			ToastUtil.displayPromptInfo(GlueCameraActivity.this, "未知错误");
-			break;
+			case 40101:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "非法功能");
+				break;
+			case 40102:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "非法数据地址");
+				break;
+			case 40103:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "非法数据");
+				break;
+			case 40105:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "设备忙");
+				break;
+			case 40109:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "急停中");
+				break;
+			case 40110:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "X轴光电报警");
+				break;
+			case 40111:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "Y轴光电报警");
+				break;
+			case 40112:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "Z轴光电报警");
+				break;
+			case 40113:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "U轴光电报警");
+				break;
+			case 40114:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "行程超限报警");
+				break;
+			case 40115:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务上传失败");
+				break;
+			case 40116:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务下载失败");
+				break;
+			case 40117:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务模拟失败");
+				break;
+			case 40118:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "示教指令错误");
+				break;
+			case 40119:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "循迹定位失败");
+				break;
+			case 40120:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务号不可用");
+				break;
+			case 40121:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "初始化失败");
+				break;
+			case 40122:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "API版本错误");
+				break;
+			case 40123:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "程序升级失败");
+				break;
+			case 40124:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "系统损坏");
+				break;
+			case 40125:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "任务未加载");
+				break;
+			case 40126:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "(Z轴)基点抬起高度过高");
+				break;
+			case 40127:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "等待输入超时");
+				break;
+			default:
+				ToastUtil.displayPromptInfo(GlueCameraActivity.this, "未知错误");
+				break;
 		}
 	}
 
@@ -937,11 +939,9 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 				buffer = temp.array();
 				// byte[] revBuffer = (byte[]) msg.obj;
 				DisPlayInfoAfterGetMsg(buffer);
-			}else if (msg.what== SocketInputThread.SocketError){
+			}else if (msg.what==SocketInputThread.SocketError){
 				//wifi中断
-				System.out.println("wifi连接断开。。");
 				SocketThreadManager.releaseInstance();
-				System.out.println("单例被释放了-----------------------------");
 				//设置全局变量，跟新ui
 				userApplication.setWifiConnecting(false);
 				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);

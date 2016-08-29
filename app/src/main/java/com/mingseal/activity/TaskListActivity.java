@@ -6,6 +6,7 @@ package com.mingseal.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,22 +36,31 @@ import com.mingseal.communicate.SocketThreadManager;
 import com.mingseal.communicate.TCPClient;
 import com.mingseal.data.dao.PointDao;
 import com.mingseal.data.dao.PointTaskDao;
+import com.mingseal.data.dao.WeldBlowDao;
 import com.mingseal.data.dao.WeldLineEndDao;
 import com.mingseal.data.dao.WeldLineMidDao;
 import com.mingseal.data.dao.WeldLineStartDao;
 import com.mingseal.data.dao.WeldWorkDao;
 import com.mingseal.data.dao.WiFiDao;
+import com.mingseal.data.db.DBInfo;
 import com.mingseal.data.manager.MessageMgr;
 import com.mingseal.data.param.CmdParam;
 import com.mingseal.data.param.OrderParam;
 import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.point.Point;
 import com.mingseal.data.point.PointTask;
+import com.mingseal.data.point.PointType;
+import com.mingseal.data.point.weldparam.PointWeldBlowParam;
+import com.mingseal.data.point.weldparam.PointWeldLineEndParam;
+import com.mingseal.data.point.weldparam.PointWeldLineMidParam;
+import com.mingseal.data.point.weldparam.PointWeldLineStartParam;
+import com.mingseal.data.point.weldparam.PointWeldWorkParam;
 import com.mingseal.data.protocol.Protocol_400_1;
 import com.mingseal.dhp_500dh.R;
 import com.mingseal.utils.CustomUploadDialog;
 import com.mingseal.utils.DateUtil;
 import com.mingseal.utils.FileDatabase;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.mingseal.utils.UploadTaskAnalyse;
@@ -66,7 +76,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author wangjian
+ * @author 王健
  *
  */
 public class TaskListActivity extends AutoLayoutActivity implements OnClickListener {
@@ -237,13 +247,18 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 	private Protocol_400_1 protocol = null;
 	private TextView yulan;
 	private WiFiDao wifiDao;// wifi的ssid Dao
-//	private NetworkStateService msgService;//service对象
+	//	private NetworkStateService msgService;//service对象
 //	private ServiceConnection mConnection=null;
-    InvalidateCustomViewTask mTask;
+	InvalidateCustomViewTask mTask;
 	private SuperTrackView Super_view_track;
 	private com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar circleProgressBar;
 	private RelativeLayout rl_menu;
 	private EditText et_num;
+	private boolean checkSuccess=true;
+	private SQLiteDatabase mSqLiteDatabase;
+	private String mTaskname;//上传的任务名
+	private String copyname;//黏贴的任务名
+	private WeldBlowDao weldBlowDao;
 
 	/************************ end ******************************/
 	@Override
@@ -254,7 +269,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		/************************ add begin ************************/
 		protocol = new Protocol_400_1();
 		/************************ end ******************************/
-		System.out.println("TaskListActivity--->onCreate()");
+		L.d("TaskListActivity--->onCreate()");
 		userApplication = (UserApplication) getApplication();
 		SharePreferenceUtils.setSharedPreference(this);
 		initView();
@@ -262,47 +277,13 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		/* =================== begin =================== */
 		if (!TCPClient.instance().isConnect()) {// 如果没连接上，等待被链接，释放单例对象
 			SocketThreadManager.releaseInstance();
-			System.out.println("单例被释放了-----------------------------");
+			L.d("单例被释放了-----------------------------");
 		}
 		/* =================== add =================== */
 		handler = new RevHandler();
 		// 线程管理单例初始化
 		SocketThreadManager.sharedInstance().setInputThreadHandler(handler);
 		NetManager.instance().init(this);
-//		/*===================== 开启服务,绑定service =====================*/
-//		mConnection=new ServiceConnection() {
-//			@Override
-//			public void onServiceConnected(ComponentName name, IBinder service) {
-//				NetworkStateService.MyBinder myBinder = (NetworkStateService.MyBinder) service;
-//				msgService=myBinder.getService();
-//				msgService.setOnINotifyServiceListener(new NetworkStateService.INotifyService() {
-//					@Override
-//					public void notifyServiceEvent(int msg) {
-//						if (msg==1){
-//							System.out.println("wifi连接断开。。");
-//							SocketThreadManager.releaseInstance();
-//							System.out.println("单例被释放了-----------------------------");
-//							//设置全局变量，跟新ui
-//							userApplication.setWifiConnecting(false);
-//							WifiConnectTools.processWifiConnect(userApplication, iv_connect_tip);
-//							ToastUtil.displayPromptInfo(TaskListActivity.this,"wifi连接断开。。");
-//						}else if (msg==0){
-//							System.out.println("wifi保持连接。。");
-//							userApplication.setWifiConnecting(true);
-//							WifiConnectTools.processWifiConnect(userApplication, iv_connect_tip);
-//						}
-//					}
-//				});
-//			}
-//			@Override
-//			public void onServiceDisconnected(ComponentName name) {
-//			}
-//		};
-//		Intent startIntent = new Intent(this, NetworkStateService.class);
-//		startService(startIntent);
-//		Intent bindIntent = new Intent(this, NetworkStateService.class);
-//		bindService(bindIntent, mConnection, BIND_AUTO_CREATE);
-//		/*=====================  end =====================*/
 
 		prepareReset=true;
 //		MessageMgr.INSTANCE.resetCoord();
@@ -384,6 +365,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 
 		Log.d(TAG, "是否连接?" + userApplication.isWifiConnecting());
 
+
 	}
 
 	@Override
@@ -392,8 +374,8 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		Super_view_track.SurfaceView_OnResume();
 		SocketThreadManager.sharedInstance().setInputThreadHandler(handler);
 		/************************ add begin ************************/
-			WifiConnectTools
-					.processWifiConnect(userApplication, iv_connect_tip);
+		WifiConnectTools
+				.processWifiConnect(userApplication, iv_connect_tip);
 
 		/************************ end ******************************/
 		if(this.taskLists !=null&& this.taskLists.size()!=0){
@@ -401,7 +383,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			if(subTask.getPointids()==null||subTask.getPointids().size()==0){//判断集合为空则删除任务
 				taskDao.deleteTask(subTask);
 				// 删除任务时,将任务点也跟着删除
-				pointDao.deletePointsByIds(subTask.getPointids());
+				pointDao.deletePointsByIds(subTask.getPointids(),subTask.getTaskName());
 				this.taskLists = taskDao.findALLTaskLists();
 
 				mTaskAdapter.setTaskList(this.taskLists);
@@ -426,7 +408,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 				mTaskAdapter.notifyDataSetChanged();
 			}
 		}
-		System.out.println("TaskListActivity-->onResume");
+		L.d("TaskListActivity-->onResume");
 	}
 
 	@Override
@@ -434,20 +416,20 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		// TODO Auto-generated method stub
 		super.onPause();
 		Super_view_track.SurfaceView_OnPause();
-		System.out.println("TaskListActivity-->onPause");
+		L.d("TaskListActivity-->onPause");
 
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		System.out.println("TaskListActivity-->onStop");
+		L.d("TaskListActivity-->onStop");
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		System.out.println("TaskListActivity-->onDestroy");
+		L.d("TaskListActivity-->onDestroy");
 		// Activity结束需要关闭进度条对话框
 		stopProgressDialog();
 		SocketThreadManager.releaseInstance();
@@ -480,7 +462,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 //		}
 	}
 	//画图操作线程池管理
-	class InvalidateCustomViewTask implements Runnable {
+	class InvalidateCustomViewTask implements Runnable{
 		@Override
 		public void run() {
 			view_track.postInvalidate();
@@ -511,31 +493,31 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 //
 //	}
 
-	/**
-	 * 初始化任务列表的内容
-	 */
-	private void initTaskList() {
-		taskLists = new ArrayList<PointTask>();
-		List<Integer> pointids = new ArrayList<Integer>();
-
-		for (int i = 1; i < 20; i++) {
-			task = new PointTask();
-			task.setId(i);
-			task.setTaskName("任务" + i);
-			pointids.add(i);
-			task.setPointids(pointids);
-			taskLists.add(task);
-		}
-		pointids = new ArrayList<Integer>();
-		for (int i = 1; i < 30; i++) {
-			task = new PointTask();
-			task.setId(i);
-			task.setTaskName("事件" + i);
-			pointids.add(i);
-			task.setPointids(pointids);
-			taskLists.add(task);
-		}
-	}
+//	/**
+//	 * 初始化任务列表的内容
+//	 */
+//	private void initTaskList() {
+//		taskLists = new ArrayList<PointTask>();
+//		List<Integer> pointids = new ArrayList<Integer>();
+//
+//		for (int i = 1; i < 20; i++) {
+//			task = new PointTask();
+//			task.setId(i);
+//			task.setTaskName("任务" + i);
+//			pointids.add(i);
+//			task.setPointids(pointids);
+//			taskLists.add(task);
+//		}
+//		pointids = new ArrayList<Integer>();
+//		for (int i = 1; i < 30; i++) {
+//			task = new PointTask();
+//			task.setId(i);
+//			task.setTaskName("事件" + i);
+//			pointids.add(i);
+//			task.setPointids(pointids);
+//			taskLists.add(task);
+//		}
+//	}
 
 	/**
 	 * 加载自定义组件
@@ -580,7 +562,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		rl_uploading.setOnClickListener(this);
 		rl_setting.setOnClickListener(this);
 		rl_paste.setOnClickListener(this);
-//		rl_menu.setOnClickListener(this);//暂时不用读写功能列表
+		rl_menu.setOnClickListener(this);
 
 //		view_track.setCircle(50);
 //		view_track.setRadius(5);
@@ -616,6 +598,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		weldLineStartDao = new WeldLineStartDao(this);
 		weldLineMidDao = new WeldLineMidDao(this);
 		weldLineEndDao = new WeldLineEndDao(this);
+		weldBlowDao=new WeldBlowDao(this);
 		taskDao = new PointTaskDao(this);
 		pointDao = new PointDao(this);
 		wifiDao=new WiFiDao(this);
@@ -756,23 +739,28 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					}
-					task = new PointTask();
-					task.setTaskName(et_title.getText().toString());
-					List<Integer> pointids = new ArrayList<Integer>();
-					task.setPointids(pointids);
-					long rowID = taskDao.insertTask(task);
-					taskLists = taskDao.findALLTaskLists();
+					List<PointTask> pointTaskList=mTaskAdapter.geTaskList();
+					if (pointTaskList.size()>=120){//不允许创建了
+						ToastUtil.displayPromptInfo(TaskListActivity.this,"仅允许创建120个任务！");
+					}else {
+						task = new PointTask();
+						task.setTaskName(et_title.getText().toString());
+						List<Integer> pointids = new ArrayList<Integer>();
+						task.setPointids(pointids);
+						long rowID = taskDao.insertTask(task);
+						taskLists = taskDao.findALLTaskLists();
 
-					mTaskAdapter.setTaskList(taskLists);
-					// 设置刚添加的被选中
-					pselect = taskLists.size() - 1;
-					mTaskAdapter.setSelectItem(pselect);
-					mTaskAdapter.notifyDataSetChanged();
-					// 滚动到最底部
-					lv_task.smoothScrollToPosition(pselect);
-					showAndHideLayout(true);
-					task.setId((int) rowID);
-					gotoActivity(task);
+						mTaskAdapter.setTaskList(taskLists);
+						// 设置刚添加的被选中
+						pselect = taskLists.size() - 1;
+						mTaskAdapter.setSelectItem(pselect);
+						mTaskAdapter.notifyDataSetChanged();
+						// 滚动到最底部
+						lv_task.smoothScrollToPosition(pselect);
+						showAndHideLayout(true);
+						task.setId((int) rowID);
+						gotoActivity(task);
+					}
 				}
 
 			}
@@ -855,6 +843,8 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 								e.printStackTrace();
 							}
 							task = taskLists.get(pselect);
+							//更改相应表名
+							alterTableName(task.getTaskName(),et_title.getText().toString());
 							task.setTaskName(et_title.getText().toString());
 							taskDao.updateTask(task);
 							// gotoActivity(task);
@@ -866,6 +856,21 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 					}
 				});
 		builderModify.show();
+	}
+
+	/**
+	 * 更改相应任务下的表名字
+	 * @param taskname
+	 * @param newTaskname
+	 */
+	private void alterTableName(String taskname, String newTaskname) {
+		mSqLiteDatabase = this.openOrCreateDatabase(DBInfo.DB.DB_NAME,MODE_PRIVATE,null);
+		mSqLiteDatabase.execSQL(DBInfo.TableWork.alter_work_table(taskname,newTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineStart.alter_line_start_table(taskname,newTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineMid.alter_line_mid_table(taskname,newTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineEnd.alter_line_end_table(taskname,newTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableWeldBlow.alter_WELD_BLOW_table(taskname,newTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TablePoint.alter_point_table(taskname,newTaskname));
 	}
 
 	/**
@@ -887,7 +892,9 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 						PointTask subTask = taskLists.get(pselect);
 						taskDao.deleteTask(subTask);
 						// 删除任务时,将任务点也跟着删除
-						pointDao.deletePointsByIds(subTask.getPointids());
+						pointDao.deletePointsByIds(subTask.getPointids(),subTask.getTaskName());
+						//删除相应任务下的点表和参数表
+						deleteTable(subTask.getTaskName());
 						taskLists = taskDao.findALLTaskLists();
 
 						mTaskAdapter.setTaskList(taskLists);
@@ -915,6 +922,20 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 					}
 				});
 		buildDelete.show();
+	}
+
+	/**
+	 * 删除任务下的表
+	 * @param taskName
+	 */
+	private void deleteTable(String taskName) {
+		mSqLiteDatabase = this.openOrCreateDatabase(DBInfo.DB.DB_NAME,MODE_PRIVATE,null);
+		mSqLiteDatabase.execSQL(DBInfo.TablePoint.drop_point_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableWork.drop_work_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineStart.drop_line_start_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineMid.drop_line_mid_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineEnd.drop_line_end_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableWeldBlow.drop_WELD_BLOW_table(taskName));
 	}
 
 	/**
@@ -982,7 +1003,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 					int a;
 					try{
 						if (isEditLow()){
-							a= Integer.parseInt(et_num.getText().toString().trim());
+							a=Integer.parseInt(et_num.getText().toString().trim());
 							OrderParam.INSTANCE.setnTaskNum(a);
 
 							//跳转界面
@@ -1149,17 +1170,16 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 	private void analyseTaskSuccess(List<Point> pointUploads) {
 		// 上传成功里面的Point的List数组
 		List<Point> points = new ArrayList<>();
-		UploadTaskAnalyse uploadAnalyse = new UploadTaskAnalyse(
-				TaskListActivity.this);
-
+		UploadTaskAnalyse uploadAnalyse = new UploadTaskAnalyse(TaskListActivity.this,mTaskname);
+//		if (checkPointParamID(pointUploads)){
 		points = uploadAnalyse.analyseTaskSuccess(pointUploads);
 		Log.d(TAG, "解析之后：" + DateUtil.getCurrentTime());
 		// 往界面上添加（暂时先删了）
 		// 先往数据库里面添加，然后再将Point的id保存出来
-		List<Integer> ids = pointDao.insertPoints(points);
+		List<Integer> ids = pointDao.insertPoints(points,mTaskname);
 		task = new PointTask();
 		task.setPointids(ids);
-		task.setTaskName(et_upload_name.getText().toString());
+		task.setTaskName(mTaskname);
 		int id = (int) taskDao.insertTask(task);
 		task.setId(id);
 		taskLists.add(task);
@@ -1172,11 +1192,32 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		showAndHideLayout(true);
 		mTaskAdapter.notifyDataSetChanged();
 		invalidateCustomView(taskLists.get(pselect), pointDao);
+//			checkSuccess=true;
+//		}else{
+//			checkSuccess=false;
+//			ToastUtil.displayPromptInfo(TaskListActivity.this, "此任务不兼容！");
+//		}
 		// /////////////////////
 		// 全部更新完之后关闭进度框
 		stopProgressDialog();
 	}
-
+	/**
+	 * 检查任务号
+	 * @param pointList
+	 * @return true:合法 flase:不合法
+	 */
+	private boolean checkPointParamID(List<Point> pointList) {
+		for (Point point:pointList) {
+			L.d("上传的任务号："+point.getPointParam().get_id());
+			if (point.getPointParam().getPointType()!= PointType.POINT_GLUE_BASE&&point.getPointParam().getPointType()!=PointType.POINT_GLUE_LINE_ARC
+					&&point.getPointParam().getPointType()!=PointType.POINT_GLUE_CLEARIO){
+				if (point.getPointParam().get_id()==0){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -1242,7 +1283,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 				R.layout.custom_dialog_edittext, null);
 		buildPaste.setView(customView);
 		et_title = (EditText) customView.findViewById(R.id.et_title);
-		et_title.setText(taskLists.get(pselect).getTaskName() + "(1)");
+		et_title.setText(taskLists.get(pselect).getTaskName() + "_1");
 		et_title.setSelectAllOnFocus(true);
 		taskNames = taskDao.getALLTaskNames();
 		buildPaste.setNegativeButton("取消",
@@ -1304,33 +1345,92 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
 							}
-							// 设置新粘贴的任务
-							task = new PointTask();
-							List<Point> pointsCur = pointDao
-									.findALLPointsByIdLists(taskLists.get(
-											pselect).getPointids());
-							List<Integer> pointIDsCur = pointDao
-									.insertPoints(pointsCur);
-							task.setPointids(pointIDsCur);
-							task.setTaskName(et_title.getText().toString());
-							long rowID = taskDao.insertTask(task);
-							task.setId((int) rowID);
-							taskLists = taskDao.findALLTaskLists();
+							List<PointTask> pointTaskList=mTaskAdapter.geTaskList();
+							if (pointTaskList.size()>=120){//不允许创建了
+								ToastUtil.displayPromptInfo(TaskListActivity.this,"仅允许创建120个任务！");
+							}else {
 
-							mTaskAdapter.setTaskList(taskLists);
-							// 设置刚添加的被选中
-							pselect = taskLists.size() - 1;
-							mTaskAdapter.setSelectItem(pselect);
-							mTaskAdapter.notifyDataSetChanged();
-							// 滚动到最底部
-							lv_task.smoothScrollToPosition(pselect);
-							showAndHideLayout(true);
-							invalidateCustomView(task, pointDao);
+								// 设置新粘贴的任务
+								task = new PointTask();
+								//从一个任务中取出所有点
+								List<Point> pointsCur = pointDao.findALLPointsByIdLists(taskLists.get(pselect).getPointids(),taskLists.get(pselect).getTaskName());
+								//存入另一个任务中，首先得创建表
+								createTable(et_title);
+								copyTable(et_title);
+								List<Integer> pointIDsCur = pointDao.insertPoints(pointsCur,et_title.getText().toString());
+								task.setPointids(pointIDsCur);
+								task.setTaskName(et_title.getText().toString());
+								long rowID = taskDao.insertTask(task);
+								task.setId((int) rowID);
+								taskLists = taskDao.findALLTaskLists();
+
+								mTaskAdapter.setTaskList(taskLists);
+								// 设置刚添加的被选中
+								pselect = taskLists.size() - 1;
+								mTaskAdapter.setSelectItem(pselect);
+								mTaskAdapter.notifyDataSetChanged();
+								// 滚动到最底部
+								lv_task.smoothScrollToPosition(pselect);
+								showAndHideLayout(true);
+								invalidateCustomView(task, pointDao);
+							}
 						}
 
 					}
 				});
 		buildPaste.show();
+	}
+
+	/**
+	 * 复制表内容至新表
+	 * @param et_title
+	 */
+	private void copyTable(EditText et_title) {
+		try {
+			copyname = et_title.getText().toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String orginalname=taskLists.get(pselect).getTaskName();
+		List<PointWeldWorkParam> pointWeldWorkParamList=weldWorkDao.findAllWeldWorkParams(orginalname);
+		if (pointWeldWorkParamList!=null){
+
+			for (PointWeldWorkParam pointWeldWorkParam:pointWeldWorkParamList) {
+				weldWorkDao.insertWeldWork(pointWeldWorkParam,copyname);//将数据复制到新表
+			}
+		}
+
+		List<PointWeldLineStartParam> pointWeldLineStartParamList= weldLineStartDao.findAllWeldLineStartParams(orginalname);
+		if (pointWeldLineStartParamList!=null){
+
+			for (PointWeldLineStartParam pointWeldLineStartParam:pointWeldLineStartParamList) {
+				weldLineStartDao.insertWeldLineStart(pointWeldLineStartParam,copyname);//将数据复制到新表
+			}
+		}
+		List<PointWeldLineMidParam> pointWeldLineMidParamList= weldLineMidDao.findAllWeldLineMidParams(orginalname);
+		if (pointWeldLineMidParamList!=null){
+
+			for (PointWeldLineMidParam pointWeldLineMidParam:pointWeldLineMidParamList) {
+				weldLineMidDao.insertWeldLineMid(pointWeldLineMidParam,copyname);//将数据复制到新表
+			}
+		}
+		List<PointWeldLineEndParam> pointWeldLineEndParamList= weldLineEndDao.findAllWeldLineEndParams(orginalname);
+		if (pointWeldLineEndParamList!=null){
+
+			for (PointWeldLineEndParam pointWeldLineEndParam:pointWeldLineEndParamList) {
+				weldLineEndDao.insertWeldLineEnd(pointWeldLineEndParam,copyname);//将数据复制到新表
+			}
+		}
+
+		List<PointWeldBlowParam> pointWeldBlowParamList= weldBlowDao.findAllWeldOutputParams(orginalname);
+		if (pointWeldBlowParamList!=null){
+
+			for (PointWeldBlowParam pointGlueInputIOParam:pointWeldBlowParamList) {
+				weldBlowDao.insertWeldOutput(pointGlueInputIOParam,copyname);//将数据复制到新表
+			}
+		}
+
+
 	}
 
 	/**
@@ -1349,7 +1449,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			case 1: {
 				int cmdFlag = ((revBuffer[2] & 0x00ff) << 8)
 						| (revBuffer[3] & 0x00ff);
-				if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
+				if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
 					ToastUtil.displayPromptInfo(TaskListActivity.this, "获取参数成功!");
 					// userApplication.setWifiConnecting(true);
 					// WifiConnectTools.processWifiConnect(userApplication,
@@ -1361,10 +1461,9 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 							+ RobotParam.INSTANCE.GetZDifferentiate());
 					// myConnection.disconnect();
 					// myConnection = null;
+				}else if (revBuffer[2]==0x2E){//获取功能列表成功
+					ToastUtil.displayPromptInfo(TaskListActivity.this,"获取功能列表成功！");
 				}
-//				else if (revBuffer[2]==0x32){//获取功能列表成功,焊锡机暂时不用
-//					ToastUtil.displayPromptInfo(TaskListActivity.this,"获取功能列表成功！");
-//				}
 
 				sendResetCommand();
 
@@ -1382,9 +1481,13 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 						// for(Point point:pointUploads){
 						// Log.d(TAG, point.toString());
 						// }
+						//创建新表
+						createTable(et_upload_name);
 						analyseTaskSuccess(pointUploads);
 					}
+//					if (checkSuccess){
 					ToastUtil.displayPromptInfo(TaskListActivity.this, "上传完成");
+//					}
 				}
 				break;
 			case 1249:
@@ -1477,6 +1580,25 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		}
 	}
 
+	/**
+	 * 打开数据库创建新表(参数方案)
+	 */
+	private void createTable(EditText et) {
+		try {
+			mTaskname = et.getText().toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		mSqLiteDatabase = this.openOrCreateDatabase(DBInfo.DB.DB_NAME,MODE_PRIVATE,null);
+		mSqLiteDatabase.execSQL(DBInfo.TableWork.create_work_table(mTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineStart.create_line_start_table(mTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineMid.create_line_mid_table(mTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineEnd.create_line_end_table(mTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TableWeldBlow.create_WELD_BLOW_table(mTaskname));
+		mSqLiteDatabase.execSQL(DBInfo.TablePoint.create_point_table(mTaskname));
+
+	}
+
 
 	private void sendResetCommand() {
 		// TODO Auto-generated method stub
@@ -1533,11 +1655,11 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 				byte[] buffer;
 				buffer = temp.array();
 				disPlayInfoAfterGetMsg(buffer);
-			}else if (msg.what== SocketInputThread.SocketError){
+			}else if (msg.what==SocketInputThread.SocketError){
 				//wifi中断
-				System.out.println("wifi连接断开。。");
+				L.d("wifi连接断开。。");
 				SocketThreadManager.releaseInstance();
-				System.out.println("单例被释放了-----------------------------");
+				L.d("单例被释放了-----------------------------");
 				//设置全局变量，跟新ui
 				userApplication.setWifiConnecting(false);
 				WifiConnectTools.processWifiConnect(userApplication, iv_connect_tip);

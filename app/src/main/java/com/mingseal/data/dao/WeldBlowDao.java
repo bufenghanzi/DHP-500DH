@@ -39,7 +39,7 @@ public class WeldBlowDao {
 	 * @param
 	 * @return  影响的行数，0表示错误
 	 */
-	public int upDateWeldOutput(PointWeldBlowParam param){
+	public int upDateWeldOutput(PointWeldBlowParam param,String taskname){
 		int rowid = 0;
 		try {
 			db = dbHelper.getWritableDatabase();
@@ -51,7 +51,7 @@ public class WeldBlowDao {
 //			values.put(TableInputIO.GO_TIME_PREV, param.getGoTimePrev());
 //			values.put(TableInputIO.GO_TIME_NEXT, param.getGoTimeNext());
 //			values.put(TableInputIO.INPUT_PORT, Arrays.toString(param.getOutputPort()));
-			rowid = db.update(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, values, DBInfo.TableWeldBlow._ID +"=?", new String[]{String.valueOf(param.get_id())});
+			rowid = db.update(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, values, DBInfo.TableWeldBlow._ID +"=?", new String[]{String.valueOf(param.get_id())});
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,7 +67,7 @@ public class WeldBlowDao {
 	 * @param param
 	 * @return 刚增加的这条数据的主键
 	 */
-	public long insertWeldOutput(PointWeldBlowParam param) {
+	public long insertWeldOutput(PointWeldBlowParam param,String taskname) {
 		long rowID = 0;
 		db = dbHelper.getWritableDatabase();
 		try {
@@ -77,7 +77,7 @@ public class WeldBlowDao {
 			values.put(DBInfo.TableWeldBlow.GO_TIME_PREV, param.getGoTimePrev());
 			values.put(DBInfo.TableWeldBlow.GO_TIME_NEXT, param.getGoTimeNext());
 			values.put(DBInfo.TableWeldBlow.INPUT_PORT, Arrays.toString(param.getOutputPort()));
-			rowID = db.insert(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, DBInfo.TableWeldBlow._ID, values);
+			rowID = db.insert(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, DBInfo.TableWeldBlow._ID, values);
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,7 +94,7 @@ public class WeldBlowDao {
 	 *
 	 * @return List<PointWeldOutputIOParam>
 	 */
-	public List<PointWeldBlowParam> findAllWeldOutputParams() {
+	public List<PointWeldBlowParam> findAllWeldOutputParams(String taskname) {
 		db = dbHelper.getReadableDatabase();
 
 		List<PointWeldBlowParam> outputIOParams = null;
@@ -102,7 +102,7 @@ public class WeldBlowDao {
 
 		Cursor cursor = null;
 		try {
-			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, columns, null, null, null, null, null);
+			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, columns, null, null, null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
                 outputIOParams = new ArrayList<PointWeldBlowParam>();
                 while (cursor.moveToNext()) {
@@ -134,7 +134,7 @@ public class WeldBlowDao {
 	 * @param ids
 	 * @return List<PointWeldOutputIOParam>
 	 */
-	public List<PointWeldBlowParam> getWeldOutputIOParamsByIDs(List<Integer> ids) {
+	public List<PointWeldBlowParam> getWeldOutputIOParamsByIDs(List<Integer> ids,String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldBlowParam> params = new ArrayList<>();
 		PointWeldBlowParam param = null;
@@ -142,7 +142,7 @@ public class WeldBlowDao {
 		try {
 			db.beginTransaction();
 			for (Integer id : ids) {
-				cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, columns, DBInfo.TableWeldBlow._ID + "=?",
+				cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, columns, DBInfo.TableWeldBlow._ID + "=?",
 						new String[] { String.valueOf(id) }, null, null, null);
 				if (cursor != null && cursor.getCount() > 0) {
 					while (cursor.moveToNext()) {
@@ -176,12 +176,12 @@ public class WeldBlowDao {
 	 * @param pointWeldOutputIOParam
 	 * @return 当前方案的主键
 	 */
-	public int getOutputParamIDByParam(PointWeldBlowParam pointWeldOutputIOParam) {
+	public int getOutputParamIDByParam(PointWeldBlowParam pointWeldOutputIOParam,String taskname) {
 		int id = -1;
 		db = dbHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
-			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, columns,
+			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, columns,
 					DBInfo.TableWeldBlow.GO_TIME_PREV + "=? and " + DBInfo.TableWeldBlow.GO_TIME_NEXT + "=? and "
                             + DBInfo.TableWeldBlow.INPUT_PORT + "=?",
                     new String[] { String.valueOf(pointWeldOutputIOParam.getGoTimePrev()),
@@ -211,13 +211,13 @@ public class WeldBlowDao {
 	 *            主键
 	 * @return PointWeldOutputIOParam
 	 */
-	public PointWeldBlowParam getOutPutPointByID(int id) {
+	public PointWeldBlowParam getOutPutPointByID(int id,String taskname) {
 		db = dbHelper.getReadableDatabase();
 		PointWeldBlowParam param = null;
 		Cursor cursor = null;
 		try {
 			db.beginTransaction();
-			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, columns, DBInfo.TableWeldBlow._ID + "=?",
+			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, columns, DBInfo.TableWeldBlow._ID + "=?",
 					new String[] { String.valueOf(id) }, null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
 				while (cursor.moveToNext()) {
@@ -243,9 +243,9 @@ public class WeldBlowDao {
 		return param;
 	}
 
-	public int deleteParam(PointWeldBlowParam pointWeldOutputIOParam) {
+	public int deleteParam(PointWeldBlowParam pointWeldOutputIOParam,String taskname) {
 		db = dbHelper.getWritableDatabase();
-		int rowID = db.delete(DBInfo.TableWeldBlow.WELD_BLOW_TABLE, DBInfo.TableWeldBlow._ID + "=?",
+		int rowID = db.delete(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, DBInfo.TableWeldBlow._ID + "=?",
 				new String[] { String.valueOf(pointWeldOutputIOParam.get_id()) });
 
 		db.close();

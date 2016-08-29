@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.mingseal.application.UserApplication;
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
 
 /**
  * @ClassName WifiConnectTools

@@ -27,6 +27,8 @@
     <string name="activity_weld_work_stopSnStimeSec">二次停锡时间:</string>
     <string name="activity_weld_work_stopSnTimeFourth">四次停锡时间:</string>
     <string name="activity_weld_work_upHeight">抬起高度:</string>
+    <string name="activity_weld_work_xiecha_angle">斜插角度:</string>
+    <string name="activity_weld_work_angle">度</string>
     <string name="activity_weld_work_sendSnSpeedFourth">四次送锡速度:</string>
     <string name="activity_weld_work_sendSnSumThird">三次送锡量:</string>
     <string name="activity_weld_work_sendSnSpeed">送锡速度:</string>

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mingseal.data.dao;
 
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author wangjian
+ * @author 商炎炳
  *
  */
 public class PointDao {
@@ -34,11 +34,11 @@ public class PointDao {
 
 	/**
 	 * 插入一条point数据
-	 * 
+	 *
 	 * @param point
 	 * @return
 	 */
-	public long insertPoint(Point point) {
+	public long insertPoint(Point point,String taskname) {
 		db = dbHelper.getWritableDatabase();
 		values = new ContentValues();
 		values.put(TablePoint.POINT_X, point.getX());
@@ -48,7 +48,7 @@ public class PointDao {
 		values.put(TablePoint.POINT_PARAM_ID, point.getPointParam().get_id());
 		values.put(TablePoint.POINT_TYPE, point.getPointParam().getPointType().toString());
 
-		long rowID = db.insert(TablePoint.POINT_TABLE, TablePoint._ID, values);
+		long rowID = db.insert(TablePoint.POINT_TABLE+taskname, TablePoint._ID, values);
 
 		// 释放资源
 		db.close();
@@ -57,11 +57,11 @@ public class PointDao {
 
 	/**
 	 * 插入一条List<Point> 集合
-	 * 
+	 *
 	 * @param pointLists
 	 * @return 刚插入的List<Point>的主键集合
 	 */
-	public List<Integer> insertPoints(List<Point> pointLists) {
+	public List<Integer> insertPoints(List<Point> pointLists,String taskname) {
 		db = dbHelper.getWritableDatabase();
 		List<Integer> rowids = new ArrayList<Integer>();
 		int rowid;
@@ -77,7 +77,7 @@ public class PointDao {
 				values.put(TablePoint.POINT_PARAM_ID, point.getPointParam().get_id());
 				values.put(TablePoint.POINT_TYPE, point.getPointParam().getPointType().toString());
 
-				rowid = (int) db.insert(TablePoint.POINT_TABLE, TablePoint._ID, values);
+				rowid = (int) db.insert(TablePoint.POINT_TABLE+taskname, TablePoint._ID, values);
 				rowids.add(rowid);
 
 			}
@@ -94,32 +94,32 @@ public class PointDao {
 
 	/**
 	 * 找到所有的Point集合
-	 * 
+	 *
 	 * @return
 	 */
-	public List<Point> findAllPointLists() {
+	public List<Point> findAllPointLists(String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<Point> pointList = new ArrayList<Point>();
 		Point point = null;
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TablePoint.POINT_TABLE, columns, null, null, null, null, null);
+			cursor = db.query(TablePoint.POINT_TABLE+taskname, columns, null, null, null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
-                while (cursor.moveToNext()) {
-                    point = new Point(PointType.POINT_NULL);
-                    point.setId(cursor.getInt(cursor.getColumnIndex(TablePoint._ID)));
-                    point.setX(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_X)));
-                    point.setY(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_Y)));
-                    point.setZ(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_Z)));
-                    point.setU(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_U)));
-                    PointParam pointParam = new PointParam();
-                    pointParam.set_id(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_PARAM_ID)));
-                    pointParam.setPointType(PointType.valueOf(PointType.class,
-                            cursor.getString(cursor.getColumnIndex(TablePoint.POINT_TYPE))));
-                    point.setPointParam(pointParam);
-                    pointList.add(point);
-                }
-            }
+				while (cursor.moveToNext()) {
+					point = new Point(PointType.POINT_NULL);
+					point.setId(cursor.getInt(cursor.getColumnIndex(TablePoint._ID)));
+					point.setX(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_X)));
+					point.setY(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_Y)));
+					point.setZ(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_Z)));
+					point.setU(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_U)));
+					PointParam pointParam = new PointParam();
+					pointParam.set_id(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_PARAM_ID)));
+					pointParam.setPointType(PointType.valueOf(PointType.class,
+							cursor.getString(cursor.getColumnIndex(TablePoint.POINT_TYPE))));
+					point.setPointParam(pointParam);
+					pointList.add(point);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -133,29 +133,29 @@ public class PointDao {
 
 	/**
 	 * 删除一条Point数据
-	 * 
+	 *
 	 * @param point
 	 */
-	public void deletePoint(Point point) {
+	public void deletePoint(Point point,String taskname) {
 		db = dbHelper.getWritableDatabase();
 
-		db.delete(TablePoint.POINT_TABLE, TablePoint._ID + "=?", new String[] { String.valueOf(point.getId()) });
+		db.delete(TablePoint.POINT_TABLE+taskname, TablePoint._ID + "=?", new String[] { String.valueOf(point.getId()) });
 
 		db.close();
 	}
 
 	/**
 	 * 删除PointList集合
-	 * 
+	 *
 	 * @param pointLists
 	 */
-	public void deletePoints(List<Point> pointLists) {
+	public void deletePoints(List<Point> pointLists,String taskname) {
 		db = dbHelper.getWritableDatabase();
 
 		try {
 			db.beginTransaction();
 			for (Point point : pointLists) {
-				db.delete(TablePoint.POINT_TABLE, TablePoint._ID + "=?",
+				db.delete(TablePoint.POINT_TABLE+taskname, TablePoint._ID + "=?",
 						new String[] { String.valueOf(point.getId()) });
 			}
 			db.setTransactionSuccessful();
@@ -169,17 +169,17 @@ public class PointDao {
 
 	/**
 	 * 删除任务时,删除该任务下的所有任务点
-	 * 
+	 *
 	 * @param pointIds
 	 *            List<Integer>
 	 */
-	public void deletePointsByIds(List<Integer> pointIds) {
+	public void deletePointsByIds(List<Integer> pointIds,String taskname) {
 		db = dbHelper.getWritableDatabase();
 
 		try {
 			db.beginTransaction();
 			for (int id : pointIds) {
-				db.delete(TablePoint.POINT_TABLE, TablePoint._ID + "=?", new String[] { String.valueOf(id) });
+				db.delete(TablePoint.POINT_TABLE+taskname, TablePoint._ID + "=?", new String[] { String.valueOf(id) });
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -192,11 +192,11 @@ public class PointDao {
 
 	/**
 	 * 通过List<Integer> 列表来查找到对应的Point集合
-	 * 
+	 *
 	 * @param ids
 	 * @return List<Point>
 	 */
-	public List<Point> findALLPointsByIdLists(List<Integer> ids) {
+	public List<Point> findALLPointsByIdLists(List<Integer> ids,String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<Point> pointList = new ArrayList<Point>();
 		Point point = null;
@@ -204,16 +204,16 @@ public class PointDao {
 		try {
 			db.beginTransaction();
 			for (Integer id : ids) {
-				 cursor = db.query(TablePoint.POINT_TABLE, columns, TablePoint._ID + "=?",
+				cursor = db.query(TablePoint.POINT_TABLE+taskname, columns, TablePoint._ID + "=?",
 						new String[] { String.valueOf(id) }, null, null, null);
 				if (cursor != null && cursor.getCount() > 0) {
 					while (cursor.moveToNext()) {
 						point = new Point(PointType.POINT_NULL);
 						point.setId(cursor.getInt(cursor.getColumnIndex(TablePoint._ID)));
-						point.setX(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_X)));
-						point.setY(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_Y)));
-						point.setZ(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_Z)));
-						point.setU(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_U)));
+						point.setX(cursor.getFloat(cursor.getColumnIndex(TablePoint.POINT_X)));
+						point.setY(cursor.getFloat(cursor.getColumnIndex(TablePoint.POINT_Y)));
+						point.setZ(cursor.getFloat(cursor.getColumnIndex(TablePoint.POINT_Z)));
+						point.setU(cursor.getFloat(cursor.getColumnIndex(TablePoint.POINT_U)));
 						PointParam pointParam = new PointParam();
 						pointParam.set_id(cursor.getInt(cursor.getColumnIndex(TablePoint.POINT_PARAM_ID)));
 						pointParam.setPointType(PointType.valueOf(PointType.class,

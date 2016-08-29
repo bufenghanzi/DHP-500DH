@@ -13,7 +13,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
+
 
 /**
  * @description 带进度的进度条，可直接在线程中更新进度

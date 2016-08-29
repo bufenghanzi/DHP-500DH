@@ -270,7 +270,16 @@ public class PointWeldLineStartParam extends PointParam {
 				", preHeatTime=" + preHeatTime +
 				'}';
 	}
-
+	public String getString(){
+		return "PointWeldLineStartParam{" +
+				"sendSnSpeed=" + sendSnSpeed +
+				", preSendSnSum=" + preSendSnSum +
+				", preSendSnSpeed=" + preSendSnSpeed +
+				", isSn=" + isSn +
+				", moveSpeed=" + moveSpeed +
+				", preHeatTime=" + preHeatTime +
+				'}';
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

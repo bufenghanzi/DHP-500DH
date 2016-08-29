@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mingseal.activity;
 
@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,7 +31,10 @@ import com.mingseal.data.manager.MessageMgr;
 import com.mingseal.data.param.SettingParam;
 import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.point.Point;
+import com.mingseal.data.point.PointType;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.listener.MaxMinEditFloatWatcher;
+import com.mingseal.listener.MaxMinFocusChangeFloatListener;
 import com.mingseal.utils.FloatUtil;
 import com.mingseal.utils.MoveUtils;
 import com.mingseal.utils.PointCopyTools;
@@ -48,8 +52,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @author wangjian
- *
+ * @author 商炎炳
  */
 public class GlueViewActivity extends AutoLayoutActivity implements OnClickListener {
 
@@ -190,11 +193,27 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 	 * @Fields iv_wifi_connecting: wifi连接情况
 	 */
 	private ImageView iv_wifi_connecting;
-	boolean StopFlag=false;//是否在重发状态
-	boolean StopSuccessFlag=false;//停止成功标记
-	private int StopRetryTimes=5;//重传次数
+	boolean StopFlag = false;//是否在重发状态
+	boolean StopSuccessFlag = false;//停止成功标记
+	private int StopRetryTimes = 5;//重传次数
 	Timer mTimer;
 	TimerTask mTimerTask;
+	private TextView mTv_u;
+	private float mTemp_x;
+	private float mTemp_y;
+	private float mTemp_z;
+	private float mTemp_u;
+	private static int KEY_X = 0;
+	private static int KEY_Y = 1;
+	private static int KEY_Z = 2;
+	private static int KEY_U = 3;
+	private TextView mTv_point_num;
+	private TextView mTv_point_type;
+	private TextView tv_x;
+	private TextView tv_y;
+	private TextView tv_z;
+	private TextView tv_u;
+	private int num=1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -225,11 +244,15 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 
 		setCoords();
 		m_nAxisNum = RobotParam.INSTANCE.getM_nAxisNum();
-		if(m_nAxisNum == 3){
+		if (m_nAxisNum == 3) {
 			et_u.setEnabled(false);
+			et_u.setVisibility(View.INVISIBLE);
+			mTv_u.setVisibility(View.INVISIBLE);
 //			myCircleDown.setRow("");
-		}else{
+		} else {
 			et_u.setEnabled(true);
+			et_u.setVisibility(View.VISIBLE);
+			mTv_u.setVisibility(View.VISIBLE);
 		}
 
 	}
@@ -249,7 +272,7 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		rl_back.setOnClickListener(this);
 		rl_title_speed = (RelativeLayout) findViewById(R.id.rl_title_speed);
 		rl_title_moshi = (RelativeLayout) findViewById(R.id.rl_title_moshi);
-		iv_wifi_connecting  =(ImageView) findViewById(R.id.iv_title_wifi_connecting);
+		iv_wifi_connecting = (ImageView) findViewById(R.id.iv_title_wifi_connecting);
 		WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
 		// 让RelativeLayout显示
 		rl_title_speed.setVisibility(View.VISIBLE);
@@ -257,6 +280,14 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		image_speed = (ImageView) findViewById(R.id.iv_title_speed);
 		image_moshi = (ImageView) findViewById(R.id.iv_title_moshi);
 		// 设置初值
+		mTv_point_num = (TextView) findViewById(R.id.tv_point_num);
+		mTv_point_num.setText(num+":");
+		mTv_point_type = (TextView) findViewById(R.id.tv_point_type);
+		mTv_point_type.setText(PointType.getTypeName(pointListsCur.get(0).getPointParam().getPointType().getValue()));
+		tv_x = (TextView) findViewById(R.id.tv_x);
+		tv_y = (TextView) findViewById(R.id.tv_y);
+		tv_z = (TextView) findViewById(R.id.tv_z);
+		tv_u = (TextView) findViewById(R.id.tv_u);
 		image_speed.setBackgroundResource(R.drawable.icon_speed_high);
 		image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
 		rl_sudu = (RelativeLayout) findViewById(R.id.rl_sudu);
@@ -272,7 +303,41 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		et_y = (EditText) findViewById(R.id.et_y);
 		et_z = (EditText) findViewById(R.id.et_z);
 		et_u = (EditText) findViewById(R.id.et_u);
+		et_x.addTextChangedListener(new MaxMinEditFloatWatcher(
+				RobotParam.INSTANCE.GetXJourney(),
+				0, et_x));
+		et_x.setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
+				RobotParam.INSTANCE.GetXJourney(),
+				0, et_x));
+		et_x.setOnEditorActionListener(new OnKeyEditorActionListener());
+		et_x.setSelectAllOnFocus(true);
+		et_y.addTextChangedListener(new MaxMinEditFloatWatcher(
+				RobotParam.INSTANCE.GetYJourney(),
+				0, et_y));
+		et_y.setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
+				RobotParam.INSTANCE.GetYJourney(),
+				0, et_y));
+		et_y.setOnEditorActionListener(new OnKeyEditorActionListener());
+		et_y.setSelectAllOnFocus(true);
+		et_z.addTextChangedListener(new MaxMinEditFloatWatcher(
+				RobotParam.INSTANCE.GetZJourney(),
+				0, et_z));
+		et_z.setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
+				RobotParam.INSTANCE.GetZJourney(),
+				0, et_z));
+		et_z.setOnEditorActionListener(new OnKeyEditorActionListener());
 
+		et_z.setSelectAllOnFocus(true);
+
+		et_u.addTextChangedListener(new MaxMinEditFloatWatcher(
+				RobotParam.INSTANCE.GetUJourney(),
+				0, et_u));
+		et_u.setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
+				RobotParam.INSTANCE.GetUJourney(),
+				0, et_u));
+		et_u.setOnEditorActionListener(new OnKeyEditorActionListener());
+
+		et_u.setSelectAllOnFocus(true);
 		but_x_plus = (Button) findViewById(R.id.nav_x_plus);
 		but_x_minus = (Button) findViewById(R.id.nav_x_minus);
 		but_y_plus = (Button) findViewById(R.id.nav_y_plus);
@@ -281,10 +346,11 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		but_z_minus = (Button) findViewById(R.id.nav_z_minus);
 		but_u_plus = (Button) findViewById(R.id.nav_u_plus);
 		but_u_minus = (Button) findViewById(R.id.nav_u_minus);
-		
+
 		but_u_plus.setText("↓");
 		but_u_minus.setText("↑");
-		/*===================== begin =====================*/
+		mTv_u = (TextView) findViewById(R.id.tv_u);
+        /*===================== begin =====================*/
 		but_x_plus.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(45));
 		but_x_minus.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(45));
 		but_y_plus.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(45));
@@ -293,7 +359,12 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		but_z_minus.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(45));
 		but_u_plus.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(45));
 		but_u_minus.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(45));
-
+		tv_x.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_y.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_z.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_u.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		mTv_point_num.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		mTv_point_type.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		/*=====================  end =====================*/
 
 		MoveListener moveListener = new MoveListener();
@@ -306,7 +377,7 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		but_z_minus.setOnTouchListener(moveListener);
 		but_u_plus.setOnTouchListener(moveListener);
 		but_u_minus.setOnTouchListener(moveListener);
-		
+
 		speed = settingParam.getHighSpeed();
 		speedXYZ = new int[3];
 		speedXYZ[0] = 4 * settingParam.getxStepDistance();
@@ -314,27 +385,50 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		speedXYZ[2] = 4 * settingParam.getzStepDistance();
 
 	}
-	
+
+	/**
+	 * 自定义的OnEditorActionListener,软键盘输入回车，将数据保存到List集合中
+	 */
+	private class OnKeyEditorActionListener implements TextView.OnEditorActionListener {
+
+		/**
+		 * 软键盘输入回车，将数据保存到List集合中
+		 */
+		public OnKeyEditorActionListener() {
+
+		}
+
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			if (actionId == EditorInfo.IME_ACTION_DONE) {
+				SetDatasAndUpdateUI();
+			}
+
+			return false;
+		}
+
+	}
+
 	/**
 	 * 设置X,Y,Z,U的坐标值
 	 */
 	private void setCoords() {
 		et_x.setText(FloatUtil.getFloatToString(
-				RobotParam.INSTANCE.XPulse2Journey(customView.getPointByAssignPosition().getX())) + "");
+				customView.getPointByAssignPosition().getX()));
 		et_y.setText(FloatUtil.getFloatToString(
-				RobotParam.INSTANCE.YPulse2Journey(customView.getPointByAssignPosition().getY())) + "");
+				customView.getPointByAssignPosition().getY()));
 		et_z.setText(FloatUtil.getFloatToString(
-				RobotParam.INSTANCE.ZPulse2Journey(customView.getPointByAssignPosition().getZ())) + "");
+				customView.getPointByAssignPosition().getZ()));
 		et_u.setText(FloatUtil.getFloatToString(
-				RobotParam.INSTANCE.UPulse2Journey(customView.getPointByAssignPosition().getU())) + "");
+				customView.getPointByAssignPosition().getU()));
 	}
 
+
 	/**
-	 * @ClassName MoveListener
-	 * @Description x,y,z,u移动
 	 * @author 商炎炳
+	 * @ClassName MoveListener
+	 * @Description x, y, z, u移动
 	 * @date 2016年1月28日 下午3:29:26
-	 *
 	 */
 	private class MoveListener implements OnTouchListener {
 
@@ -342,11 +436,32 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		public boolean onTouch(View v, MotionEvent event) {
 			if (v.getId() == R.id.nav_u_plus) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					++num;
+					if (num>=pointListsCur.size()){
+						num=pointListsCur.size();
+						mTv_point_num.setText(num+":");
+						mTv_point_type.setText(PointType.getTypeName(pointListsCur.get(num-1).getPointParam().getPointType().getValue()));
+					}else {
+						mTv_point_num.setText(num+":");
+						mTv_point_type.setText(PointType.getTypeName(pointListsCur.get(num-1).getPointParam().getPointType().getValue()));
+					}
+					SetDatasAndUpdateUI();
 					customView.setAssignPosition(1);
 					setCoords();
+
 				}
 			} else if (v.getId() == R.id.nav_u_minus) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					--num;
+					if (num<1){
+						num=1;
+						mTv_point_num.setText(num+":");
+						mTv_point_type.setText(PointType.getTypeName(pointListsCur.get(num-1).getPointParam().getPointType().getValue()));
+					}else {
+						mTv_point_num.setText(num+":");
+						mTv_point_type.setText(PointType.getTypeName(pointListsCur.get(num-1).getPointParam().getPointType().getValue()));
+					}
+					SetDatasAndUpdateUI();
 					customView.setAssignPosition(-1);
 					setCoords();
 				}
@@ -357,105 +472,105 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 					if (modeFlag == 0) {
 						// 连续
 						switch (v.getId()) {
-						case R.id.nav_x_plus:// x+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 0, 0, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(0);
-								prepareStopRetry(0);
-							}
-							break;
-						case R.id.nav_x_minus:// x-
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 0, 0, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(0);
-								prepareStopRetry(0);
-							}
-							break;
-						case R.id.nav_y_plus:// y+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 0, 1, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(1);
-								prepareStopRetry(1);
-							}
-							break;
-						case R.id.nav_y_minus:// y-
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 0, 1, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(1);
-								prepareStopRetry(1);
-							}
-							break;
-						case R.id.nav_z_plus:// z+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 0, 2, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(2);
-								prepareStopRetry(2);
-							}
-							break;
-						case R.id.nav_z_minus:// z-
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 0, 2, speed);
-								stopTimer();
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(2);
-								prepareStopRetry(2);
-							}
-							break;
+							case R.id.nav_x_plus:// x+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 0, 0, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+									prepareStopRetry(0);
+								}
+								break;
+							case R.id.nav_x_minus:// x-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 0, 0, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+									prepareStopRetry(0);
+								}
+								break;
+							case R.id.nav_y_plus:// y+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 0, 1, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+									prepareStopRetry(1);
+								}
+								break;
+							case R.id.nav_y_minus:// y-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 0, 1, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+									prepareStopRetry(1);
+								}
+								break;
+							case R.id.nav_z_plus:// z+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 0, 2, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+									prepareStopRetry(2);
+								}
+								break;
+							case R.id.nav_z_minus:// z-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 0, 2, speed);
+									stopTimer();
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+									prepareStopRetry(2);
+								}
+								break;
 						}
 					} else if (modeFlag == 1) {
 						// 单步
 						switch (v.getId()) {
-						case R.id.nav_x_plus:// x+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 1, 0, speedXYZ[0]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(0);
-							}
-							break;
-						case R.id.nav_x_minus:// x-
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 1, 0, speedXYZ[0]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(0);
-							}
-							break;
-						case R.id.nav_y_plus:// y+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 1, 1, speedXYZ[1]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(1);
-							}
-							break;
-						case R.id.nav_y_minus:// y-
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 1, 1, speedXYZ[1]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(1);
-							}
-							break;
-						case R.id.nav_z_plus:// z+
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(0, 1, 2, speedXYZ[2]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(2);
-							}
-							break;
-						case R.id.nav_z_minus:// z-
-							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								MoveUtils.move(1, 1, 2, speedXYZ[2]);
-							} else if (event.getAction() == MotionEvent.ACTION_UP) {
-								MoveUtils.stop(2);
-							}
+							case R.id.nav_x_plus:// x+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 1, 0, speedXYZ[0]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+								}
+								break;
+							case R.id.nav_x_minus:// x-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 1, 0, speedXYZ[0]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(0);
+								}
+								break;
+							case R.id.nav_y_plus:// y+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 1, 1, speedXYZ[1]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+								}
+								break;
+							case R.id.nav_y_minus:// y-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 1, 1, speedXYZ[1]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(1);
+								}
+								break;
+							case R.id.nav_z_plus:// z+
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(0, 1, 2, speedXYZ[2]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+								}
+								break;
+							case R.id.nav_z_minus:// z-
+								if (event.getAction() == MotionEvent.ACTION_DOWN) {
+									MoveUtils.move(1, 1, 2, speedXYZ[2]);
+								} else if (event.getAction() == MotionEvent.ACTION_UP) {
+									MoveUtils.stop(2);
+								}
 						}
 					}
 				} else {
@@ -471,6 +586,38 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		}
 
 	}
+
+	/**
+	 * //如果直接手动修改了坐标，暂时保存
+	 */
+	private void SetDatasAndUpdateUI() {
+		try {
+			mTemp_x = Float.parseFloat(et_x.getText().toString());
+		} catch (NumberFormatException e) {
+			mTemp_x = 0;
+		}
+		try {
+			mTemp_y = Float.parseFloat(et_y.getText().toString());
+		} catch (NumberFormatException e) {
+			mTemp_y = 0;
+		}
+		try {
+			mTemp_z = Float.parseFloat(et_z.getText().toString());
+		} catch (NumberFormatException e) {
+			mTemp_z = 0;
+		}
+		try {
+			mTemp_u = Float.parseFloat(et_u.getText().toString());
+		} catch (NumberFormatException e) {
+			mTemp_u = 0;
+		}
+		pointListsCur.get(customView.getAssignPosition()).setX(mTemp_x);
+		pointListsCur.get(customView.getAssignPosition()).setY(mTemp_y);
+		pointListsCur.get(customView.getAssignPosition()).setZ(mTemp_z);
+		pointListsCur.get(customView.getAssignPosition()).setU(mTemp_u);
+		customView.setPoints(pointListsCur);// 重绘图
+	}
+
 	/**
 	 * 将之前的定时任务移除队列
 	 */
@@ -485,50 +632,52 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 			mTimerTask = null;
 		}
 	}
+
 	/**
 	 * 重发停止指令
+	 *
 	 * @param i
 	 */
 	private void prepareStopRetry(final int i) {
-		StopRetryTimes=5;//重新设置重传次数
-		StopSuccessFlag=false;//重置标记为
-		StopFlag=false;//非重发停止指令状态
-		if (mTimer==null){
+		StopRetryTimes = 5;//重新设置重传次数
+		StopSuccessFlag = false;//重置标记为
+		StopFlag = false;//非重发停止指令状态
+		if (mTimer == null) {
 
-			mTimer=new Timer();
+			mTimer = new Timer();
 		}
-		if (mTimerTask == null){
-			mTimerTask=new TimerTask() {
+		if (mTimerTask == null) {
+			mTimerTask = new TimerTask() {
 				@Override
 				public void run() {
-					if (StopSuccessFlag==false) {
+					if (StopSuccessFlag == false) {
 						if (StopRetryTimes > 0) {
 							if (StopSuccessFlag == false) {
 								StopRetryTimes--;
 								MoveUtils.stop(i);
 //								Log.d(TAG, "重发了停止指令");
-								StopFlag=true;
+								StopFlag = true;
 							}
-						}else{
+						} else {
 							//重发失败
 //							Log.d(TAG,"重发失败！");
 							//关闭timer，重置参数
-							StopRetryTimes=5;//重新设置重传次数
-							StopSuccessFlag=false;//重置标记为
-							StopFlag=false;//非重发停止指令状态
+							StopRetryTimes = 5;//重新设置重传次数
+							StopSuccessFlag = false;//重置标记为
+							StopFlag = false;//非重发停止指令状态
 							mTimer.cancel();
 							mTimer = null;
 							mTimerTask.cancel();
 							mTimerTask = null;
 						}
-					}else {
-						if (StopFlag){//重发状态
+					} else {
+						if (StopFlag) {//重发状态
 							//成功
 //								Log.d(TAG, "重发了停止指令成功！");
 							StopSuccessFlag = false;
-							StopRetryTimes=5;//重新设置重传次数
-							StopSuccessFlag=false;//重置标记为
-							StopFlag=false;//非重发停止指令状态
+							StopRetryTimes = 5;//重新设置重传次数
+							StopSuccessFlag = false;//重置标记为
+							StopFlag = false;//非重发停止指令状态
 							mTimer.cancel();
 							mTimer = null;
 							mTimerTask.cancel();
@@ -538,8 +687,8 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 				}
 			};
 		}
-		if(mTimer != null && mTimerTask != null ){
-			mTimer.schedule(mTimerTask,220,60);
+		if (mTimer != null && mTimerTask != null) {
+			mTimer.schedule(mTimerTask, 220, 60);
 		}
 	}
 
@@ -597,99 +746,99 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 
 	private void DisPlayInfoAfterGetMsg(byte[] revBuffer) {
 		switch (MessageMgr.INSTANCE.managingMessage(revBuffer)) {
-		case 0:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "校验失败");
-			break;
-		case 1: {
-			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
-			if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
-				Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
-				StopSuccessFlag=true;//说明下位机成功返回消息
-				StopRetryTimes=5;//重新设置重传次数
-				pointListsCur.get(customView.getAssignPosition()).setX(coordPoint.getX());
-				pointListsCur.get(customView.getAssignPosition()).setY(coordPoint.getY());
-				pointListsCur.get(customView.getAssignPosition()).setZ(coordPoint.getZ());
-				pointListsCur.get(customView.getAssignPosition()).setU(coordPoint.getU());
-				customView.setPoints(pointListsCur);// 重绘图
-				setCoords();
+			case 0:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "校验失败");
+				break;
+			case 1: {
+				int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
+				if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
+					Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
+					StopSuccessFlag = true;//说明下位机成功返回消息
+					StopRetryTimes = 5;//重新设置重传次数
+					pointListsCur.get(customView.getAssignPosition()).setX(coordPoint.getX());
+					pointListsCur.get(customView.getAssignPosition()).setY(coordPoint.getY());
+					pointListsCur.get(customView.getAssignPosition()).setZ(coordPoint.getZ());
+					pointListsCur.get(customView.getAssignPosition()).setU(coordPoint.getU());
+					customView.setPoints(pointListsCur);// 重绘图
+					setCoords();
 
-			} else if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
-				ToastUtil.displayPromptInfo(GlueViewActivity.this, "获取参数成功!");
+				} else if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
+					ToastUtil.displayPromptInfo(GlueViewActivity.this, "获取参数成功!");
+				}
 			}
-		}
 			break;
-		case 40101:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "非法功能");
-			break;
-		case 40102:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "非法数据地址");
-			break;
-		case 40103:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "非法数据");
-			break;
-		case 40105:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "设备忙");
-			break;
-		case 40109:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "急停中");
-			break;
-		case 40110:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "X轴光电报警");
-			break;
-		case 40111:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "Y轴光电报警");
-			break;
-		case 40112:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "Z轴光电报警");
-			break;
-		case 40113:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "U轴光电报警");
-			break;
-		case 40114:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "行程超限报警");
-			break;
-		case 40115:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务下载失败");
-			break;
-		case 40116:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务上传失败");
-			break;
-		case 40117:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务模拟失败");
-			break;
-		case 40118:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "示教指令错误");
-			break;
-		case 40119:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "循迹定位失败");
-			break;
-		case 40120:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务号不可用");
-			break;
-		case 40121:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "初始化失败");
-			break;
-		case 40122:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "API版本错误");
-			break;
-		case 40123:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "程序升级失败");
-			break;
-		case 40124:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "系统损坏");
-			break;
-		case 40125:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务未加载");
-			break;
-		case 40126:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "(Z轴)基点抬起高度过高");
-			break;
-		case 40127:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "等待输入超时");
-			break;
-		default:
-			ToastUtil.displayPromptInfo(GlueViewActivity.this, "未知错误");
-			break;
+			case 40101:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "非法功能");
+				break;
+			case 40102:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "非法数据地址");
+				break;
+			case 40103:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "非法数据");
+				break;
+			case 40105:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "设备忙");
+				break;
+			case 40109:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "急停中");
+				break;
+			case 40110:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "X轴光电报警");
+				break;
+			case 40111:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "Y轴光电报警");
+				break;
+			case 40112:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "Z轴光电报警");
+				break;
+			case 40113:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "U轴光电报警");
+				break;
+			case 40114:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "行程超限报警");
+				break;
+			case 40115:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务下载失败");
+				break;
+			case 40116:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务上传失败");
+				break;
+			case 40117:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务模拟失败");
+				break;
+			case 40118:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "示教指令错误");
+				break;
+			case 40119:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "循迹定位失败");
+				break;
+			case 40120:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务号不可用");
+				break;
+			case 40121:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "初始化失败");
+				break;
+			case 40122:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "API版本错误");
+				break;
+			case 40123:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "程序升级失败");
+				break;
+			case 40124:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "系统损坏");
+				break;
+			case 40125:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "任务未加载");
+				break;
+			case 40126:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "(Z轴)基点抬起高度过高");
+				break;
+			case 40127:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "等待输入超时");
+				break;
+			default:
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "未知错误");
+				break;
 		}
 	}
 
@@ -705,24 +854,22 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 				buffer = temp.array();
 				// byte[] revBuffer = (byte[]) msg.obj;
 				DisPlayInfoAfterGetMsg(buffer);
-			}else if (msg.what== SocketInputThread.SocketError){
+			} else if (msg.what == SocketInputThread.SocketError) {
 				//wifi中断
-				System.out.println("wifi连接断开。。");
 				SocketThreadManager.releaseInstance();
-				System.out.println("单例被释放了-----------------------------");
 				//设置全局变量，跟新ui
 				userApplication.setWifiConnecting(false);
 				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
-				ToastUtil.displayPromptInfo(GlueViewActivity.this,"wifi连接断开。。");
+				ToastUtil.displayPromptInfo(GlueViewActivity.this, "wifi连接断开。。");
 			}
 		}
 	}
 
 
 	/**
+	 * @param settingParam
 	 * @Title saveMediumSpeed
 	 * @Description 单步和连续的速度都改成中速的，且将文本提示设置成中速
-	 * @param settingParam
 	 */
 	private void saveMediumSpeed(SettingParam settingParam) {
 		speed = settingParam.getMediumSpeed();
@@ -735,9 +882,9 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 	}
 
 	/**
+	 * @param settingParam
 	 * @Title saveLowSpeed
 	 * @Description 单步和连续的速度都改成低速的，且将文本提示设置成低速
-	 * @param settingParam
 	 */
 	private void saveLowSpeed(SettingParam settingParam) {
 		speed = settingParam.getLowSpeed();
@@ -750,9 +897,9 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 	}
 
 	/**
+	 * @param settingParam
 	 * @Title saveHighSpeed
 	 * @Description 单步和连续的速度都改成高速的，且将文本提示设置成高速
-	 * @param settingParam
 	 */
 	private void saveHighSpeed(SettingParam settingParam) {
 		speed = settingParam.getHighSpeed();
@@ -763,70 +910,74 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 		image_speed.setBackgroundResource(R.drawable.icon_speed_high);
 		tv_speed.setText(getResources().getString(R.string.activity_high));
 	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			isChange = PointCopyTools.comparePoints(pointListsFirst, pointListsCur);
-			if(isChange){
+			if (isChange) {
 //				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
 				saveBackActivity();
 //				showBackDialog();
 //				GlueViewActivity.this.finish();
-			}else{
+			} else {
 				showBackDialog();
 			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.rl_back:// 返回
-			isChange = PointCopyTools.comparePoints(pointListsFirst, pointListsCur);
-			if(isChange){
+			case R.id.rl_back:// 返回
+				SetDatasAndUpdateUI();
+				isChange = PointCopyTools.comparePoints(pointListsFirst, pointListsCur);
+				if (isChange) {
 //				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
-				saveBackActivity();
+					saveBackActivity();
 //				showBackDialog();
 //				GlueViewActivity.this.finish();
-			}else{
-				showBackDialog();
-			}
-			break;
-		case R.id.rl_sudu:// 速度
-			speedFlag++;
-			if (speedFlag % 3 == 1) {
-				saveMediumSpeed(settingParam);
-			} else if (speedFlag % 3 == 2) {
-				saveLowSpeed(settingParam);
-			} else if (speedFlag % 3 == 0) {
-				saveHighSpeed(settingParam);
-			}
+				} else {
+					showBackDialog();
+				}
+				break;
+			case R.id.rl_sudu:// 速度
+				speedFlag++;
+				if (speedFlag % 3 == 1) {
+					saveMediumSpeed(settingParam);
+				} else if (speedFlag % 3 == 2) {
+					saveLowSpeed(settingParam);
+				} else if (speedFlag % 3 == 0) {
+					saveHighSpeed(settingParam);
+				}
 
-			break;
-		case R.id.rl_moshi:// 模式
-			if (modeFlag == 0) {
-				modeFlag = 1;// 点击一次变为单步
-				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
-				image_moshi.setBackgroundResource(R.drawable.icon_step_single);
-				tv_moshi.setText(getResources().getString(R.string.step_single));
-			} else {
-				modeFlag = 0;// 默认为0
-				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_serious));
-				image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
-				tv_moshi.setText(getResources().getString(R.string.step_serious));
-			}
-			break;
-		case R.id.rl_complete:// 完成
-			isChange = PointCopyTools.comparePoints(pointListsFirst, pointListsCur);
-			if(isChange){
+				break;
+			case R.id.rl_moshi:// 模式
+				if (modeFlag == 0) {
+					modeFlag = 1;// 点击一次变为单步
+					ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
+					image_moshi.setBackgroundResource(R.drawable.icon_step_single);
+					tv_moshi.setText(getResources().getString(R.string.step_single));
+				} else {
+					modeFlag = 0;// 默认为0
+					ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_serious));
+					image_moshi.setBackgroundResource(R.drawable.icon_step_serious);
+					tv_moshi.setText(getResources().getString(R.string.step_serious));
+				}
+				break;
+			case R.id.rl_complete:// 完成
+				SetDatasAndUpdateUI();
+				isChange = PointCopyTools.comparePoints(pointListsFirst, pointListsCur);
+				if (isChange) {
 //				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
 //				GlueViewActivity.this.finish();
 //				showBackDialog();
-				saveBackActivity();
-			}else{
-				showBackDialog();
-			}
-			break;
+					saveBackActivity();
+				} else {
+					showBackDialog();
+				}
+				break;
 
 		}
 	}

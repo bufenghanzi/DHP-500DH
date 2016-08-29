@@ -3,6 +3,7 @@ package com.mingseal.data.point;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.point.weldparam.PointWeldBaseParam;
 import com.mingseal.data.point.weldparam.PointWeldBlowParam;
 import com.mingseal.data.point.weldparam.PointWeldInputIOParam;
@@ -17,20 +18,20 @@ import java.util.HashMap;
 /**
  * 点类
  *
- * @author lyq
+ * @author wj
  */
 public class Point implements Parcelable {
     private int id;// 主键
-    private int x;
-    private int y;
-    private int z;
-    private int u;
+    private float x;
+    private float y;
+    private float z;
+    private float u;
 
     private PointParam pointParam; // 点参数
 
     /*=================== begin ===================*/
-    static HashMap<PointType, PointParam> cachesPointParam = new HashMap<PointType, PointParam>();
-    /*===================  add  ===================*/
+    static HashMap<PointType,PointParam>	cachesPointParam	= new HashMap<PointType,PointParam>();
+	/*===================  add  ===================*/
 
     /**
      * 只用于初始化一个Point，不能用作点类型的添加
@@ -38,14 +39,14 @@ public class Point implements Parcelable {
 	/*
 	 * public Point() { super(); }
 	 */
-    public Point() {
+    public Point(){
 
     }
-
     /**
      * 点类构造函数,坐标默认为原点
      *
-     * @param pointType 点类型
+     * @param pointType
+     *            点类型
      */
     public Point(PointType pointType) {
         this.x = 0;
@@ -62,9 +63,10 @@ public class Point implements Parcelable {
      * @param y
      * @param z
      * @param u
-     * @param pointType 点类型
+     * @param pointType
+     *            点类型
      */
-    public Point(int x, int y, int z, int u, PointType pointType) {
+    public Point(float x, float y, float z, float u, PointType pointType) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -80,35 +82,35 @@ public class Point implements Parcelable {
         this.id = id;
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(float y) {
         this.y = y;
     }
 
-    public int getZ() {
+    public float getZ() {
         return z;
     }
 
-    public void setZ(int z) {
+    public void setZ(float z) {
         this.z = z;
     }
 
-    public int getU() {
+    public float getU() {
         return u;
     }
 
-    public void setU(int u) {
+    public void setU(float u) {
         this.u = u;
     }
 
@@ -119,7 +121,7 @@ public class Point implements Parcelable {
      * @return 获取倍数之后的X
      */
     public int getFoldX(int fold) {
-        return this.x / fold;
+        return RobotParam.INSTANCE.XJourney2Pulse(this.x)/fold ;
     }
 
     /**
@@ -129,7 +131,7 @@ public class Point implements Parcelable {
      * @return 获取倍数之后的Y
      */
     public int getFoldY(int fold) {
-        return this.y / fold;
+        return RobotParam.INSTANCE.YJourney2Pulse(this.y)/fold;
     }
 
     /**
@@ -139,7 +141,7 @@ public class Point implements Parcelable {
      * @return 获取倍数之后的Z
      */
     public int getFoldZ(int fold) {
-        return this.z / fold;
+        return RobotParam.INSTANCE.ZJourney2Pulse(this.z)/fold;
     }
 
     /**
@@ -149,7 +151,7 @@ public class Point implements Parcelable {
      * @return 获取倍数之后的U
      */
     public int getFoldU(int fold) {
-        return this.u / fold;
+        return RobotParam.INSTANCE.UJourney2Pulse(this.u) / fold;
     }
 
     /**
@@ -162,7 +164,8 @@ public class Point implements Parcelable {
     /**
      * 设置点参数
      *
-     * @param pointParam 点参数
+     * @param pointParam
+     *            点参数
      */
     public void setPointParam(PointParam pointParam) {
         this.pointParam = pointParam;
@@ -176,15 +179,26 @@ public class Point implements Parcelable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((pointParam == null) ? 0 : pointParam.hashCode());
-        result = prime * result + u;
-        result = prime * result + x;
-        result = prime * result + y;
-        result = prime * result + z;
+        int result = id;
+        result = 31 * result + (x != +0.0f ? Float.floatToIntBits(x) : 0);
+        result = 31 * result + (y != +0.0f ? Float.floatToIntBits(y) : 0);
+        result = 31 * result + (z != +0.0f ? Float.floatToIntBits(z) : 0);
+        result = 31 * result + (u != +0.0f ? Float.floatToIntBits(u) : 0);
+        result = 31 * result + (pointParam != null ? pointParam.hashCode() : 0);
         return result;
     }
+
+    //	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + ((pointParam == null) ? 0 : pointParam.hashCode());
+//		result = prime * result + u;
+//		result = prime * result + x;
+//		result = prime * result + y;
+//		result = prime * result + z;
+//		return result;
+//	}
 
     @Override
     public boolean equals(Object obj) {
@@ -210,7 +224,6 @@ public class Point implements Parcelable {
             return false;
         return true;
     }
-
     /**
      * 参数工厂
      *
@@ -225,43 +238,6 @@ public class Point implements Parcelable {
         }
 		/*===================  add  ===================*/
         switch (pointType) {
-//            case POINT_GLUE_BASE:
-//                this.pointParam = new PointGlueBaseParam();
-//                break;
-//            case POINT_GLUE_ALONE:
-//                this.pointParam = new PointGlueAloneParam();
-//                break;
-//            case POINT_GLUE_LINE_START:
-//                this.pointParam = new PointGlueLineStartParam();
-//                break;
-//            case POINT_GLUE_LINE_MID:
-//                this.pointParam = new PointGlueLineMidParam();
-//                break;
-//            case POINT_GLUE_LINE_ARC:
-//                this.pointParam = new PointGlueLineArcParam();
-//                break;
-//            case POINT_GLUE_LINE_END:
-//                this.pointParam = new PointGlueLineEndParam();
-//                break;
-//            case POINT_GLUE_FACE_START:
-//                this.pointParam = new PointGlueFaceStartParam();
-//                break;
-//            case POINT_GLUE_FACE_END:
-//                this.pointParam = new PointGlueFaceEndParam();
-//                break;
-//            case POINT_GLUE_INPUT:
-//                this.pointParam = new PointGlueInputIOParam();
-//                break;
-//            case POINT_GLUE_OUTPUT:
-//                this.pointParam = new PointGlueOutputIOParam();
-//                break;
-//            case POINT_GLUE_CLEAR:
-//                this.pointParam = new PointGlueClearParam();
-//                break;
-//            case POINT_GLUE_CLEARIO:
-//                this.pointParam = new PointGlueClearIOParam();
-//                break;
-
             case POINT_WELD_BASE:
                 this.pointParam = new PointWeldBaseParam();
                 break;
@@ -274,18 +250,9 @@ public class Point implements Parcelable {
             case POINT_WELD_LINE_MID:
                 this.pointParam = new PointWeldLineMidParam();
                 break;
-//            case POINT_WELD_LINE_ARC:
-//                this.pointParam = new PointWeldLineArcParam();
-//                break;
             case POINT_WELD_LINE_END:
                 this.pointParam = new PointWeldLineEndParam();
                 break;
-//            case POINT_WELD_FACE_START:
-//                this.pointParam = new PointWeldFaceStartParam();
-//                break;
-//            case POINT_WELD_FACE_END:
-//                this.pointParam = new PointWeldFaceEndParam();
-//                break;
             case POINT_WELD_BLOW:
                 this.pointParam = new PointWeldBlowParam();
                 break;
@@ -305,9 +272,7 @@ public class Point implements Parcelable {
 		/*===================  add  ===================*/
     }
 
-    /**
-     * @author 商炎炳
-     */
+
     public static final Parcelable.Creator<Point> CREATOR = new Creator<Point>() {
 
         @Override
@@ -318,10 +283,10 @@ public class Point implements Parcelable {
         @Override
         public Point createFromParcel(Parcel source) {
             Point point = new Point(PointType.POINT_GLUE_ALONE);
-            point.x = source.readInt();
-            point.y = source.readInt();
-            point.z = source.readInt();
-            point.u = source.readInt();
+            point.x = source.readFloat();
+            point.y = source.readFloat();
+            point.z = source.readFloat();
+            point.u = source.readFloat();
             point.pointParam = source.readParcelable(PointParam.class.getClassLoader());
 
             return point;
@@ -335,10 +300,10 @@ public class Point implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(x);
-        dest.writeInt(y);
-        dest.writeInt(z);
-        dest.writeInt(u);
+        dest.writeFloat(x);
+        dest.writeFloat(y);
+        dest.writeFloat(z);
+        dest.writeFloat(u);
         dest.writeParcelable(pointParam, flags);
     }
 

@@ -140,7 +140,14 @@ public class PointWeldLineMidParam extends PointParam {
 				", isSn=" + isSn +
 				'}';
 	}
-
+	public String getString(){
+		return "PointWeldLineMidParam{" +
+				"moveSpeed=" + moveSpeed +
+				", sendSnSpeed=" + sendSnSpeed +
+				", stopSnTime=" + stopSnTime +
+				", isSn=" + isSn +
+				'}';
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

@@ -27,7 +27,7 @@ import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CompoundButton;
 
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
 import com.zhy.autolayout.utils.AutoUtils;
 
 

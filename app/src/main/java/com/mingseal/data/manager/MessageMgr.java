@@ -400,7 +400,6 @@ public enum MessageMgr {
         info.setAllValueDefault();
         info.setPointType((byte) 0);//作业点
         info.setIfSn((byte) (pParam.isSn() ? 1 : 0));//是否出锡
-        info.setIfOut((byte) (pParam.isOut() ? 1 : 0));//是否抬停
         info.setIfSus((byte) (pParam.isSus() ? 1 : 0));//是否减速
         info.setLen((byte) 54);//记录总字节数
         info.setIfPause((byte) (pParam.isPause() ? 1 : 0));//是否暂停
@@ -412,14 +411,14 @@ public enum MessageMgr {
         task.pushBackByByte(temp[4]);
         task.pushBackByByte(temp[5]);
 
-        task.pushBack(p.getX());
-        task.pushBack(p.getX() >>> 16);
-        task.pushBack(p.getY());
-        task.pushBack(p.getY() >>> 16);
-        task.pushBack(p.getZ());
-        task.pushBack(p.getZ() >>> 16);
-        task.pushBack(p.getU());
-        task.pushBack(p.getU() >>> 16);
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()));
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()));
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()));
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU()));
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU())>>> 16);
 
         task.pushBack(0);// 组号
         task.pushBack(0);// 组号
@@ -435,8 +434,9 @@ public enum MessageMgr {
         task.pushBack(pParam.getSendSnSpeedFourth());//四次送锡速度
         task.pushBack(pParam.getSendSnSumFourth());//四次送锡量
         task.pushBack(pParam.getStopSnTimeFourth());//四次停锡时间
-        task.pushBack(pParam.getDipDistance());//倾斜距离
         task.pushBack(pParam.getUpHeight());//抬起高度
+        task.pushBack(pParam.getDipDistance());//倾斜距离
+        task.pushBack(pParam.getDipDistance_angle());//倾斜距离
         nNum++;
 
     }
@@ -462,14 +462,14 @@ public enum MessageMgr {
         task.pushBackByByte(temp[3]);
         task.pushBackByByte(temp[4]);
         task.pushBackByByte(temp[5]);
-        task.pushBack(p.getX());
-        task.pushBack(p.getX() >>> 16);
-        task.pushBack(p.getY());
-        task.pushBack(p.getY() >>> 16);
-        task.pushBack(p.getZ());
-        task.pushBack(p.getZ() >>> 16);
-        task.pushBack(p.getU());
-        task.pushBack(p.getU() >>> 16);
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()));
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()));
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()));
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU()));
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU())>>> 16);
         task.pushBack(0);// 组号
         task.pushBack(0);// 组号
         task.pushBack(pParam.getMoveSpeed());//运行速度
@@ -507,14 +507,14 @@ public enum MessageMgr {
         task.pushBackByByte(temp[3]);
         task.pushBackByByte(temp[4]);
         task.pushBackByByte(temp[5]);
-        task.pushBack(p.getX());
-        task.pushBack(p.getX() >>> 16);
-        task.pushBack(p.getY());
-        task.pushBack(p.getY() >>> 16);
-        task.pushBack(p.getZ());
-        task.pushBack(p.getZ() >>> 16);
-        task.pushBack(p.getU());
-        task.pushBack(p.getU() >>> 16);
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()));
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()));
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()));
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU()));
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU())>>> 16);
         task.pushBack(0);
         task.pushBack(0);
         task.pushBack(pParam.getMoveSpeed());
@@ -546,14 +546,14 @@ public enum MessageMgr {
         task.pushBackByByte(temp[3]);
         task.pushBackByByte(temp[4]);
         task.pushBackByByte(temp[5]);
-        task.pushBack(p.getX());
-        task.pushBack(p.getX() >>> 16);
-        task.pushBack(p.getY());
-        task.pushBack(p.getY() >>> 16);
-        task.pushBack(p.getZ());
-        task.pushBack(p.getZ() >>> 16);
-        task.pushBack(p.getU());
-        task.pushBack(p.getU() >>> 16);
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()));
+        task.pushBack(RobotParam.INSTANCE.XJourney2Pulse(p.getX()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()));
+        task.pushBack(RobotParam.INSTANCE.YJourney2Pulse(p.getY()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()));
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()) >>> 16);
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU()));
+        task.pushBack(RobotParam.INSTANCE.UJourney2Pulse(p.getU())>>> 16);
         task.pushBack(0);// 组号
         task.pushBack(0);// 组号
         task.pushBack(pParam.getStopSnTime());
@@ -615,7 +615,7 @@ public enum MessageMgr {
                 task.setValueR(i + 1, temp[i]);
             }
         }
-        task.setValue(32, 1);// 零点校正默认1：回起始点模式
+        task.setValue(32, 0);// 零点校正默认1：回起始点模式,改为回到零点
         task.setValue(33, TaskParam.INSTANCE.getnAccelerate());
         task.setValue(34, TaskParam.INSTANCE.getnDecelerate());
         task.setValue(35, TaskParam.INSTANCE.getnTurnSpeed());
@@ -662,14 +662,14 @@ public enum MessageMgr {
             switch (p.getPointParam().getPointType()) {
                 case POINT_WELD_BASE:
                     task.setValue(0, (task.getByte2ShortValue(0) | (1 << 14)));
-                    task.setValue(14, p.getX());
-                    task.setValue(15, p.getX() >>> 16);
-                    task.setValue(16, p.getY());
-                    task.setValue(17, p.getY() >>> 16);
-                    task.setValue(18, p.getZ());
-                    task.setValue(19, p.getZ() >>> 16);
-                    task.setValue(20, p.getU());
-                    task.setValue(21, p.getU() >>> 16);
+                    task.setValue(14, RobotParam.INSTANCE.XJourney2Pulse(p.getX()));
+                    task.setValue(15, RobotParam.INSTANCE.XJourney2Pulse(p.getX()) >>> 16);
+                    task.setValue(16, RobotParam.INSTANCE.YJourney2Pulse(p.getY()));
+                    task.setValue(17, RobotParam.INSTANCE.YJourney2Pulse(p.getY()) >>> 16);
+                    task.setValue(18, RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()));
+                    task.setValue(19, RobotParam.INSTANCE.ZJourney2Pulse(p.getZ()) >>> 16);
+                    task.setValue(20, RobotParam.INSTANCE.UJourney2Pulse(p.getU()));
+                    task.setValue(21, RobotParam.INSTANCE.UJourney2Pulse(p.getU()) >>> 16);
 
                     break;
                 case POINT_WELD_INPUT:
@@ -795,7 +795,6 @@ public enum MessageMgr {
                         pt.setZ(Protocol_400_1.READ4BYTES(buf, primaryOffset, 14));
                         pt.setU(Protocol_400_1.READ4BYTES(buf, primaryOffset, 18));
                         pParam.setSn(info.getIfSn());
-                        pParam.setOut(info.getIfOut());
                         pParam.setSus(info.getifSus());
                         pParam.setPause(info.getIfPause());
                         pParam.setSendSnSpeedFir(Protocol_400_1.READ2BYTES(buf, primaryOffset, 26));//一次送锡速度
@@ -810,8 +809,9 @@ public enum MessageMgr {
 					    pParam.setSendSnSpeedFourth(Protocol_400_1.READ2BYTES(buf, primaryOffset, 44));//四次送锡速度
 					    pParam.setSendSnSumFourth((int)(Protocol_400_1.READ2BYTES(buf, primaryOffset, 46)+0.5));//四次送锡量
 					    pParam.setStopSnTimeFourth(Protocol_400_1.READ2BYTES(buf, primaryOffset, 48));//四次停锡时间
-					    pParam.setDipDistance(Protocol_400_1.READ2BYTES(buf, primaryOffset, 50));//倾斜距离
-					    pParam.setUpHeight((int) (Protocol_400_1.READ2BYTES(buf, primaryOffset, 52) + 0.5));
+                        pParam.setUpHeight((int) (Protocol_400_1.READ2BYTES(buf, primaryOffset, 50) + 0.5));
+                        pParam.setDipDistance(Protocol_400_1.READ2BYTES(buf, primaryOffset, 52));//倾斜距离
+                        pParam.setDipDistance_angle(Protocol_400_1.READ2BYTES(buf, primaryOffset, 54));//倾斜jiaodu
                         _pointMgr.add(pt);
                     } else {
 //                        Point pt = new Point(PointType.POINT_GLUE_ALONE);
@@ -1744,7 +1744,7 @@ public enum MessageMgr {
 //						short temp = data[i];
 //						temp = (short) (temp & (0x00ff));
 //						log[i] = temp;
-//						str+=log[i]+","; 
+//						str+=log[i]+",";
 //					}
 //					Log.d(TAG, str.toString());
                     cmdDelayFlag = CmdParam.Cmd_DownLoad;

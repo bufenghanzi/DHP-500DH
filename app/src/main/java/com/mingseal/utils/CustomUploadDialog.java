@@ -9,7 +9,8 @@ import android.view.Gravity;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.mingseal.dhp.R;
+import com.mingseal.dhp_500dh.R;
+
 
 /**
  * @author 商炎炳

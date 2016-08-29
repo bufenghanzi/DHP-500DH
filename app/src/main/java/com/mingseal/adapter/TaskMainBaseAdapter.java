@@ -45,6 +45,7 @@ import java.util.List;
  */
 public class TaskMainBaseAdapter extends BaseAdapter {
 
+	private  String taskname;
 	private Context context;
 	private LayoutInflater mInflater;
 
@@ -61,7 +62,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 	 * @Fields singeOrMultify: true显示多选框,false显示单选框
 	 */
 	private boolean singeOrMultify = false;// 单选框标志,true隐藏单选框
-	
+
 	/**
 	 * @Fields m_nAxisNum: 判断收到的是4轴还是3轴
 	 */
@@ -78,7 +79,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 	private int type_value;// PointType类型之index
 
 	private TaskActivity activity;
-	
+
 	private static int KEY_X = 0;
 	private static int KEY_Y = 1;
 	private static int KEY_Z = 2;
@@ -99,8 +100,8 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 	/**
 	 * 方案号
 	 */
-	private int _id; 
-	public TaskMainBaseAdapter(Context context, TaskActivity activity) {
+	private int _id;
+	public TaskMainBaseAdapter(Context context, TaskActivity activity,String taskname) {
 		this.context = context;
 		this.mInflater = LayoutInflater.from(context);
 		this.pointLists = new ArrayList<Point>();
@@ -108,6 +109,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 		this.activity = activity;
 		this.inputDao = new WeldInputDao(context);
 		this.outputDao = new WeldOutputDao(context);
+		this.taskname=taskname;
 	}
 
 	public TaskMainBaseAdapter() {
@@ -115,13 +117,13 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 设置当前选中的selectID
-	 * 
+	 *
 	 * @param position
 	 */
 	public void setSelectID(int position) {
 		this.selectID = position;
 	}
-	
+
 	/**
 	 * 设置复选框选中的IDs
 	 * @Title setSelectCheckIDS
@@ -134,7 +136,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 自定义List数据
-	 * 
+	 *
 	 * @param list
 	 */
 	public void setData(List<Point> list) {
@@ -161,13 +163,13 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 设置是多选还是单选按钮
-	 * 
+	 *
 	 * @param singleFlag true为显示多选,false显示单选
 	 */
 	public void setSingleOrMultify(boolean singleFlag) {
 		this.singeOrMultify = singleFlag;
 	}
-	
+
 	/**
 	 * @Title: setM_nAxisNum
 	 * @Description: 设置机器轴数，是三轴还是四轴
@@ -232,14 +234,14 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 		  holder.tv_y.setSelectAllOnFocus(true);
 		  holder.tv_z.setSelectAllOnFocus(true);
 		  holder.tv_u.setSelectAllOnFocus(true);
-		 
-		
+
+
 		if(m_nAxisNum == 3){
 			holder.tv_u.setVisibility(View.GONE);
 		}else if(m_nAxisNum == 4){
 			holder.tv_u.setVisibility(View.VISIBLE);
 		}
-		
+
 
 		// true显示多选框，隐藏单选框
 		if (singeOrMultify) {
@@ -288,10 +290,10 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 				holder.tv_z.setEnabled(false);
 				holder.tv_u.setEnabled(false);
 			} else {
-				holder.tv_x.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.XPulse2Journey(point.getX())));
-				holder.tv_y.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.YPulse2Journey(point.getY())));
-				holder.tv_z.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.ZPulse2Journey(point.getZ())));
-				holder.tv_u.setText(FloatUtil.getFloatToString(RobotParam.INSTANCE.UPulse2Journey(point.getU())));
+				holder.tv_x.setText(FloatUtil.getFloatToString(point.getX()));
+				holder.tv_y.setText(FloatUtil.getFloatToString(point.getY()));
+				holder.tv_z.setText(FloatUtil.getFloatToString(point.getZ()));
+				holder.tv_u.setText(FloatUtil.getFloatToString(point.getU()));
 				holder.tv_x.setEnabled(true);
 				holder.tv_y.setEnabled(true);
 				holder.tv_z.setEnabled(true);
@@ -316,8 +318,8 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 				holder.tv_z.setOnFocusChangeListener(new OnKeyFocusChangeListener(point, et_z, KEY_Z));
 				holder.tv_u.setOnFocusChangeListener(new OnKeyFocusChangeListener(point, et_u, KEY_U));
 			}
-			
-			
+
+
 //			final EditText et_x = holder.tv_x;
 //			final EditText et_y = holder.tv_y;
 //			final EditText et_z = holder.tv_z;
@@ -340,7 +342,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 						activity.popMenu = new MyPopWindowClickListener(activity);
 						activity.mPopupWindow = activity.popMenu.getMenu();
 					}
-					activity.popMenu.setPoint(pointLists, getItem(position), 1, TaskMainBaseAdapter.this);
+					activity.popMenu.setPoint(pointLists, getItem(position), 1, TaskMainBaseAdapter.this,taskname);
 					// mPopupWindow.setFocusable(true);
 					activity.mPopupWindow.setOutsideTouchable(true); // 设置点击屏幕其它地方弹出框消失
 					/*=================== begin ===================*/
@@ -427,7 +429,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 自定义OnFocusChangeListene,失去焦点时，保存当前的内容
-	 * 
+	 *
 	 */
 	private class OnKeyFocusChangeListener implements OnFocusChangeListener {
 
@@ -438,7 +440,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 		/**
 		 * 失去焦点时，保存当前的内容
-		 * 
+		 *
 		 * @param point
 		 *            Point
 		 * @param et
@@ -513,7 +515,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 		/**
 		 * 软键盘输入回车，将数据保存到List集合中
-		 * 
+		 *
 		 * @param point
 		 *            Point
 		 * @param et
@@ -575,7 +577,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 		}
 
 	}
-	
+
 	/**
 	 * 输入输出口的状态
 	 * @Title getIOInfo
@@ -601,7 +603,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * @Title getOpenOrClose
 	 * @Description 返回输入口的状态
@@ -641,7 +643,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 自定义checkbox回调函数
-	 * 
+	 *
 	 * @param l
 	 */
 	public void setOnCheckboxChanged(onMyCheckboxChangedListener l) {
@@ -650,7 +652,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 自定义checkbox接口
-	 * 
+	 *
 	 * @author Administrator
 	 *
 	 */
@@ -661,7 +663,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 回调函数
-	 * 
+	 *
 	 * @param l
 	 */
 	public void setOnRadioButtonChanged(onMyRadioButtonChangedListener l) {
@@ -670,7 +672,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 
 	/**
 	 * 自定义接口
-	 * 
+	 *
 	 * @author Administrator
 	 *
 	 */

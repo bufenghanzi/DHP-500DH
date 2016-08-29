@@ -104,7 +104,13 @@ public class PointWeldLineEndParam extends PointParam {
 				", isPause=" + isPause +
 				'}';
 	}
-
+	public String getString(){
+		return "PointWeldLineEndParam{" +
+				"stopSnTime=" + stopSnTime +
+				", upHeight=" + upHeight +
+				", isPause=" + isPause +
+				'}';
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

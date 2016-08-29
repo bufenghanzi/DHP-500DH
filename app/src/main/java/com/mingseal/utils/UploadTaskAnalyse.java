@@ -6,21 +6,17 @@ package com.mingseal.utils;
 import android.content.Context;
 
 import com.mingseal.data.dao.WeldBlowDao;
-import com.mingseal.data.dao.WeldInputDao;
 import com.mingseal.data.dao.WeldLineEndDao;
 import com.mingseal.data.dao.WeldLineMidDao;
 import com.mingseal.data.dao.WeldLineStartDao;
-import com.mingseal.data.dao.WeldOutputDao;
 import com.mingseal.data.dao.WeldWorkDao;
 import com.mingseal.data.point.Point;
 import com.mingseal.data.point.PointParam;
 import com.mingseal.data.point.PointType;
 import com.mingseal.data.point.weldparam.PointWeldBlowParam;
-import com.mingseal.data.point.weldparam.PointWeldInputIOParam;
 import com.mingseal.data.point.weldparam.PointWeldLineEndParam;
 import com.mingseal.data.point.weldparam.PointWeldLineMidParam;
 import com.mingseal.data.point.weldparam.PointWeldLineStartParam;
-import com.mingseal.data.point.weldparam.PointWeldOutputIOParam;
 import com.mingseal.data.point.weldparam.PointWeldWorkParam;
 
 import java.util.ArrayList;
@@ -34,6 +30,7 @@ import java.util.List;
 public class UploadTaskAnalyse {
 
 	private static final String TAG = "UploadTaskAnalyse";
+	private  String taskname;
 	/**
 	 * 独立点的数据库操作改为作业点
 	 */
@@ -54,28 +51,25 @@ public class UploadTaskAnalyse {
 	 * 清胶点的数据库操作改为吹锡点
 	 */
 	private WeldBlowDao weldBlowDao;// 吹锡点的数据库操作
-	/**
-	 * 输入IO的数据库操作
-	 */
-	private WeldInputDao weldInputDao;// 输入IO的数据库操作
-	/**
-	 * 输出IO的数据库操作
-	 */
-	private WeldOutputDao weldOutputDao;// 输出IO的数据库操作
 
+	private int weldWork_key=0;
+	private int weldLineStart_key=0;
+	private int weldLineMid_key=0;
+	private int weldLineEnd_key=0;
+	private int weldBlow_key=0;
 	/**
 	 * 初始化各个和数据库操作的Dao
-	 * 
+	 *
 	 * @param context
+	 * @param taskname
 	 */
-	public UploadTaskAnalyse(Context context) {
+	public UploadTaskAnalyse(Context context, String taskname) {
 		weldWorkDao = new WeldWorkDao(context);
 		weldLineStartDao = new WeldLineStartDao(context);
 		weldLineMidDao = new WeldLineMidDao(context);
 		weldLineEndDao = new WeldLineEndDao(context);
 		weldBlowDao = new WeldBlowDao(context);
-		weldInputDao = new WeldInputDao(context);
-		weldOutputDao = new WeldOutputDao(context);
+		this.taskname = taskname;
 	}
 
 	/**
@@ -99,26 +93,19 @@ public class UploadTaskAnalyse {
 		PointWeldLineEndParam lineEndParam = null;
 		//吹锡点
 		PointWeldBlowParam    blowParam=  null;
-		// 输入IO参数
-		PointWeldInputIOParam inputParam = null;
-		// 输出IO参数
-		PointWeldOutputIOParam outputParam = null;
 		// 各个点胶口的初始化，因为下载是有24个的，实际上保存的时候是不需要这么多的
 		boolean[] ports = null;
 		// 作业点HashMap集合
-		HashMap<PointWeldWorkParam, Integer> aloneParamMaps = new HashMap<>();
+		HashMap<String, Integer> aloneParamMaps = new HashMap<>();
 		// 起始点HashMap集合
-		HashMap<PointWeldLineStartParam, Integer> lineStartParamMaps = new HashMap<>();
+		HashMap<String, Integer> lineStartParamMaps = new HashMap<>();
 		// 中间点HashMap集合
-		HashMap<PointWeldLineMidParam, Integer> lineMidParamMaps = new HashMap<>();
+		HashMap<String, Integer> lineMidParamMaps = new HashMap<>();
 		// 结束点HashMap集合
-		HashMap<PointWeldLineEndParam, Integer> lineEndParamMaps = new HashMap<>();
+		HashMap<String, Integer> lineEndParamMaps = new HashMap<>();
 		//吹锡点集合
-		HashMap<PointWeldBlowParam, Integer> blowParamMaps = new HashMap<>();
-		// 输入IO点HashMap集合
-		HashMap<PointWeldInputIOParam, Integer> inputParamMaps = new HashMap<>();
-		// 输出IO点HashMap集合
-		HashMap<PointWeldOutputIOParam, Integer> outputParamMaps = new HashMap<>();
+		HashMap<String, Integer> blowParamMaps = new HashMap<>();
+
 		for (Point point : pointUploads) {
 			if (point.getPointParam().getPointType() == PointType.POINT_WELD_BASE) {
 				// 基准点解析
@@ -134,12 +121,23 @@ public class UploadTaskAnalyse {
 
 				// 先判断Map里面有没有，有的话，直接添加，无需查询数据库
 				pointParam = new PointParam();
-				if (aloneParamMaps.containsKey(aloneParam)) {
-					pointParam.set_id(aloneParamMaps.get(aloneParam));
+				if (aloneParamMaps.containsKey(aloneParam.getString())) {
+					pointParam.set_id(aloneParamMaps.get(aloneParam.getString()));
 				} else {
-					int _id = weldWorkDao.getAloneParamIdByParam(aloneParam);
-					pointParam.set_id(_id);
-					aloneParamMaps.put(aloneParam, _id);
+					//自增主键从1开始,如果大于10，则使用第一种方案
+					weldWork_key=weldWork_key+1;
+					if (weldWork_key>10){
+						pointParam.set_id(1);
+					}else {
+
+						aloneParamMaps.put(aloneParam.getString(),weldWork_key);
+						aloneParam.set_id(weldWork_key);
+						int rowid=(int) weldWorkDao.insertWeldWork(aloneParam, taskname);
+						L.d("插入数据库数据："+weldWorkDao.getPointWeldWorkParamById(weldWork_key,taskname).toString());
+
+						L.d("aloneParamMaps.contains(aloneParam.hashCode())::"+aloneParamMaps.containsKey(aloneParam.toString()));
+						pointParam.set_id(weldWork_key);
+					}
 				}
 
 				pointParam.setPointType(PointType.POINT_WELD_WORK);
@@ -156,12 +154,21 @@ public class UploadTaskAnalyse {
 //				lineStartParam.setGluePort(ports);
 				// 先判断Map里面有没有，有的话，直接添加，无需查询数据库
 				pointParam = new PointParam();
-				if (lineStartParamMaps.containsKey(lineStartParam)) {
-					pointParam.set_id(lineStartParamMaps.get(lineStartParam));
+				if (lineStartParamMaps.containsKey(lineStartParam.getString())) {
+					pointParam.set_id(lineStartParamMaps.get(lineStartParam.getString()));
 				} else {
-					int _id = weldLineStartDao.getLineStartParamIDByParam(lineStartParam);
-					pointParam.set_id(_id);
-					lineStartParamMaps.put(lineStartParam, _id);
+					//自增主键从1开始
+					weldLineStart_key=weldLineStart_key+1;
+					if (weldLineStart_key>10){
+						pointParam.set_id(1);
+
+					}else {
+
+						lineStartParamMaps.put(lineStartParam.getString(), weldLineStart_key);
+						lineStartParam.set_id(weldLineStart_key);
+						int rowid=(int) weldLineStartDao.insertWeldLineStart(lineStartParam, taskname);
+						pointParam.set_id(weldLineStart_key);
+					}
 				}
 
 				pointParam.setPointType(PointType.POINT_WELD_LINE_START);
@@ -177,12 +184,21 @@ public class UploadTaskAnalyse {
 //				}
 //				lineMidParam.setGluePort(ports);
 				pointParam = new PointParam();
-				if (lineMidParamMaps.containsKey(lineMidParam)) {
-					pointParam.set_id(lineMidParamMaps.get(lineMidParam));
+				if (lineMidParamMaps.containsKey(lineMidParam.getString())) {
+					pointParam.set_id(lineMidParamMaps.get(lineMidParam.getString()));
 				} else {
-					int _id = weldLineMidDao.getLineMidParamIDByParam(lineMidParam);
-					pointParam.set_id(_id);
-					lineMidParamMaps.put(lineMidParam, _id);
+					//自增主键从1开始
+					weldLineMid_key=weldLineMid_key+1;
+					if (weldLineMid_key>10){
+						pointParam.set_id(1);
+
+					}else {
+
+						lineMidParamMaps.put(lineMidParam.getString(), weldLineMid_key);
+						lineMidParam.set_id(weldLineMid_key);
+						int rowid=(int) weldLineMidDao.insertWeldLineMid(lineMidParam, taskname);
+						pointParam.set_id(weldLineMid_key);
+					}
 				}
 
 				pointParam.setPointType(PointType.POINT_WELD_LINE_MID);
@@ -193,63 +209,47 @@ public class UploadTaskAnalyse {
 				// 结束点解析
 				lineEndParam = (PointWeldLineEndParam) point.getPointParam();
 				pointParam = new PointParam();
-				if (lineEndParamMaps.containsKey(lineEndParam)) {
-					pointParam.set_id(lineEndParamMaps.get(lineEndParam));
+				if (lineEndParamMaps.containsKey(lineEndParam.getString())) {
+					pointParam.set_id(lineEndParamMaps.get(lineEndParam.getString()));
 				} else {
-					int _id = weldLineEndDao.getLineEndParamIDByParam(lineEndParam);
-					pointParam.set_id(_id);
-					lineEndParamMaps.put(lineEndParam, _id);
+					//自增主键从1开始
+					weldLineEnd_key=weldLineEnd_key+1;
+					if (weldLineEnd_key>10){
+						pointParam.set_id(1);
+
+					}else {
+
+						lineEndParamMaps.put(lineEndParam.getString(), weldLineEnd_key);
+						lineEndParam.set_id(weldLineEnd_key);
+						int rowid=(int) weldLineEndDao.insertWeldLineEnd(lineEndParam, taskname);
+						pointParam.set_id(weldLineEnd_key);
+					}
 				}
 
 				pointParam.setPointType(PointType.POINT_WELD_LINE_END);
 				point.setPointParam(pointParam);
 				points.add(point);
 
-			} else if (point.getPointParam().getPointType() == PointType.POINT_WELD_INPUT) {
-				// 输入IO
-				inputParam = (PointWeldInputIOParam) point.getPointParam();
-				pointParam = new PointParam();
-
-				if (inputParamMaps.containsKey(inputParam)) {
-					pointParam.set_id(inputParamMaps.get(inputParam));
-				} else {
-					int _id = weldInputDao.getInputParamIDByParam(inputParam);
-					pointParam.set_id(_id);
-					inputParamMaps.put(inputParam, _id);
-				}
-
-				pointParam.setPointType(PointType.POINT_WELD_INPUT);
-				point.setPointParam(pointParam);
-				points.add(point);
-
-			} else if (point.getPointParam().getPointType() == PointType.POINT_WELD_OUTPUT) {
-				// 输出IO
-				outputParam = (PointWeldOutputIOParam) point.getPointParam();
-				pointParam = new PointParam();
-
-				if (outputParamMaps.containsKey(outputParam)) {
-					pointParam.set_id(outputParamMaps.get(outputParam));
-				} else {
-					int _id = weldOutputDao.getOutputParamIDByParam(outputParam);
-					pointParam.set_id(_id);
-					outputParamMaps.put(outputParam, _id);
-				}
-
-				pointParam.setPointType(PointType.POINT_WELD_OUTPUT);
-				point.setPointParam(pointParam);
-				points.add(point);
-
-			}else if (point.getPointParam().getPointType() == PointType.POINT_WELD_BLOW) {
+			} else if (point.getPointParam().getPointType() == PointType.POINT_WELD_BLOW) {
 				// 输出IO
 				blowParam = (PointWeldBlowParam) point.getPointParam();
 				pointParam = new PointParam();
 
-				if (blowParamMaps.containsKey(blowParam)) {
-					pointParam.set_id(blowParamMaps.get(blowParam));
+				if (blowParamMaps.containsKey(blowParam.getString())) {
+					pointParam.set_id(blowParamMaps.get(blowParam.getString()));
 				} else {
-					int _id = weldBlowDao.getOutputParamIDByParam(blowParam);
-					pointParam.set_id(_id);
-					blowParamMaps.put(blowParam, _id);
+					//自增主键从1开始
+					weldBlow_key=weldBlow_key+1;
+					if (weldBlow_key>10){
+						pointParam.set_id(1);
+
+					}else {
+
+						blowParamMaps.put(blowParam.getString(), weldBlow_key);
+						blowParam.set_id(weldBlow_key);
+						int rowid=(int) weldBlowDao.insertWeldOutput(blowParam, taskname);
+						pointParam.set_id(weldBlow_key);
+					}
 				}
 
 				pointParam.setPointType(PointType.POINT_WELD_BLOW);

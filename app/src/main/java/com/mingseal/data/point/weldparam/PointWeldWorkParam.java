@@ -25,13 +25,11 @@ public class PointWeldWorkParam extends PointParam {
     private int sendSnSumFourth;        //四次送锡量(单位:丝米dmm)
     private int stopSnTimeFourth;        //四次停锡时间
     private int dipDistance;                    //倾斜距离(单位:mm)
+    private int dipDistance_angle;                    //倾斜角度(单位:度)
     private int upHeight;                        //抬起高度(单位:mm)
     private boolean isSn;                        //是否出锡
-//    private boolean isSlow;                    //焊点结束后是否自动暂停标志		0: 不暂停		1: 暂停
-    private boolean isOut;                    //焊点结束退出时是否抬起停顿标志	0: 不抬起停顿	1:抬起停顿
-    //	private boolean isStp;						//焊点结束后是否有输出标志			0: 有输出		1:无输出
+//    private boolean isOut;                    //焊点结束退出时是否抬起停顿标志	0: 不抬起停顿	1:抬起停顿
     private boolean isSus;                    //下降焊锡前是否减速标志			0: 不减速		1:减速
-//	private boolean[] snPort;				//焊锡口
 	private boolean isPause;				//是否暂停
 
     @Override
@@ -285,55 +283,23 @@ public class PointWeldWorkParam extends PointParam {
         this.isSn = isSn;
     }
 
-//    /**
-//     * @return 焊点结束后是否自动暂停标志        0: 不暂停		1: 暂停
-//     * @deprecated 新增加的参数, 不通用
-//     */
-//    public boolean isSlow() {
-//        return isSlow;
-//    }
-//
-//    /**
-//     * 焊点结束后是否自动暂停标志		0: 不暂停		1: 暂停
-//     *
-//     * @param isSlow
-//     * @deprecated 新增加的参数, 不通用
-//     */
-//    public void setSlow(boolean isSlow) {
-//        this.isSlow = isSlow;
-//    }
+
 
     /**
-     * @return 焊点结束退出时是否抬起停顿标志    0: 不抬起停顿	1:抬起停顿
+     * @return 倾斜角度
      */
-    public boolean isOut() {
-        return isOut;
+    public int getDipDistance_angle() {
+        return dipDistance_angle;
     }
 
     /**
-     * 焊点结束退出时是否抬起停顿标志	0: 不抬起停顿	1:抬起停顿
-     * @param isOut
+     * 倾斜角度
+     * @param dipDistance_angle
      */
-    public void setOut(boolean isOut) {
-        this.isOut = isOut;
+    public void setDipDistance_angle(int dipDistance_angle) {
+        this.dipDistance_angle = dipDistance_angle;
     }
 
-//	/**
-//	 * @return 焊点结束后是否有输出标志			0: 有输出		1:无输出
-//	 * @deprecated 新增加的参数,不通用
-//	 */
-//	public boolean isStp() {
-//		return isStp;
-//	}
-//
-//	/**
-//	 * 焊点结束后是否有输出标志			0: 有输出		1:无输出
-//	 * @param isStp
-//	 * @deprecated 新增加的参数,不通用
-//	 */
-//	public void setStp(boolean isStp) {
-//		this.isStp = isStp;
-//	}
 
     /**
      * @return 下降焊锡前是否减速标志            0: 不减速		1:减速
@@ -352,20 +318,6 @@ public class PointWeldWorkParam extends PointParam {
         this.isSus = isSus;
     }
 
-//	/**
-//	 * @return 获取焊锡口数据
-//	 */
-//	public boolean[] getSnPort() {
-//		return snPort;
-//	}
-//
-//	/**
-//	 * 设置焊锡口数据
-//	 * @param snPort 焊锡口
-//	 */
-//	public void setSnPort(boolean[] snPort) {
-//		this.snPort = snPort;
-//	}
 
 	/**
 	 * @return 获取是否暂停
@@ -420,16 +372,14 @@ public class PointWeldWorkParam extends PointParam {
         this.dipDistance = 0;
         this.upHeight = 10;
         this.isSn = true;
-		this.isPause = false;
-        this.isOut=false;
+        this.isPause = false;
+        this.dipDistance_angle=0;
         this.isSus=false;
         super.setPointType(PointType.POINT_WELD_WORK);
-//		this.snPort = new boolean[GWOutPort.USER_O_NO_ALL.ordinal()];
-//		this.snPort[0] = true;
     }
 
     public PointWeldWorkParam(int preHeatTime, int sendSnSpeedFir, int sendSnSumFir, int sendSnSpeedSec, int sendSnSumSec, int stopSnStimeSec, int sendSnSpeedThird, int sendSnSumThird, int stopSnTimeThird, int sendSnSpeedFourth, int sendSnSumFourth, int stopSnTimeFourth,
-                              int dipDistance, int upHeight, boolean isSn, boolean isPause, boolean isOut, boolean isSus) {
+                              int dipDistance, int upHeight, boolean isSn, boolean isPause, int dipDistance_angle, boolean isSus) {
         this.preHeatTime = preHeatTime;
         this.sendSnSpeedFir = sendSnSpeedFir;
         this.sendSnSumFir = sendSnSumFir;
@@ -446,7 +396,7 @@ public class PointWeldWorkParam extends PointParam {
         this.upHeight = upHeight;
         this.isSn = isSn;
         this.isPause = isPause;
-        this.isOut = isOut;
+        this.dipDistance_angle = dipDistance_angle;
         this.isSus = isSus;
         super.setPointType(PointType.POINT_WELD_WORK);
     }
@@ -470,7 +420,29 @@ public class PointWeldWorkParam extends PointParam {
                 ", upHeight=" + upHeight +
                 ", isSn=" + isSn +
                 ", isPause=" + isPause +
-                ", isOut=" + isOut +
+                ", dipDistance_angle=" + dipDistance_angle +
+                ", isSus=" + isSus +
+                '}';
+    }
+    public String getString(){
+        return "PointWeldAloneParam{" +
+                "preHeatTime=" + preHeatTime +
+                ", sendSnSpeedFir=" + sendSnSpeedFir +
+                ", sendSnSumFir=" + sendSnSumFir +
+                ", sendSnSpeedSec=" + sendSnSpeedSec +
+                ", sendSnSumSec=" + sendSnSumSec +
+                ", stopSnStimeSec=" + stopSnStimeSec +
+                ", sendSnSpeedThird=" + sendSnSpeedThird +
+                ", sendSnSumThird=" + sendSnSumThird +
+                ", stopSnTimeThird=" + stopSnTimeThird +
+                ", sendSnSpeedFourth=" + sendSnSpeedFourth +
+                ", sendSnSumFourth=" + sendSnSumFourth +
+                ", stopSnTimeFourth=" + stopSnTimeFourth +
+                ", dipDistance=" + dipDistance +
+                ", upHeight=" + upHeight +
+                ", isSn=" + isSn +
+                ", isPause=" + isPause +
+                ", dipDistance_angle=" + dipDistance_angle +
                 ", isSus=" + isSus +
                 '}';
     }
@@ -496,11 +468,11 @@ public class PointWeldWorkParam extends PointParam {
         if (sendSnSumFourth != that.sendSnSumFourth) return false;
         if (stopSnTimeFourth != that.stopSnTimeFourth) return false;
         if (dipDistance != that.dipDistance) return false;
+        if (dipDistance_angle != that.dipDistance_angle) return false;
         if (upHeight != that.upHeight) return false;
         if (isSn != that.isSn) return false;
-        if (isPause != that.isPause) return false;
-        if (isOut != that.isOut) return false;
-        return isSus == that.isSus;
+        if (isSus != that.isSus) return false;
+        return isPause == that.isPause;
 
     }
 
@@ -520,11 +492,11 @@ public class PointWeldWorkParam extends PointParam {
         result = 31 * result + sendSnSumFourth;
         result = 31 * result + stopSnTimeFourth;
         result = 31 * result + dipDistance;
+        result = 31 * result + dipDistance_angle;
         result = 31 * result + upHeight;
         result = 31 * result + (isSn ? 1 : 0);
-        result = 31 * result + (isPause ? 1 : 0);
-        result = 31 * result + (isOut ? 1 : 0);
         result = 31 * result + (isSus ? 1 : 0);
+        result = 31 * result + (isPause ? 1 : 0);
         return result;
     }
 
@@ -548,7 +520,7 @@ public class PointWeldWorkParam extends PointParam {
             point.upHeight = source.readInt();
             point.isSn = source.readInt() != 0;
             point.isPause = source.readInt() != 0;
-            point.isOut = source.readInt() != 0;
+            point.dipDistance_angle = source.readInt();
             point.isSus = source.readInt() != 0;
             point.set_id(source.readInt());
             return point;
@@ -584,7 +556,7 @@ public class PointWeldWorkParam extends PointParam {
         dest.writeInt(upHeight);
         dest.writeInt(isSn?1:0);
         dest.writeInt(isPause?1:0);
-        dest.writeInt(isOut?1:0);
+        dest.writeInt(dipDistance_angle);
         dest.writeInt(isSus?1:0);
         dest.writeInt(get_id());
     }

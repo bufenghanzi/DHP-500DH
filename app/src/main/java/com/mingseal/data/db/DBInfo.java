@@ -123,16 +123,19 @@ public class DBInfo {
          */
         public static final String POINT_TYPE = "pointtype";
 
-        /**
-         * 创建Point表语
-         */
-        public static final String CREATE_POINT_TABLE = "create table if not exists " + POINT_TABLE + "(" + _ID
-                + " integer primary key, " + POINT_X + " integer, " + POINT_Y + " integer, " + POINT_Z + " integer, "
-                + POINT_U + " integer, " + POINT_PARAM_ID + " integer, " + POINT_TYPE + " text" + ");";
-        /**
-         * 删除Point表语
-         */
-        public static final String DROP_POINT_TABLE = "drop table " + POINT_TABLE;
+        public static String create_point_table(String taskname) {
+            return "create table if not exists " + POINT_TABLE + taskname + "(" + _ID
+                    + " integer primary key, " + POINT_X + " integer, " + POINT_Y + " integer, " + POINT_Z + " integer, "
+                    + POINT_U + " integer, " + POINT_PARAM_ID + " integer, " + POINT_TYPE + " text" + ");";
+        }
+
+        public static String drop_point_table(String taskname) {
+            return "drop table " + POINT_TABLE + taskname;
+        }
+
+        public static String alter_point_table(String taskname, String newTaskname) {
+            return "ALTER TABLE " + POINT_TABLE + taskname + " RENAME TO " + POINT_TABLE + newTaskname;
+        }
     }
 
     /**
@@ -197,180 +200,67 @@ public class DBInfo {
          * 四次停锡时间
          */
         public static final String STOPSNTIMEFOURTH = "stopSnTimeFourth";
-          /*
-         * 倾斜距离
-         */
+        /*
+       * 倾斜距离
+       */
         public static final String DIPDISTANCE = "dipDistance";
-          /*
-         * 抬起高度
-         */
+        /*
+       * 抬起高度
+       */
         public static final String UPHEIGHT = "upHeight";
-            /*
-         * 是否出锡
-         */
+        /*
+     * 是否出锡
+     */
         public static final String ISSN = "isSn";
-            /*
-         * 焊点是否暂停
-         */
+        /*
+     * 焊点是否暂停
+     */
         public static final String ISPAUSE = "isPause";
-            /*
-         * 焊点结束退出时是否抬起停顿标志
-         */
-        public static final String ISOUT = "isOut";
-            /*
-         * 下降焊锡前是否减速标志
-         */
+        /*
+     * 倾斜角度
+     */
+        public static final String DIPDISTANCE_ANGLE = "dipDistance_angle";
+        /*
+     * 下降焊锡前是否减速标志
+     */
         public static final String ISSUS = "isSus";
 
         /**
-         * 方案号
+         * 调用以生成作业表
+         *
+         * @param taskname 任务名
+         * @return 表名：独立点+任务名
          */
-//		public static final String PLAN="plan_id";
+        public static String create_work_table(String taskname) {
+            return "create table if not exists " + WORK_TABLE + taskname + "(" + _ID
+                    + " integer primary key, " + PREHEATTIME + " integer, " + SENDSNSPEEDFIR + " integer, "
+                    + SENDSNSUMFIR + " integer, " + SENDSNSPEEDSEC + " integer, " + SENDSNSUMSEC + " integer, " + STOPSNSTIMESEC + " BLOB, " + SENDSNSPEEDTHIRD + " integer, "
+                    + SENDSNSUMTHIRD + " integer, " + STOPSNTIMETHIRD + " integer," + SENDSNSPEEDFOURTH + " integer, " + SENDSNSUMFOURTH + " integer, " + STOPSNTIMEFOURTH + " integer, "
+                    + DIPDISTANCE + " integer, " + UPHEIGHT + " integer, " + ISSN + " integer, " + ISPAUSE + " integer, " + DIPDISTANCE_ANGLE + " integer, " + ISSUS + " integer"
+                    + ");";
+        }
 
         /**
-         * 创建作业点表语
+         * 删除表
+         *
+         * @param taskname
+         * @return
          */
-        public static final String CREATE_WORK_TABLE = "create table if not exists " + WORK_TABLE + "(" + _ID
-                + " integer primary key, " + PREHEATTIME + " integer, " + SENDSNSPEEDFIR + " integer, "
-                + SENDSNSUMFIR + " integer, " + SENDSNSPEEDSEC + " integer, " + SENDSNSUMSEC + " integer, " + STOPSNSTIMESEC + " BLOB, "+ SENDSNSPEEDTHIRD + " integer, "
-                + SENDSNSUMTHIRD + " integer, "+ STOPSNTIMETHIRD + " integer," + SENDSNSPEEDFOURTH + " integer, " + SENDSNSUMFOURTH + " integer, " + STOPSNTIMEFOURTH + " integer, "
-                + DIPDISTANCE + " integer, " + UPHEIGHT + " integer, " + ISSN + " integer, " + ISPAUSE + " integer, " + ISOUT + " integer, "+ ISSUS + " integer"
-                + ");";
+        public static String drop_work_table(String taskname) {
+            return "drop table " + WORK_TABLE + taskname;
+        }
 
         /**
-         * 删除作业表语
+         * 更改表名
+         *
+         * @param taskname
+         * @param newTaskname
+         * @return
          */
-        public static final String DROP_WORK_TABLE = "drop table " + WORK_TABLE;
+        public static String alter_work_table(String taskname, String newTaskname) {
+            return "ALTER TABLE " + WORK_TABLE + taskname + " RENAME TO " + WORK_TABLE + newTaskname;
+        }
 
-    }
-
-    /**
-     * 面起始点
-     */
-    public static class TableFaceStart {
-        /**
-         * 面起始点表名称
-         */
-        public static final String FACE_START_TABLE = "face_start_table";
-
-        /**
-         * 主键
-         */
-        public static final String _ID = "_id";
-        /**
-         * 出胶前延时
-         */
-        public static final String OUT_GLUE_TIME_PREV = "outGlueTimePrev";
-        /**
-         * 出胶(后)延时
-         */
-        public static final String OUT_GLUE_TIME = "outGlueTime";
-        /**
-         * 轨迹速度
-         */
-        public static final String MOVE_SPEED = "moveSpeed";
-        /**
-         * 是否出胶
-         */
-        public static final String IS_OUT_GLUE = "isOutGlue";
-        /**
-         * 停胶延时
-         */
-        public static final String STOP_GLUE_TIME = "stopGlueTime";
-        /**
-         * 起始方向 true:x方向 false:y方向
-         */
-        public static final String START_DIR = "startDir";
-        /**
-         * 点胶口
-         */
-        public static final String GLUE_PORT = "gluePort";
-
-        /**
-         * 创建面起始点的sql
-         */
-        public static final String CREATE_FACE_START_TABLE = "create table if not exists " + FACE_START_TABLE + "("
-                + _ID + " integer primary key autoincrement, " + OUT_GLUE_TIME_PREV + " integer, " + OUT_GLUE_TIME
-                + " integer, " + MOVE_SPEED + " integer, " + IS_OUT_GLUE + " integer, " + STOP_GLUE_TIME + " integer, "
-                + START_DIR + " integer, " + GLUE_PORT + " BLOB" + ");";
-
-        /**
-         * 删除面起始点的sql
-         */
-        public static final String DROP_FACE_START_TABLE = "drop table " + FACE_START_TABLE;
-    }
-
-    /**
-     * 面结束点
-     */
-    public static class TableFaceEnd {
-
-        /**
-         * 面结束点名称
-         */
-        public static final String FACE_END_TABLE = "face_end_table";
-        /**
-         * 主键
-         */
-        public static final String _ID = "_id";
-        /**
-         * 停胶延时
-         */
-        public static final String STOP_GLUE_TIME = "stopGlueTime";
-        /**
-         * 抬起高度
-         */
-        public static final String UP_HEIGHT = "upHeight";
-        /**
-         * 直线条数
-         */
-        public static final String LINE_NUM = "lineNum";
-        /**
-         * 是否暂停
-         */
-        public static final String IS_PAUSE = "isPause";
-
-        /**
-         * 创建面结束点的sql
-         */
-        public static final String CREATE_FACE_END_TABLE = "create table if not exists " + FACE_END_TABLE + "(" + _ID
-                + " integer primary key autoincrement, " + STOP_GLUE_TIME + " integer, " + UP_HEIGHT + " integer, "
-                + LINE_NUM + " integer, " + IS_PAUSE + " integer" + ");";
-
-        /**
-         * 删除面结束点的sql
-         */
-        public static final String DROP_FACE_END_TABLE = "drop table " + FACE_END_TABLE;
-    }
-
-    /**
-     * @author 商炎炳
-     */
-    public static class TableClear {
-
-        /**
-         * 清胶点数据表名
-         */
-        public static final String CLEAR_TABLE = "clear_table";
-        /**
-         * 清胶点主键
-         */
-        public static final String _ID = "_id";
-        /**
-         * 清胶延时
-         */
-        public static final String CLEAR_GLUE_TIME = "clearGlueTime";
-
-        /**
-         * 创建清胶点的sql
-         */
-        public static final String CREATE_CLEAR_TABLE = "create table if not exists " + CLEAR_TABLE + "(" + _ID
-                + " integer primary key autoincrement, " + CLEAR_GLUE_TIME + " integer" + ");";
-
-        /**
-         * 删除清胶点的sql
-         */
-        public static final String DROP_CLEAR_TABLE = "drop table " + CLEAR_TABLE;
     }
 
     /**
@@ -411,18 +301,21 @@ public class DBInfo {
          * 预热时间
          */
         public static final String PREHEATTIME = "preHeatTime";
-        /**
-         * 创建线起始点表语
-         */
-        public static final String CREATE_LINE_START_TABLE = "create table if not exists " + LINE_START_TABLE + "("
-                + _ID + " integer primary key autoincrement, " + SENDSNSPEED + " integer, " + PRESENDSNSUM
-                + " integer, " + PRESENDSNSPEED + " integer, " + ISSN + " integer, " + MOVESPEED + " integer, "
-                + PREHEATTIME + " integer" + ");";
 
-        /**
-         * 删除线起始点表语
-         */
-        public static final String DROP_LINE_START_TABLE = "drop table " + LINE_START_TABLE;
+        public static String create_line_start_table(String taskname) {
+            return "create table if not exists " + LINE_START_TABLE + taskname + "("
+                    + _ID + " integer primary key autoincrement, " + SENDSNSPEED + " integer, " + PRESENDSNSUM
+                    + " integer, " + PRESENDSNSPEED + " integer, " + ISSN + " integer, " + MOVESPEED + " integer, "
+                    + PREHEATTIME + " integer" + ");";
+        }
+
+        public static String drop_line_start_table(String taskname) {
+            return "drop table " + LINE_START_TABLE + taskname;
+        }
+
+        public static String alter_line_start_table(String taskname, String newTaskname) {
+            return "ALTER TABLE " + LINE_START_TABLE + taskname + " RENAME TO " + LINE_START_TABLE + newTaskname;
+        }
     }
 
     /**
@@ -453,17 +346,21 @@ public class DBInfo {
          * 是否出锡
          */
         public static final String ISSN = "isSn";
-        /**
-         * 创建线中间点表语
-         */
-        public static final String CREATE_LINE_Mid_TABLE = "create table if not exists " + LINE_MID_TABLE + "(" + _ID
-                + " integer primary key autoincrement, " + MOVESPEED + " integer, " + SENDSNSPEED + " integer, "
-                + STOPSNTIME + " integer, " + ISSN + " integer " + ");";
 
-        /**
-         * 删除线中间点表语
-         */
-        public static final String DROP_LINE_MID_TABLE = "drop table " + LINE_MID_TABLE;
+
+        public static String create_line_mid_table(String taskname) {
+            return "create table if not exists " + LINE_MID_TABLE + taskname + "(" + _ID
+                    + " integer primary key autoincrement, " + MOVESPEED + " integer, " + SENDSNSPEED + " integer, "
+                    + STOPSNTIME + " integer, " + ISSN + " integer " + ");";
+        }
+
+        public static String drop_line_mid_table(String taskname) {
+            return "drop table " + LINE_MID_TABLE + taskname;
+        }
+
+        public static String alter_line_mid_table(String taskname, String newTaskname) {
+            return "ALTER TABLE " + LINE_MID_TABLE + taskname + " RENAME TO " + LINE_MID_TABLE + newTaskname;
+        }
     }
 
     /**
@@ -491,17 +388,19 @@ public class DBInfo {
          */
         public static final String ISPAUSE = "isPause";
 
-        /**
-         * 创建线结束点表语
-         */
-        public static final String CREATE_LINE_END_TABLE = "create table if not exists " + LINE_END_TABLE + "(" + _ID
-                + " integer primary key autoincrement, " + STOPSNTIME + " integer, " + UPHEIGHT
-                + " integer, " + ISPAUSE + " integer"  + ");";
+        public static String create_line_end_table(String taskname) {
+            return "create table if not exists " + LINE_END_TABLE + taskname + "(" + _ID
+                    + " integer primary key autoincrement, " + STOPSNTIME + " integer, " + UPHEIGHT
+                    + " integer, " + ISPAUSE + " integer" + ");";
+        }
 
-        /**
-         * 删除线结束点表语
-         */
-        public static final String DROP_LINE_END_TABLE = "drop table " + LINE_END_TABLE;
+        public static String drop_line_end_table(String taskname) {
+            return "drop table " + LINE_END_TABLE + taskname;
+        }
+
+        public static String alter_line_end_table(String taskname, String newTaskname) {
+            return "ALTER TABLE " + LINE_END_TABLE + taskname + " RENAME TO " + LINE_END_TABLE + newTaskname;
+        }
 
     }
 
@@ -571,19 +470,23 @@ public class DBInfo {
          */
         public static final String INPUT_PORT = "inputPort";
 
-        /**
-         * 创建输出IO表语
-         */
-        public static final String CREATE_WELD_BLOW_TABLE = "create table if not exists " + WELD_BLOW_TABLE + "(" + _ID
-                + " integer primary key autoincrement, " + GO_TIME_PREV + " integer, " + GO_TIME_NEXT + " integer, "
-                + INPUT_PORT + " BLOB" + ");";
 
-        /**
-         * 删除输出IO表语
-         */
-        public static final String DROP_WELD_BLOW_TABLE = "drop table " + WELD_BLOW_TABLE;
+        public static String create_WELD_BLOW_table(String taskname) {
+            return "create table if not exists " + WELD_BLOW_TABLE + taskname + "(" + _ID
+                    + " integer primary key autoincrement, " + GO_TIME_PREV + " integer, " + GO_TIME_NEXT + " integer, "
+                    + INPUT_PORT + " BLOB" + ");";
+        }
+
+        public static String drop_WELD_BLOW_table(String taskname) {
+            return "drop table " + WELD_BLOW_TABLE + taskname;
+        }
+
+        public static String alter_WELD_BLOW_table(String taskname, String newTaskname) {
+            return "ALTER TABLE " + WELD_BLOW_TABLE + taskname + " RENAME TO " + WELD_BLOW_TABLE + newTaskname;
+        }
 
     }
+
     /**
      * 点胶输入IO
      */

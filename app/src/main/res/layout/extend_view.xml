@@ -550,22 +550,35 @@
                 android:background="@android:color/transparent"
                 android:button="@drawable/checkbox_iphone"
                 android:checked="true"/>
-            <ToggleButton
-                android:id="@+id/switch_isOut"
+            <TextView
+                android:id="@+id/extend_jiaodu"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
-                android:background="@android:color/transparent"
-                android:button="@drawable/checkbox_iphone"
-                android:checked="false"/>
+                android:text="@string/activity_weld_work_angle"
+                android:textColor="#000000"
+                />
+
+            <EditText
+                android:id="@+id/et_dipDistance_angle"
+                android:layout_width="130dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@id/extend_jiaodu"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#000000"/>
             <TextView
-                android:id="@+id/extend_isOut"
+                android:id="@+id/extend_dipDistance_angle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_toLeftOf="@id/switch_isOut"
-                android:text="@string/activity_glue_alone_isOut"
+                android:layout_toLeftOf="@id/et_dipDistance_angle"
+                android:text="@string/activity_weld_work_xiecha_angle"
                 android:textColor="#000000"
                 />
 

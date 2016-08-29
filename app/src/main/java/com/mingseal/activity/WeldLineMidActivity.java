@@ -145,6 +145,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
     private EditText et_stopSnTime;
     private int sendSnSpeed;
     private int stopSnTime;
+    private String taskname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,18 +160,19 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
                 .getParcelableExtra(MyPopWindowClickListener.POPWINDOW_KEY);
         mFlag = intent.getIntExtra(MyPopWindowClickListener.FLAG_KEY, 0);
         mType = intent.getIntExtra(MyPopWindowClickListener.TYPE_KEY, 0);
+        taskname=intent.getStringExtra("taskname");
         defaultNum = SharePreferenceUtils.getParamNumberFromPref(
                 WeldLineMidActivity.this,
                 SettingParam.DefaultNum.ParamGlueLineMidNumber);
         weldMidDao = new WeldLineMidDao(WeldLineMidActivity.this);
-        weldMidLists = weldMidDao.findAllWeldLineMidParams();
+        weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
         if (weldMidLists == null || weldMidLists.isEmpty()) {
             weldMid = new PointWeldLineMidParam();
             weldMid.set_id(param_id);
-            weldMidDao.insertWeldLineMid(weldMid);
+            weldMidDao.insertWeldLineMid(weldMid,taskname);
             // 插入主键id
         }
-        weldMidLists = weldMidDao.findAllWeldLineMidParams();
+        weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
 
         popupViews = new ArrayList<>();
         initPicker();
@@ -352,7 +354,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
      * @author wj
      */
     protected void SetDateAndRefreshUI() {
-        weldMidLists = weldMidDao.findAllWeldLineMidParams();
+        weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
         ArrayList<Integer> list = new ArrayList<>();
         for (PointWeldLineMidParam pointWeldLineMidParam : weldMidLists) {
             list.add(pointWeldLineMidParam.get_id());
@@ -383,7 +385,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
     protected void save() {
         View extendView = popupListView.getItemViews().get(currentClickNum)
                 .getExtendView();
-        weldMidLists = weldMidDao.findAllWeldLineMidParams();
+        weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
         ArrayList<Integer> list = new ArrayList<>();
         for (PointWeldLineMidParam pointWeldLineMidParam : weldMidLists) {
             list.add(pointWeldLineMidParam.get_id());
@@ -414,7 +416,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
                 }
                 if (flag) {
                     // 更新数据
-                    int rowid = weldMidDao.upDateWeldLineMid(upLineMidParam);
+                    int rowid = weldMidDao.upDateWeldLineMid(upLineMidParam,taskname);
                     // System.out.println("影响的行数"+rowid);
                     update_id.put(upLineMidParam.get_id(), upLineMidParam);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
@@ -422,9 +424,9 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
                     // System.out.println(glueAloneDao.getPointGlueAloneParamById(currentTaskNum).toString());
                 } else {
                     // 插入一条数据
-                    long rowid = weldMidDao.insertWeldLineMid(upLineMidParam);
+                    long rowid = weldMidDao.insertWeldLineMid(upLineMidParam,taskname);
                     firstExist = true;
-                    weldMidLists = weldMidDao.findAllWeldLineMidParams();
+                    weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
                     Log.i(TAG, "保存之后新方案-->" + weldMidLists.toString());
                     ToastUtil.displayPromptInfo(WeldLineMidActivity.this,
                             getResources().getString(R.string.save_success));
@@ -453,7 +455,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
      * @author wj
      */
     private void refreshTitle() {
-        weldMidLists = weldMidDao.findAllWeldLineMidParams();
+        weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
         // popupListView->pupupview->title
         for (PointWeldLineMidParam pointWeldLineMidParam : weldMidLists) {
 
@@ -602,7 +604,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
             }
         }
         System.out.println("返回的方案号为================》" + mIndex);
-        point.setPointParam(weldMidDao.getPointWeldLineMidParam(mIndex));
+        point.setPointParam(weldMidDao.getPointWeldLineMidParam(mIndex,taskname));
         System.out.println("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldLineMidParam>> list = new ArrayList<Map<Integer, PointWeldLineMidParam>>();
@@ -669,7 +671,7 @@ public class WeldLineMidActivity extends AutoLayoutActivity implements OnClickLi
                 public void setViewsElements(View view) {
 //					TextView textView = (TextView) view
 //							.findViewById(R.id.title);
-                    weldMidLists = weldMidDao.findAllWeldLineMidParams();
+                    weldMidLists = weldMidDao.findAllWeldLineMidParams(taskname);
                     ImageView title_num = (ImageView) view
                             .findViewById(R.id.title_num);
                     if (p == 1) {// 方案列表第一位对应一号方案

@@ -33,6 +33,7 @@ import java.util.List;
  */
 public class ParamsSetting {
 
+	private  String taskname;
 	/**
 	 * 独立点的数据库操作改为作业点
 	 */
@@ -69,7 +70,7 @@ public class ParamsSetting {
 	 * 
 	 * @param context
 	 */
-	public ParamsSetting(Context context) {
+	public ParamsSetting(Context context,String taskname) {
 		weldWorkDao = new WeldWorkDao(context);
 		weldLineStartDao = new WeldLineStartDao(context);
 		weldLineMidDao = new WeldLineMidDao(context);
@@ -77,6 +78,7 @@ public class ParamsSetting {
 		weldBlowDao = new WeldBlowDao(context);
 		weldInputDao = new WeldInputDao(context);
 		weldOutputDao = new WeldOutputDao(context);
+		this.taskname=taskname;
 	}
 
 	/**
@@ -169,7 +171,7 @@ public class ParamsSetting {
 
 		// 获取所有独立点的参数方案
 		if (!aloneIDs.isEmpty()) {
-			List<PointWeldWorkParam> aloneParams = weldWorkDao.getWeldWorkParamsByIDs(aloneIDs);
+			List<PointWeldWorkParam> aloneParams = weldWorkDao.getWeldWorkParamsByIDs(aloneIDs,taskname);
 			// 将方案和对应方案主键放到一个HashMap中
 			for (int i = 0; i < aloneIDs.size(); i++) {
 				aloneMaps.put(aloneIDs.get(i), aloneParams.get(i));
@@ -178,7 +180,7 @@ public class ParamsSetting {
 
 		// 获取所有线起始点的参数方案
 		if (!lineStartIDs.isEmpty()) {
-			List<PointWeldLineStartParam> lineStartParams = weldLineStartDao.getPointWeldLineStartParamsByIDs(lineStartIDs);
+			List<PointWeldLineStartParam> lineStartParams = weldLineStartDao.getPointWeldLineStartParamsByIDs(lineStartIDs,taskname);
 			for (int i = 0; i < lineStartIDs.size(); i++) {
 				lineStartMaps.put(lineStartIDs.get(i), lineStartParams.get(i));
 			}
@@ -186,7 +188,7 @@ public class ParamsSetting {
 
 		// 获取所有线中间点的参数方案
 		if (!lineMidIDs.isEmpty()) {
-			List<PointWeldLineMidParam> lineMidParams = weldLineMidDao.getPointWeldLineMidParamsByIDs(lineMidIDs);
+			List<PointWeldLineMidParam> lineMidParams = weldLineMidDao.getPointWeldLineMidParamsByIDs(lineMidIDs,taskname);
 
 			for (int i = 0; i < lineMidIDs.size(); i++) {
 				lineMidMaps.put(lineMidIDs.get(i), lineMidParams.get(i));
@@ -195,7 +197,7 @@ public class ParamsSetting {
 
 		// 获取所有线结束点的参数方案
 		if (!lineEndIDs.isEmpty()) {
-			List<PointWeldLineEndParam> lineEndParams = weldLineEndDao.getPointWeldLineEndParamsByIDs(lineEndIDs);
+			List<PointWeldLineEndParam> lineEndParams = weldLineEndDao.getPointWeldLineEndParamsByIDs(lineEndIDs,taskname);
 
 			for (int i = 0; i < lineEndIDs.size(); i++) {
 				lineEndMaps.put(lineEndIDs.get(i), lineEndParams.get(i));
@@ -203,7 +205,7 @@ public class ParamsSetting {
 		}
 		// 获取所有吹锡点的参数方案
 		if (!blowIDs.isEmpty()) {
-			List<PointWeldBlowParam> clearParams = weldBlowDao.getWeldOutputIOParamsByIDs(blowIDs);
+			List<PointWeldBlowParam> clearParams = weldBlowDao.getWeldOutputIOParamsByIDs(blowIDs,taskname);
 			for (int i = 0; i < blowIDs.size(); i++) {
 				blowMaps.put(blowIDs.get(i), clearParams.get(i));
 			}

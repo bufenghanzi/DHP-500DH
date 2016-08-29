@@ -148,6 +148,10 @@ public class TaskListBaseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
+	public List<PointTask> geTaskList() {
+		return mOriginalValues;
+	}
+
 	static class ViewHolder {
 		private TextView tv_task;// 任务名称
 	}

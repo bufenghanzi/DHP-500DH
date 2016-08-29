@@ -36,7 +36,7 @@ public class WeldLineEndDao {
 	 * @param
 	 * @return  影响的行数，0表示错误
 	 */
-	public int upDateWeldLineEnd(PointWeldLineEndParam pointWeldLineEndParam){
+	public int upDateWeldLineEnd(PointWeldLineEndParam pointWeldLineEndParam,String taskname){
 		int rowid = 0;
 		try {
 			db = dbHelper.getWritableDatabase();
@@ -45,7 +45,7 @@ public class WeldLineEndDao {
 			values.put(TableLineEnd.STOPSNTIME, pointWeldLineEndParam.getStopSnTime());
 			values.put(TableLineEnd.UPHEIGHT, pointWeldLineEndParam.getUpHeight());
 			values.put(TableLineEnd.ISPAUSE, (boolean) pointWeldLineEndParam.isPause() ? 1 : 0);
-			rowid = db.update(TableLineEnd.LINE_END_TABLE, values, TableLineEnd._ID +"=?", new String[]{String.valueOf(pointWeldLineEndParam.get_id())});
+			rowid = db.update(TableLineEnd.LINE_END_TABLE+taskname, values, TableLineEnd._ID +"=?", new String[]{String.valueOf(pointWeldLineEndParam.get_id())});
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -62,7 +62,7 @@ public class WeldLineEndDao {
 	 * @param pointWeldLineEndParam
 	 * @return pointWeldLineEndParam
 	 */
-	public long insertWeldLineEnd(PointWeldLineEndParam pointWeldLineEndParam) {
+	public long insertWeldLineEnd(PointWeldLineEndParam pointWeldLineEndParam,String taskname) {
 		long rowID = 0;
 		db = dbHelper.getWritableDatabase();
 		try {
@@ -72,7 +72,7 @@ public class WeldLineEndDao {
 			values.put(TableLineEnd.STOPSNTIME, pointWeldLineEndParam.getStopSnTime());
 			values.put(TableLineEnd.UPHEIGHT, pointWeldLineEndParam.getUpHeight());
 			values.put(TableLineEnd.ISPAUSE, (boolean) pointWeldLineEndParam.isPause() ? 1 : 0);
-			rowID = db.insert(TableLineEnd.LINE_END_TABLE, TableLineEnd._ID, values);
+			rowID = db.insert(TableLineEnd.LINE_END_TABLE+taskname, TableLineEnd._ID, values);
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,14 +90,14 @@ public class WeldLineEndDao {
 	 *
 	 * @return List<PointWeldLineEndParam>
 	 */
-	public List<PointWeldLineEndParam> findAllWeldLineEndParams() {
+	public List<PointWeldLineEndParam> findAllWeldLineEndParams(String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldLineEndParam> endLists = null;
 		PointWeldLineEndParam end = null;
 
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TableLineEnd.LINE_END_TABLE, columns, null, null, null, null, null);
+			cursor = db.query(TableLineEnd.LINE_END_TABLE+taskname, columns, null, null, null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
                 endLists = new ArrayList<PointWeldLineEndParam>();
                 while (cursor.moveToNext()) {
@@ -128,12 +128,12 @@ public class WeldLineEndDao {
 	 * @param id
 	 * @return PointWeldLineEndParam
 	 */
-	public PointWeldLineEndParam getPointWeldLineEndParamByID(int id) {
+	public PointWeldLineEndParam getPointWeldLineEndParamByID(int id,String taskname) {
 		PointWeldLineEndParam param = new PointWeldLineEndParam();
 		db = dbHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TableLineEnd.LINE_END_TABLE, columns, TableLineEnd._ID + "=?",
+			cursor = db.query(TableLineEnd.LINE_END_TABLE+taskname, columns, TableLineEnd._ID + "=?",
 					new String[] { String.valueOf(id) }, null, null, null);
 			db.beginTransaction();
 			if (cursor != null && cursor.getCount() > 0) {
@@ -164,7 +164,7 @@ public class WeldLineEndDao {
 	 * @param ids
 	 * @return List<PointWeldLineEndParam>
 	 */
-	public List<PointWeldLineEndParam> getPointWeldLineEndParamsByIDs(List<Integer> ids) {
+	public List<PointWeldLineEndParam> getPointWeldLineEndParamsByIDs(List<Integer> ids,String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldLineEndParam> params = new ArrayList<>();
 		PointWeldLineEndParam param = null;
@@ -172,7 +172,7 @@ public class WeldLineEndDao {
 		try {
 			db.beginTransaction();
 			for (Integer id : ids) {
-				cursor = db.query(TableLineEnd.LINE_END_TABLE, columns, TableLineEnd._ID + "=?",
+				cursor = db.query(TableLineEnd.LINE_END_TABLE+taskname, columns, TableLineEnd._ID + "=?",
 						new String[] { String.valueOf(id) }, null, null, null);
 				if (cursor != null && cursor.getCount() > 0) {
 					while (cursor.moveToNext()) {
@@ -204,10 +204,10 @@ public class WeldLineEndDao {
 	 * @param pointWeldLineEndParam
 	 * @return 当前方案的主键
 	 */
-	public int getLineEndParamIDByParam(PointWeldLineEndParam pointWeldLineEndParam) {
+	public int getLineEndParamIDByParam(PointWeldLineEndParam pointWeldLineEndParam,String taskname) {
 		int id = -1;
 		db = dbHelper.getReadableDatabase();
-		Cursor cursor = db.query(TableLineEnd.LINE_END_TABLE, columns,
+		Cursor cursor = db.query(TableLineEnd.LINE_END_TABLE+taskname, columns,
 				TableLineEnd.STOPSNTIME + "=? and " + TableLineEnd.UPHEIGHT + "=? and "
 						+ TableLineEnd.ISPAUSE + "=? ",
 				new String[] { String.valueOf(pointWeldLineEndParam.getStopSnTime()),
@@ -222,7 +222,7 @@ public class WeldLineEndDao {
 		db.close();
 		if (-1 == id) {
 			db = dbHelper.getReadableDatabase();
-			cursor = db.query(TableLineEnd.LINE_END_TABLE, columns,
+			cursor = db.query(TableLineEnd.LINE_END_TABLE+taskname, columns,
 					TableLineEnd.STOPSNTIME + "=? and " + TableLineEnd.UPHEIGHT + "=? and "
 							+ TableLineEnd.ISPAUSE + "=? ",
 					new String[] { String.valueOf(pointWeldLineEndParam.getStopSnTime()),
@@ -235,9 +235,7 @@ public class WeldLineEndDao {
 				}
 			}
 			db.close();
-			if(-1 == id){
-				id = (int) insertWeldLineEnd(pointWeldLineEndParam);
-			}
+
 		}
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.close();
@@ -245,9 +243,9 @@ public class WeldLineEndDao {
 		return id;
 	}
 
-	public int deleteParam(PointWeldLineEndParam param) {
+	public int deleteParam(PointWeldLineEndParam param,String taskname) {
 		db = dbHelper.getWritableDatabase();
-		int rowID = db.delete(TableLineEnd.LINE_END_TABLE, TableLineEnd._ID + "=?",
+		int rowID = db.delete(TableLineEnd.LINE_END_TABLE+taskname, TableLineEnd._ID + "=?",
 				new String[] { String.valueOf(param.get_id()) });
 
 		db.close();

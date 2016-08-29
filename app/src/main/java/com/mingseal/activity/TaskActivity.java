@@ -3,6 +3,7 @@ package com.mingseal.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,10 +41,12 @@ import com.mingseal.communicate.NetManager;
 import com.mingseal.communicate.SocketInputThread;
 import com.mingseal.communicate.SocketThreadManager;
 import com.mingseal.data.dao.PointDao;
+import com.mingseal.data.dao.WeldBlowDao;
 import com.mingseal.data.dao.WeldLineEndDao;
 import com.mingseal.data.dao.WeldLineMidDao;
 import com.mingseal.data.dao.WeldLineStartDao;
 import com.mingseal.data.dao.WeldWorkDao;
+import com.mingseal.data.db.DBInfo;
 import com.mingseal.data.manager.MessageMgr;
 import com.mingseal.data.param.CmdParam;
 import com.mingseal.data.param.OrderParam;
@@ -387,10 +390,12 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 	private int StopRetryTimes=5;//重传次数
 	Timer mTimer;
 	TimerTask mTimerTask;
-	private int mlast_xPulse = 0;
-	private int mlast_yPulse = 0;
-	private int mlast_zPulse = 0;
-	private int mlast_uPulse = 0;
+	private float mlast_xPulse = 0;
+	private float mlast_yPulse = 0;
+	private float mlast_zPulse = 0;
+	private float mlast_uPulse = 0;
+	private SQLiteDatabase mSqLiteDatabase;
+	private WeldBlowDao weldBlowDao;
 
 	/**
 	 * 判断是否是第一次打开popwindow
@@ -475,8 +480,8 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 
 		AutoUtils.autoSize(mHeaderView);
 		mList.addHeaderView(mHeaderView);
-		pointDao = new PointDao(TaskActivity.this);
-		mAdapter = new TaskMainBaseAdapter(this, TaskActivity.this);
+		initDao(task.getTaskName());
+		mAdapter = new TaskMainBaseAdapter(this, TaskActivity.this,task.getTaskName());
 		new GetPointsAsynctask().execute(task.getPointids());
 
 		handler = new RevHandler();
@@ -485,7 +490,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		NetManager.instance().init(this);
 
 		initComponent();
-		initDao();
 		tv_title.setText(task.getTaskName());
 
 		singleSwitch.setOnCheckedChangeListener(new myCheckedChangeListener());
@@ -790,12 +794,22 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 
 	/**
 	 * 加载自定义的Dao
+	 * @param taskName
 	 */
-	private void initDao() {
+	private void initDao(String taskName) {
+		mSqLiteDatabase = this.openOrCreateDatabase(DBInfo.DB.DB_NAME,MODE_PRIVATE,null);
+		mSqLiteDatabase.execSQL(DBInfo.TableWork.create_work_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineStart.create_line_start_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineMid.create_line_mid_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableLineEnd.create_line_end_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TableWeldBlow.create_WELD_BLOW_table(taskName));
+		mSqLiteDatabase.execSQL(DBInfo.TablePoint.create_point_table(taskName));
+		pointDao = new PointDao(TaskActivity.this);
 		weldWorkDao = new WeldWorkDao(this);
 		weldLineStartDao = new WeldLineStartDao(this);
 		weldLineMidDao = new WeldLineMidDao(this);
 		weldLineEndDao = new WeldLineEndDao(this);
+		weldBlowDao=new WeldBlowDao(this);
 
 	}
 
@@ -1262,49 +1276,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		return true;
 	}
 
-	/**
-	 * 下载之前要判断独立点,线结束点,面结束点的抬起高度(放到异步线程里去，这里不需要了！！！)
-	 * 
-	 * @param points
-	 * @return false(抬起高度过高),true(一切正常)
-	 */
-	private boolean checkUpHeightValidity(List<Point> points) {
-		// 独立点参数改为作业点
-		PointWeldWorkParam pointWeldWorkParam = null;
-		// 线结束点参数改为焊锡结束点
-		PointWeldLineEndParam pointWeldLineEndParam = null;
 
-		Point point;
-		// 类型
-		PointType pointType = PointType.POINT_NULL;
-		// Point的任务参数序列
-		int id = -1;
-		for (int i = 0; i < points.size(); i++) {
-			point = points.get(i);
-			pointType = getPointType(point);
-			id = point.getPointParam().get_id();
-			if (pointType.equals(PointType.POINT_GLUE_ALONE)) {
-				// 如果等于独立点
-				pointWeldWorkParam = weldWorkDao.getPointWeldWorkParamById(id);
-				if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < pointWeldWorkParam.getUpHeight()) {
-					// Z轴行程小于抬起高度
-					ToastUtil.displayPromptInfo(this, "作业点的抬起高度过高");
-					selectRadioIDCur = i;
-					return false;
-				}
-			} else if (pointType.equals(PointType.POINT_GLUE_LINE_END)) {
-				// 如果为线结束点
-				pointWeldLineEndParam = weldLineEndDao.getPointWeldLineEndParamByID(id);
-				if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < pointWeldLineEndParam.getUpHeight()) {
-					// Z轴行程小于抬起高度
-					ToastUtil.displayPromptInfo(this, "线结束点的抬起高度过高");
-					selectRadioIDCur = i;
-					return false;
-				}
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * 保存页面中的信息并返回到之前的TaskListActivity
@@ -1366,6 +1338,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				extras.putParcelable(MyPopWindowClickListener.POPWINDOW_KEY, mPointsCur.get(selectRadioIDCur));
 				extras.putInt(MyPopWindowClickListener.FLAG_KEY, 1);// 1代表更新数据
 				extras.putInt(MyPopWindowClickListener.TYPE_KEY, 1);// 1代表要显示方案
+				extras.putString("taskname",task.getTaskName());
 				intent.putExtras(extras);
 				startActivityForResult(intent, requestCode);
 //				overridePendingTransition(R.anim.in_from_right, R.anim.out_from_left);
@@ -1770,7 +1743,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				popMenu = new MyPopWindowClickListener(TaskActivity.this);
 				mPopupWindow = popMenu.getMenu();
 			}
-			popMenu.setPointLists(mPointsCur, selectRadioIDCur, 0, mAdapter);
+			popMenu.setPointLists(mPointsCur, selectRadioIDCur, 0, mAdapter,task.getTaskName());
 			// mPopupWindow.setFocusable(true);
 			mPopupWindow.setOutsideTouchable(true); // 设置点击屏幕其它地方弹出框消失
 			/*=================== begin ===================*/
@@ -1803,9 +1776,9 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		case R.id.rl_dingwei:// 定位
 			Log.d(TAG, "--------->定位");
 			if (!mPointsCur.isEmpty()) {
-				OrderParam.INSTANCE.setnXCoord(mPointsCur.get(selectRadioIDCur).getX());
-				OrderParam.INSTANCE.setnYCoord(mPointsCur.get(selectRadioIDCur).getY());
-				OrderParam.INSTANCE.setnZCoord(mPointsCur.get(selectRadioIDCur).getZ());
+				OrderParam.INSTANCE.setnXCoord(RobotParam.INSTANCE.XJourney2Pulse(mPointsCur.get(selectRadioIDCur).getX()));
+				OrderParam.INSTANCE.setnYCoord(RobotParam.INSTANCE.YJourney2Pulse(mPointsCur.get(selectRadioIDCur).getY()));
+				OrderParam.INSTANCE.setnZCoord(RobotParam.INSTANCE.ZJourney2Pulse(mPointsCur.get(selectRadioIDCur).getZ()));
 				OrderParam.INSTANCE.setnSpeed(200);
 				MessageMgr.INSTANCE.setCurCoord();
 			} else {
@@ -2280,8 +2253,21 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 
 		@Override
 		protected Boolean doInBackground(Object... params) {
-			mPointsCur = pointDao.findALLPointsByIdLists((List<Integer>) params[0]);
-
+			mPointsCur = pointDao.findALLPointsByIdLists((List<Integer>) params[0],task.getTaskName());
+			for (Point point:mPointsCur) {
+				if (point.getX()>RobotParam.INSTANCE.GetXJourney()){
+					point.setX(RobotParam.INSTANCE.GetXJourney());
+				}
+				if(point.getY()>RobotParam.INSTANCE.GetYJourney()){
+					point.setY(RobotParam.INSTANCE.GetYJourney());
+				}
+				if (point.getZ()>RobotParam.INSTANCE.GetZJourney()){
+					point.setZ(RobotParam.INSTANCE.GetZJourney());
+				}
+				if (point.getU()>RobotParam.INSTANCE.GetUJourney()){
+					point.setU(RobotParam.INSTANCE.GetUJourney());
+				}
+			}
 			return true;
 		}
 
@@ -2354,9 +2340,9 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 			}
 			// 获取所有独立点的参数方案
-			List<PointWeldWorkParam> aloneParams = weldWorkDao.getWeldWorkParamsByIDs(aloneIDs);
+			List<PointWeldWorkParam> aloneParams = weldWorkDao.getWeldWorkParamsByIDs(aloneIDs,task.getTaskName());
 			// 获取所有线结束点的参数方案
-			List<PointWeldLineEndParam> lineEndParams = weldLineEndDao.getPointWeldLineEndParamsByIDs(lineEndIDs);
+			List<PointWeldLineEndParam> lineEndParams = weldLineEndDao.getPointWeldLineEndParamsByIDs(lineEndIDs,task.getTaskName());
 //			// 获取所有线中间点的参数方案
 //			List<PointGlueLineMidParam> lineMidParams = weldLineMidDao.getPointGlueLineMidParamsByIDs(lineMidIDs);
 //			// 获取所有面起始点的参数方案
@@ -2395,7 +2381,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				if (pointType.equals(PointType.POINT_WELD_WORK)) {
 					// 如果等于作业点
 					pointWeldWorkParam = aloneMaps.get(id);
-					if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < pointWeldWorkParam.getUpHeight()) {
+					if (point.getZ() < pointWeldWorkParam.getUpHeight()) {
 						// Z轴行程小于抬起高度
 						selectRadioIDCur = i;
 						result[0] = 0;
@@ -2405,7 +2391,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				} else if (pointType.equals(PointType.POINT_WELD_LINE_END)) {
 					// 如果为线结束点
 					pointWeldLineEndParam = lineEndMaps.get(id);
-					if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < pointWeldLineEndParam.getUpHeight()) {
+					if (point.getZ() < pointWeldLineEndParam.getUpHeight()) {
 						// Z轴行程小于抬起高度
 						selectRadioIDCur = i;
 						result[0] = 0;
@@ -2415,9 +2401,9 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 			}
 			// 说明抬起高度都低于Z轴
-			pointDao.deletePoints(mPointStorages);
-			rowids = pointDao.insertPoints(mPointsCur);
-			mPointsCur = pointDao.findALLPointsByIdLists(rowids);
+			pointDao.deletePoints(mPointStorages,task.getTaskName());
+			rowids = pointDao.insertPoints(mPointsCur,task.getTaskName());
+			mPointsCur = pointDao.findALLPointsByIdLists(rowids,task.getTaskName());
 			return result;
 		}
 
@@ -2472,7 +2458,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		@Override
 		protected void onPreExecute() {
 			startUpLoadDialog();
-			paramSetting = new ParamsSetting(TaskActivity.this);
+			paramSetting = new ParamsSetting(TaskActivity.this,task.getTaskName());
 		}
 
 		@Override
@@ -2494,7 +2480,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				id = point.getPointParam().get_id();
 				if (pointType.equals(PointType.POINT_WELD_WORK)) {
 					// 如果等于作业点
-					if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < userApplication.getAloneParamMaps().get(id)
+					if (point.getZ() < userApplication.getAloneParamMaps().get(id)
 							.getUpHeight()) {
 						// Z轴行程小于抬起高度
 						selectRadioIDCur = i;
@@ -2504,7 +2490,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 					}
 				} else if (pointType.equals(PointType.POINT_WELD_LINE_END)) {
 					// 如果为线结束点
-					if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < userApplication.getLineEndParamMaps().get(id)
+					if (point.getZ() < userApplication.getLineEndParamMaps().get(id)
 							.getUpHeight()) {
 						// Z轴行程小于抬起高度
 						selectRadioIDCur = i;
@@ -2559,7 +2545,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		@Override
 		protected void onPreExecute() {
 			startProgressDialog();
-			paramSetting = new ParamsSetting(TaskActivity.this);
+			paramSetting = new ParamsSetting(TaskActivity.this,task.getTaskName());
 		}
 
 		@Override
@@ -2587,7 +2573,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				id = point.getPointParam().get_id();
 				if (pointType.equals(PointType.POINT_WELD_WORK)) {
 					// 如果等于作业点
-					if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < userApplication.getAloneParamMaps().get(id)
+					if (point.getZ() < userApplication.getAloneParamMaps().get(id)
 							.getUpHeight()) {
 						// Z轴行程小于抬起高度
 						selectRadioIDCur = i;
@@ -2597,7 +2583,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 					}
 				} else if (pointType.equals(PointType.POINT_WELD_LINE_END)) {
 					// 如果为线结束点
-					if (RobotParam.INSTANCE.ZPulse2Journey(point.getZ()) < userApplication.getLineEndParamMaps().get(id)
+					if (point.getZ() < userApplication.getLineEndParamMaps().get(id)
 							.getUpHeight()) {
 						// Z轴行程小于抬起高度
 						selectRadioIDCur = i;

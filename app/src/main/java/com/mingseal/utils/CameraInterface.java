@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author 商炎炳
+ * @author wj
  *
  */
 public class CameraInterface {

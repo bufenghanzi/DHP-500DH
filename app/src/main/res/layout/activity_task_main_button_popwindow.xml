@@ -79,25 +79,7 @@
 
 
 
-        <Button
-            android:id="@+id/but_inputio"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_input"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
 
-        <Button
-            android:id="@+id/but_outputio"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_output"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
     </LinearLayout>
 
 </ScrollView>

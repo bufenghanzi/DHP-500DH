@@ -39,7 +39,7 @@ public class WeldLineStartDao {
 	 * @param
 	 * @return 影响的行数，0表示错误
 	 */
-	public int upDateWeldLineStart(PointWeldLineStartParam pointWeldLineStartParam) {
+	public int upDateWeldLineStart(PointWeldLineStartParam pointWeldLineStartParam,String taskname) {
 		int rowid = 0;
 		try {
 			db = dbHelper.getWritableDatabase();
@@ -57,7 +57,7 @@ public class WeldLineStartDao {
 					pointWeldLineStartParam.getMoveSpeed());
 			values.put(TableLineStart.PREHEATTIME,
 					pointWeldLineStartParam.getPreHeatTime());
-			rowid = db.update(TableLineStart.LINE_START_TABLE, values,
+			rowid = db.update(TableLineStart.LINE_START_TABLE+taskname, values,
 					TableLineStart._ID + "=?", new String[] { String
 							.valueOf(pointWeldLineStartParam.get_id()) });
 			db.setTransactionSuccessful();
@@ -77,7 +77,7 @@ public class WeldLineStartDao {
 	 * @return 刚增加的这条数据的主键
 	 */
 	public long insertWeldLineStart(
-			PointWeldLineStartParam pointWeldLineStartParam) {
+			PointWeldLineStartParam pointWeldLineStartParam,String taskname) {
 		long rowID = 0;
 		db = dbHelper.getWritableDatabase();
 		try {
@@ -98,7 +98,7 @@ public class WeldLineStartDao {
 			values.put(TableLineStart.PREHEATTIME,
 					pointWeldLineStartParam.getPreHeatTime());
 
-			rowID = db.insert(TableLineStart.LINE_START_TABLE,
+			rowID = db.insert(TableLineStart.LINE_START_TABLE+taskname,
 					TableLineStart._ID, values);
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -116,14 +116,14 @@ public class WeldLineStartDao {
 	 *
 	 * @return
 	 */
-	public List<PointWeldLineStartParam> findAllWeldLineStartParams() {
+	public List<PointWeldLineStartParam> findAllWeldLineStartParams(String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldLineStartParam> startLists = null;
 		PointWeldLineStartParam start = null;
 
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TableLineStart.LINE_START_TABLE, columns,
+			cursor = db.query(TableLineStart.LINE_START_TABLE+taskname, columns,
                     null, null, null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
                 startLists = new ArrayList<PointWeldLineStartParam>();
@@ -165,12 +165,12 @@ public class WeldLineStartDao {
 	 * @param id
 	 * @return PointWeldLineStartParam
 	 */
-	public PointWeldLineStartParam getPointWeldLineStartParamByID(int id) {
+	public PointWeldLineStartParam getPointWeldLineStartParamByID(int id,String taskname) {
 		PointWeldLineStartParam param = new PointWeldLineStartParam();
 		db = dbHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
-			cursor = db.query(TableLineStart.LINE_START_TABLE, columns,
+			cursor = db.query(TableLineStart.LINE_START_TABLE+taskname, columns,
 					TableLineStart._ID + "=?", new String[] { String.valueOf(id) },
 					null, null, null);
 			db.beginTransaction();
@@ -213,14 +213,14 @@ public class WeldLineStartDao {
 	 * @return List<PointWeldLineStartParam>
 	 */
 	public List<PointWeldLineStartParam> getPointWeldLineStartParamsByIDs(
-			List<Integer> ids) {
+			List<Integer> ids,String taskname) {
 		db = dbHelper.getReadableDatabase();
 		List<PointWeldLineStartParam> params = new ArrayList<>();
 		PointWeldLineStartParam param = null;
 		try {
 			db.beginTransaction();
 			for (Integer id : ids) {
-				Cursor cursor = db.query(TableLineStart.LINE_START_TABLE,
+				Cursor cursor = db.query(TableLineStart.LINE_START_TABLE+taskname,
 						columns, TableLineStart._ID + "=?",
 						new String[] { String.valueOf(id) }, null, null, null);
 				if (cursor != null && cursor.getCount() > 0) {
@@ -263,11 +263,11 @@ public class WeldLineStartDao {
 	 * @return 当前方案的主键
 	 */
 	public int getLineStartParamIDByParam(
-			PointWeldLineStartParam pointWeldLineStartParam) {
+			PointWeldLineStartParam pointWeldLineStartParam,String taskname) {
 		int id = -1;
 		db = dbHelper.getReadableDatabase();
 		Cursor cursor = db
-				.query(TableLineStart.LINE_START_TABLE,
+				.query(TableLineStart.LINE_START_TABLE+taskname,
 						columns,
 						TableLineStart.SENDSNSPEED + "=? and "
 								+ TableLineStart.PRESENDSNSUM + "=? and "
@@ -299,7 +299,7 @@ public class WeldLineStartDao {
 			// 先查询除了是否出胶,停胶前延时,停胶后延时,抬起高度之外有没有相对应的方案参数
 			db = dbHelper.getReadableDatabase();
 			cursor = db
-					.query(TableLineStart.LINE_START_TABLE,
+					.query(TableLineStart.LINE_START_TABLE+taskname,
 							columns,
 							TableLineStart.SENDSNSPEED + "=? and "
 									+ TableLineStart.PRESENDSNSUM + "=? and "
@@ -329,9 +329,6 @@ public class WeldLineStartDao {
 			}
 			db.close();
 
-			if (-1 == id) {
-				id = (int) insertWeldLineStart(pointWeldLineStartParam);
-			}
 		}
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.close();
@@ -347,10 +344,10 @@ public class WeldLineStartDao {
 	 * @param pointWeldLineStartParam
 	 * @return
 	 */
-	public int deleteParam(PointWeldLineStartParam pointWeldLineStartParam) {
+	public int deleteParam(PointWeldLineStartParam pointWeldLineStartParam,String taskname) {
 		db = dbHelper.getWritableDatabase();
 		int rowID = db
-				.delete(TableLineStart.LINE_START_TABLE,
+				.delete(TableLineStart.LINE_START_TABLE+taskname,
 						TableLineStart._ID + "=?", new String[] { String
 								.valueOf(pointWeldLineStartParam.get_id()) });
 
