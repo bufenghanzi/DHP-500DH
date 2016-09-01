@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.kyleduo.switchbutton.SwitchButton;
 import com.mingseal.application.UserApplication;
 import com.mingseal.communicate.SocketInputThread;
 import com.mingseal.communicate.SocketThreadManager;
@@ -70,7 +71,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
      */
     private EditText et_sendSnSumSec;
 
-    private ToggleButton switch_isSn;// 是否出胶
+    private com.kyleduo.switchbutton.SwitchButton switch_isSn;// 是否出胶
     private ToggleButton[] isGluePort;// 点胶口
 
     private RelativeLayout rl_back;// 返回上级的按钮
@@ -168,9 +169,9 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private TextView tv_upHeight;
     private TextView extend_mm7;
     private TextView extend_isSus;
-    private ToggleButton switch_isSus;
+    private SwitchButton switch_isSus;
     private TextView extend_isPause;
-    private ToggleButton switch_isPause;
+    private SwitchButton switch_isPause;
     private float sendSnSumThird;
     private float sendSnSumFourth;
     private int dipDistance;
@@ -254,6 +255,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private TextView mActivity_nine_mm;
     private TextView mActivity_third_ms;
     private TextView mActivity_third_mms;
+    private TextView extend_dafault;
 
     // End Of Content View Elements
     @Override
@@ -571,7 +573,6 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
             }
         }
     }
-
     /**
      * @Title SetDateAndRefreshUI
      * @Description 打开extendview的时候设置界面内容，显示最新的方案数据而不是没有保存的数据,没有得到保存的方案
@@ -583,9 +584,9 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
         for (PointWeldWorkParam pointWeldWorkParam : weldWorkLists) {
             list.add(pointWeldWorkParam.get_id());
         }
-        System.out.println("存放主键id的集合---->" + list);
-        System.out.println("当前选择的方案号---->" + currentTaskNum);
-        System.out.println("list是否存在------------》" + list.contains(currentTaskNum));
+        L.d("存放主键id的集合---->" + list);
+        L.d("当前选择的方案号---->" + currentTaskNum);
+        L.d("list是否存在------------》" + list.contains(currentTaskNum));
         if (list.contains(currentTaskNum)) {
             // 已经保存在数据库中的数据
             for (PointWeldWorkParam pointWeldWorkParam : weldWorkLists) {
@@ -627,6 +628,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
             et_stopSnTimeFourth.setText("");
             et_sendSnSpeedThird.setText("");
             et_sendSnSpeedFourth.setText("");
+            et_dipDistance_angle.setText("");
         } else {
             et_yure.setText(pointWeldWorkParam.getPreHeatTime() + "");
             et_sendSnSumFir.setText((float)pointWeldWorkParam.getSendSnSumFir()/10+ "");
@@ -654,18 +656,18 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     /**
      * @param extendView
      * @Title initView
-     * @Description 初始化当前extendView视图
+     * @Description 初始化当前extendView视图n.
      * @author wj
      */
     private void initView(View extendView) {
         et_yure = (EditText) extendView.findViewById(R.id.et_yure);
-        switch_isSn = (ToggleButton) extendView
+        switch_isSn = (SwitchButton) extendView
                 .findViewById(R.id.switch_isSn);
         et_sendSnSumFir = (EditText) extendView
                 .findViewById(R.id.et_sendSnSumFir);
         et_dipDistance_angle = (EditText) extendView.findViewById(R.id.et_dipDistance_angle);
-        switch_isSus = (ToggleButton) extendView.findViewById(R.id.switch_isSus);
-        switch_isPause = (ToggleButton) extendView.findViewById(R.id.switch_isPause);
+        switch_isSus = (SwitchButton) extendView.findViewById(R.id.switch_isSus);
+        switch_isPause = (com.kyleduo.switchbutton.SwitchButton) extendView.findViewById(R.id.switch_isPause);
         et_sendSnSumSec = (EditText) extendView.findViewById(R.id.et_sendSnSumSec);
 
         et_sendSnSpeedFir = (EditText) extendView.findViewById(R.id.et_sendSnSpeedFir);
@@ -813,14 +815,14 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                     // System.out.println("影响的行数"+rowid);
                     update_id.put(upglueAlone.get_id(), upglueAlone);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
-                    System.out.println("修改的方案号为：" + upglueAlone.get_id());
+                    L.d("修改的方案号为：" + upglueAlone.get_id());
                     // System.out.println(weldWorkDao.getPointGlueAloneParamById(currentTaskNum).toString());
                 } else {
                     // 插入一条数据
                     long rowid = weldWorkDao.insertWeldWork(upglueAlone,taskname);
                     firstExist = true;
                     weldWorkLists = weldWorkDao.findAllWeldWorkParams(taskname);
-                    Log.i(TAG, "保存之后新方案-->" + weldWorkLists.toString());
+                    L.d(TAG, "保存之后新方案-->" + weldWorkLists.toString());
                     ToastUtil.displayPromptInfo(WeldWorkActivity.this,
                             getResources().getString(R.string.save_success));
                     list.clear();
@@ -876,11 +878,11 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
     private PointWeldWorkParam getGlueAlone(View extendView) {
         weldWork = new PointWeldWorkParam();
         et_yure = (EditText) extendView.findViewById(R.id.et_yure);
-        switch_isSn = (ToggleButton) extendView.findViewById(R.id.switch_isSn);
+        switch_isSn = (SwitchButton) extendView.findViewById(R.id.switch_isSn);
         et_sendSnSumFir = (EditText) extendView.findViewById(R.id.et_sendSnSumFir);
         et_dipDistance_angle = (EditText) extendView.findViewById(R.id.et_dipDistance_angle);
-        switch_isSus = (ToggleButton) extendView.findViewById(R.id.switch_isSus);
-        switch_isPause = (ToggleButton) extendView.findViewById(R.id.switch_isPause);
+        switch_isSus = (SwitchButton) extendView.findViewById(R.id.switch_isSus);
+        switch_isPause = (SwitchButton) extendView.findViewById(R.id.switch_isPause);
         et_sendSnSumSec = (EditText) extendView.findViewById(R.id.et_sendSnSumSec);
         et_sendSnSumThird = (EditText) extendView.findViewById(R.id.et_sendSnSumThird);
         et_sendSnSumFourth = (EditText) extendView.findViewById(R.id.et_sendSnSumFourth);
@@ -1004,6 +1006,7 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
      */
     private boolean isEditClean(View extendView) {
         et_yure = (EditText) extendView.findViewById(R.id.et_yure);
+        et_dipDistance_angle = (EditText) extendView.findViewById(R.id.et_dipDistance_angle);
         et_sendSnSumFir = (EditText) extendView.findViewById(R.id.et_sendSnSumFir);
         et_sendSnSumSec = (EditText) extendView.findViewById(R.id.et_sendSnSumSec);
         et_sendSnSumThird = (EditText) extendView.findViewById(R.id.et_sendSnSumThird);
@@ -1020,6 +1023,8 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
         if ("".equals(et_yure.getText().toString())) {
             return false;
         } else if ("".equals(et_sendSnSumFir.getText().toString())) {
+            return false;
+        }else if ("".equals(et_dipDistance_angle.getText().toString())) {
             return false;
         } else if ("".equals(et_sendSnSumSec.getText().toString())) {
             return false;
@@ -1095,13 +1100,13 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                 mIndex = itemPopuViews.indexOf(popupView) + 1;
             }
         }
-        System.out.println("返回的方案号为================》" + mIndex);
+        L.d("返回的方案号为================》" + mIndex);
         point.setPointParam(weldWorkDao.getPointWeldWorkParamById(mIndex,taskname));
-        System.out.println("返回的Point为================》" + point);
+        L.d("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldWorkParam>> list = new ArrayList<Map<Integer, PointWeldWorkParam>>();
         list.add(update_id);
-        Log.i(TAG, point.toString());
+        L.d(TAG, point.toString());
         Bundle extras = new Bundle();
         extras.putParcelable(MyPopWindowClickListener.POPWINDOW_KEY, point);
         extras.putInt(MyPopWindowClickListener.FLAG_KEY, mFlag);
@@ -1120,9 +1125,9 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
         public void handleMessage(Message msg) {
             if (msg.what == SocketInputThread.SocketError) {
                 //wifi中断
-                System.out.println("wifi连接断开。。");
+                L.d("wifi连接断开。。");
                 SocketThreadManager.releaseInstance();
-                System.out.println("单例被释放了-----------------------------");
+                L.d("单例被释放了-----------------------------");
                 //设置全局变量，跟新ui
                 userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
@@ -1276,11 +1281,11 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                 @Override
                 public void initViewAndListener(View extendView) {
                     et_yure = (EditText) extendView.findViewById(R.id.et_yure);
-                    switch_isSn = (ToggleButton) extendView.findViewById(R.id.switch_isSn);
+                    switch_isSn = (com.kyleduo.switchbutton.SwitchButton) extendView.findViewById(R.id.switch_isSn);
                     et_sendSnSumFir = (EditText) extendView.findViewById(R.id.et_sendSnSumFir);
                     et_dipDistance_angle = (EditText) extendView.findViewById(R.id.et_dipDistance_angle);
-                    switch_isSus = (ToggleButton) extendView.findViewById(R.id.switch_isSus);
-                    switch_isPause = (ToggleButton) extendView.findViewById(R.id.switch_isPause);
+                    switch_isSus = (SwitchButton) extendView.findViewById(R.id.switch_isSus);
+                    switch_isPause = (SwitchButton) extendView.findViewById(R.id.switch_isPause);
                     et_sendSnSumSec = (EditText) extendView.findViewById(R.id.et_sendSnSumSec);
                     et_sendSnSumThird = (EditText) extendView.findViewById(R.id.et_sendSnSumThird);
                     et_sendSnSumFourth = (EditText) extendView.findViewById(R.id.et_sendSnSumFourth);
@@ -1400,11 +1405,13 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                     ));
                     rl_moren = (RelativeLayout) extendView
                             .findViewById(R.id.rl_moren);
-                    iv_add = (ImageView) extendView.findViewById(R.id.iv_add);
                     rl_save = (RelativeLayout) extendView
                             .findViewById(R.id.rl_save);// 保存按钮
+                    iv_add = (ImageView) extendView.findViewById(R.id.iv_save);
                     iv_moren = (ImageView) extendView
                             .findViewById(R.id.iv_moren);// 默认按钮
+                    extend_dafault=(TextView) findViewById(R.id.extend_default);
+                    extend_save=(TextView) findViewById(R.id.extend_save);
                     rl_moren.setOnClickListener(this);
                     rl_save.setOnClickListener(this);
                     et_yure.setSelectAllOnFocus(true);

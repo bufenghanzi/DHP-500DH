@@ -36,6 +36,7 @@ import com.mingseal.ui.PopupListView;
 import com.mingseal.ui.PopupListView.OnClickPositionChanged;
 import com.mingseal.ui.PopupListView.OnZoomInChanged;
 import com.mingseal.ui.PopupView;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -227,44 +228,6 @@ public class WeldLineEndActivity extends AutoLayoutActivity implements OnClickLi
 
     protected void setTitleInfos(List<PointWeldLineEndParam> glueEndLists,
                                  View view, int p) {
-//        title_stopGlueTimePrev = (TextView) view.findViewById(R.id.title_stopGlueTimePrev);
-//        title_et_stopGlueTimePrev = (TextView) view.findViewById(R.id.title_et_stopGlueTimePrev);
-//        activity_ms = (TextView) view.findViewById(R.id.activity_ms);
-//        activity_fenghao = (TextView) view.findViewById(R.id.activity_fenghao);
-//        title_stopGlueTime = (TextView) view.findViewById(R.id.title_stopGlueTime);
-//        title_et_stopGlueTime = (TextView) view.findViewById(R.id.title_et_stopGlueTime);
-//        activity_second_ms = (TextView) view.findViewById(R.id.activity_second_ms);
-//        activity_second_fenghao = (TextView) view.findViewById(R.id.activity_second_fenghao);
-//        title_upHeight = (TextView) view.findViewById(R.id.title_upHeight);
-//        title_et_upHeight = (TextView) view.findViewById(R.id.title_et_upHeight);
-//        activity_mm = (TextView) view.findViewById(R.id.activity_mm);
-//        activity_third_fenghao = (TextView) view.findViewById(R.id.activity_third_fenghao);
-//        title_breakGlueLen = (TextView) view.findViewById(R.id.title_breakGlueLen);
-//        title_et_breakGlueLen = (TextView) view.findViewById(R.id.title_et_breakGlueLen);
-//        activity_second_mm = (TextView) view.findViewById(R.id.activity_second_mm);
-//        activity_four_fenghao = (TextView) view.findViewById(R.id.activity_four_fenghao);
-//        title_drawDistance = (TextView) view.findViewById(R.id.title_drawDistance);
-//        title_et_drawDistance = (TextView) view.findViewById(R.id.title_et_drawDistance);
-//        activity_third_mm = (TextView) view.findViewById(R.id.activity_third_mm);
-//        activity_five_fenghao = (TextView) view.findViewById(R.id.activity_five_fenghao);
-//        title_drawSpeed = (TextView) view.findViewById(R.id.title_drawSpeed);
-//        title_et_drawSpeed = (TextView) view.findViewById(R.id.title_et_drawSpeed);
-//        activity_mm_s = (TextView) view.findViewById(R.id.activity_mm_s);
-//        activity_six_fenghao = (TextView) view.findViewById(R.id.activity_six_fenghao);
-//        title_switch_isPause = (TextView) view.findViewById(R.id.title_switch_isPause);
-//        title_et_switch_isPause = (TextView) view.findViewById(R.id.title_et_switch_isPause);
-//
-//        for (PointWeldLineEndParam pointWeldLineEndParam : glueEndLists) {
-//            if (p == pointWeldLineEndParam.get_id()) {
-//                    /*===================== begin =====================*/
-//                title_stopGlueTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                title_et_stopGlueTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                activity_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                activity_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                title_stopGlueTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                title_et_stopGlueTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                activity_second_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//                activity_second_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 //                title_upHeight.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 //                title_et_upHeight.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 //                activity_mm.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
@@ -382,9 +345,9 @@ public class WeldLineEndActivity extends AutoLayoutActivity implements OnClickLi
         for (PointWeldLineEndParam pointWeldLineEndParam : weldEndLists) {
             list.add(pointWeldLineEndParam.get_id());
         }
-        System.out.println("存放主键id的集合---->" + list);
-        System.out.println("当前选择的方案号---->" + currentTaskNum);
-        System.out.println("list是否存在------------》"
+        L.d("存放主键id的集合---->" + list);
+        L.d("当前选择的方案号---->" + currentTaskNum);
+        L.d("list是否存在------------》"
                 + list.contains(currentTaskNum));
         if (list.contains(currentTaskNum)) {
             // 已经保存在数据库中的数据
@@ -442,14 +405,14 @@ public class WeldLineEndActivity extends AutoLayoutActivity implements OnClickLi
                     // System.out.println("影响的行数"+rowid);
                     update_id.put(upLineEndParam.get_id(), upLineEndParam);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
-                    System.out.println("修改的方案号为：" + upLineEndParam.get_id());
+                    L.d("修改的方案号为：" + upLineEndParam.get_id());
                     // System.out.println(glueAloneDao.getPointGlueAloneParamById(currentTaskNum).toString());
                 } else {
                     // 插入一条数据
                     long rowid = weldEndDao.insertWeldLineEnd(upLineEndParam,taskname);
                     firstExist = true;
                     weldEndLists = weldEndDao.findAllWeldLineEndParams(taskname);
-                    Log.i(TAG, "保存之后新方案-->" + weldEndLists.toString());
+                    L.d(TAG, "保存之后新方案-->" + weldEndLists.toString());
                     ToastUtil.displayPromptInfo(WeldLineEndActivity.this,
                             getResources().getString(R.string.save_success));
                     list.clear();
@@ -613,9 +576,9 @@ public class WeldLineEndActivity extends AutoLayoutActivity implements OnClickLi
                 mIndex = itemPopuViews.indexOf(popupView) + 1;
             }
         }
-        System.out.println("返回的方案号为================》" + mIndex);
+        L.d("返回的方案号为================》" + mIndex);
         point.setPointParam(weldEndDao.getPointWeldLineEndParamByID(mIndex,taskname));
-        System.out.println("返回的Point为================》" + point);
+        L.d("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldLineEndParam>> list = new ArrayList<Map<Integer, PointWeldLineEndParam>>();
         list.add(update_id);

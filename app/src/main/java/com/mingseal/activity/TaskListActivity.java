@@ -266,9 +266,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		super.onCreate(savedInstanceState);
 //		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_task_list);
-		/************************ add begin ************************/
 		protocol = new Protocol_400_1();
-		/************************ end ******************************/
 		L.d("TaskListActivity--->onCreate()");
 		userApplication = (UserApplication) getApplication();
 		SharePreferenceUtils.setSharedPreference(this);
@@ -286,7 +284,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		NetManager.instance().init(this);
 
 		prepareReset=true;
-//		MessageMgr.INSTANCE.resetCoord();
 		taskLists = taskDao.findALLTaskLists();
 		//开启线程后台去加载视图
 		mTaskAdapter = new TaskListBaseAdapter(this);
@@ -363,7 +360,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			}
 		});
 
-		Log.d(TAG, "是否连接?" + userApplication.isWifiConnecting());
+		L.d(TAG, "是否连接?" + userApplication.isWifiConnecting());
 
 
 	}
@@ -387,7 +384,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 				this.taskLists = taskDao.findALLTaskLists();
 
 				mTaskAdapter.setTaskList(this.taskLists);
-				Log.d(TAG, "taskLists.size():" + this.taskLists.size()
+				L.d(TAG, "taskLists.size():" + this.taskLists.size()
 						+ ",pselect:" + pselect);
 				if (this.taskLists.size() == 0) {
 					showAndHideLayout(false);
@@ -433,13 +430,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		// Activity结束需要关闭进度条对话框
 		stopProgressDialog();
 		SocketThreadManager.releaseInstance();
-//		/*===================== 关闭服务，解绑activity =====================*/
-//		Intent stopIntent = new Intent(this, NetworkStateService.class);
-//		stopService(stopIntent);
-//		if (mConnection!=null){
-//			unbindService(mConnection);
-//		}
-//		/*=====================  end =====================*/
 
 	}
 
@@ -449,17 +439,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 	 * @param pointDao
 	 */
 	private void invalidateCustomView(PointTask pointTask, PointDao pointDao) {
-//		circleProgressBar.setVisibility(View.VISIBLE);
 		Super_view_track.setPointTask(pointTask,pointDao);
-//		view_track.setPointTask(pointTask, pointDao);
-//		if (mTask==null){
-//			mTask=new InvalidateCustomViewTask();
-//			ThreadPoolFactory.getNormalPool().execute(mTask);
-//		}else {
-//			ThreadPoolFactory.getNormalPool().removeTask(mTask);
-//			mTask=new InvalidateCustomViewTask();
-//			ThreadPoolFactory.getNormalPool().execute(mTask);
-//		}
 	}
 	//画图操作线程池管理
 	class InvalidateCustomViewTask implements Runnable{
@@ -468,56 +448,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			view_track.postInvalidate();
 		}
 	}
-//	/**
-//	 * 画图操作放到异步线程中去
-//	 *
-//	 */
-//	private class InvalidateViewAsynctask extends
-//			AsyncTask<Object, Void, Boolean> {
-//
-//		@Override
-//		protected Boolean doInBackground(Object... params) {
-//			// 设置任务点
-//			view_track
-//					.setPointTask((PointTask)params[0], (PointDao) params[1]);
-//			return true;
-//		}
-//
-//		@Override
-//		protected void onPostExecute(Boolean result) {
-//			if (result) {
-//				// 重绘
-//				view_track.invalidate();
-//			}
-//		}
-//
-//	}
-
-//	/**
-//	 * 初始化任务列表的内容
-//	 */
-//	private void initTaskList() {
-//		taskLists = new ArrayList<PointTask>();
-//		List<Integer> pointids = new ArrayList<Integer>();
-//
-//		for (int i = 1; i < 20; i++) {
-//			task = new PointTask();
-//			task.setId(i);
-//			task.setTaskName("任务" + i);
-//			pointids.add(i);
-//			task.setPointids(pointids);
-//			taskLists.add(task);
-//		}
-//		pointids = new ArrayList<Integer>();
-//		for (int i = 1; i < 30; i++) {
-//			task = new PointTask();
-//			task.setId(i);
-//			task.setTaskName("事件" + i);
-//			pointids.add(i);
-//			task.setPointids(pointids);
-//			taskLists.add(task);
-//		}
-//	}
 
 	/**
 	 * 加载自定义组件
@@ -530,18 +460,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		circleProgressBar = (CircleProgressBar) findViewById(R.id.circle_progress);
 		tv_totalTime = (TextView) findViewById(R.id.tv_totaltime);
 
-//		/*===================== begin =====================*/
-//		Fl_1 = (TextView) findViewById(R.id.fl_1);
-//		Fl_2 = (TextView) findViewById(R.id.fl_2);
-//		Fl_3 = (TextView) findViewById(R.id.fl_3);
-//		Fl_4 = (TextView) findViewById(R.id.fl_4);
-//		Fl_5 = (TextView) findViewById(R.id.fl_5);
-//		cacheViews=new SparseArray<>();
-//		cacheViews.put(0,Fl_1);
-//		cacheViews.put(1,Fl_2);
-//		cacheViews.put(2,Fl_3);
-//		cacheViews.put(3,Fl_4);
-//		cacheViews.put(4,Fl_5);
 //		/*=====================  end =====================*/
 		rl_add = (RelativeLayout) findViewById(R.id.rl_add);
 		rl_open = (RelativeLayout) findViewById(R.id.rl_open);
@@ -564,28 +482,11 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		rl_paste.setOnClickListener(this);
 		rl_menu.setOnClickListener(this);
 
-//		view_track.setCircle(50);
-//		view_track.setRadius(5);
 		Super_view_track.setCircle(50);
 		Super_view_track.setRadius(5);
 
 		iv_connect_tip = (ImageView) findViewById(R.id.iv_connect_tip);
 		iv_connect_tip.setOnClickListener(this);
-//		Super_view_track.setOnINotifyListener(new SuperTrackView.INotify() {
-//			@Override
-//			public void notifyEvent(boolean msg) {
-//				if (msg){
-//					CircleProgressBar.setVisibility(View.INVISIBLE);
-//				}
-//			}
-//		});
-//		view_track.setOnINotifyUIListener(new TrackView.INotifyUI() {
-//			@Override
-//			public void notifyEvent(int msg, TrackView trackView) {
-//				cacheViews.put(msg,trackView);
-//				System.out.println("缓存了视图---->"+msg);
-//			}
-//		});
 
 	}
 
@@ -609,9 +510,9 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 									Intent _data) {
 		if (_requestCode == TASK_RequestCode && _resultCode == TASK_ResultCode) {
 			task = _data.getParcelableExtra(TASK_KEY);
-			Log.d(TAG, "onActivityResult中的：" + task.toString());
+			L.d(TAG, "onActivityResult中的：" + task.toString());
 			int number = taskDao.updateTask(task);
-			Log.d(TAG, "number:" + number);
+			L.d(TAG, "number:" + number);
 			if (number > 0) {
 				ToastUtil.displayPromptInfo(this, "修改成功！");
 				// 更新成功，Task列表也需要更新
@@ -629,7 +530,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			}
 		} else if (_requestCode == TASK_RequestCode
 				&& _resultCode == TaskActivity.resultDownLoadCode) {
-			Log.d(TAG, "从DownloadActivity返回结果");
+			L.d(TAG, "从DownloadActivity返回结果");
 		}
 	}
 
@@ -650,7 +551,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 	 * @param task
 	 */
 	private void gotoActivity(PointTask task) {
-		// Log.d(TAG + "-->gotoActivity", "gotoActivity中的：" + task.toString());
 		intent = new Intent(TaskListActivity.this, TaskActivity.class);
 		Bundle extras = new Bundle();
 		if (task.getPointids().size() > TASK_MAX_SIZE) {
@@ -680,8 +580,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		et_title = (EditText) customView.findViewById(R.id.et_title);
 		et_title.setSelectAllOnFocus(true);
 		taskNames = taskDao.getALLTaskNames();
-		// Log.d(TAG, "任务名:"+taskNames.toString());
-		// Log.d(TAG,
 		// "任务名是否重复:"+taskNames.contains(et_title.getText().toString()));
 		buildAdd.setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
@@ -898,7 +796,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 						taskLists = taskDao.findALLTaskLists();
 
 						mTaskAdapter.setTaskList(taskLists);
-						Log.d(TAG, "taskLists.size():" + taskLists.size()
+						L.d(TAG, "taskLists.size():" + taskLists.size()
 								+ ",pselect:" + pselect);
 						if (taskLists.size() == 0) {
 							showAndHideLayout(false);
@@ -951,9 +849,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		et_num = (EditText) customView.findViewById(R.id.et_num);
 		et_num.setSelectAllOnFocus(true);
 		taskNames = taskDao.getALLTaskNames();
-		// Log.d(TAG, "任务名:"+taskNames.toString());
-		// Log.d(TAG,
-		// "任务名是否重复:"+taskNames.contains(et_title.getText().toString()));
 		buildAdd.setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
 			@Override
@@ -1117,8 +1012,8 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 					OrderParam.INSTANCE.setAllParamToZero();
 					OrderParam.INSTANCE.setnTaskNum(taskNum);
 					pointUploads = new ArrayList<>();
-					Log.d(TAG, "上传之前:point" + pointUploads.size());
-					Log.d(TAG, "上传之前:" + DateUtil.getCurrentTime());
+					L.d(TAG, "上传之前:point" + pointUploads.size());
+					L.d(TAG, "上传之前:" + DateUtil.getCurrentTime());
 					startProgressDialog();
 					MessageMgr.INSTANCE.taskUpload(pointUploads);
 
@@ -1173,7 +1068,7 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		UploadTaskAnalyse uploadAnalyse = new UploadTaskAnalyse(TaskListActivity.this,mTaskname);
 //		if (checkPointParamID(pointUploads)){
 		points = uploadAnalyse.analyseTaskSuccess(pointUploads);
-		Log.d(TAG, "解析之后：" + DateUtil.getCurrentTime());
+		L.d(TAG, "解析之后：" + DateUtil.getCurrentTime());
 		// 往界面上添加（暂时先删了）
 		// 先往数据库里面添加，然后再将Point的id保存出来
 		List<Integer> ids = pointDao.insertPoints(points,mTaskname);
@@ -1192,12 +1087,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 		showAndHideLayout(true);
 		mTaskAdapter.notifyDataSetChanged();
 		invalidateCustomView(taskLists.get(pselect), pointDao);
-//			checkSuccess=true;
-//		}else{
-//			checkSuccess=false;
-//			ToastUtil.displayPromptInfo(TaskListActivity.this, "此任务不兼容！");
-//		}
-		// /////////////////////
 		// 全部更新完之后关闭进度框
 		stopProgressDialog();
 	}
@@ -1451,16 +1340,10 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 						| (revBuffer[3] & 0x00ff);
 				if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
 					ToastUtil.displayPromptInfo(TaskListActivity.this, "获取参数成功!");
-					// userApplication.setWifiConnecting(true);
-					// WifiConnectTools.processWifiConnect(userApplication,
-					// iv_connect_tip);
-					// iv_connect_tip.setImageDrawable(getResources().getDrawable(R.drawable.icon_wifi_connect));
-					Log.d(TAG, RobotParam.INSTANCE.GetXJourney() + ",分辨率：x"
+					L.d(TAG, RobotParam.INSTANCE.GetXJourney() + ",分辨率：x"
 							+ RobotParam.INSTANCE.GetXDifferentiate() + ",y:"
 							+ RobotParam.INSTANCE.GetYDifferentiate() + ",z:"
 							+ RobotParam.INSTANCE.GetZDifferentiate());
-					// myConnection.disconnect();
-					// myConnection = null;
 				}else if (revBuffer[2]==0x2E){//获取功能列表成功
 					ToastUtil.displayPromptInfo(TaskListActivity.this,"获取功能列表成功！");
 				}
@@ -1476,11 +1359,8 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 				// 上传成功
 				if ((revBuffer[3] & 0x00ff) == 0xe6) {
 					if (!pointUploads.isEmpty() && pointUploads.size() > 0) {
-						Log.d(TAG, "上传的列表长度:" + pointUploads.size() + "--"
+						L.d(TAG, "上传的列表长度:" + pointUploads.size() + "--"
 								+ et_upload_name.getText().toString());
-						// for(Point point:pointUploads){
-						// Log.d(TAG, point.toString());
-						// }
 						//创建新表
 						createTable(et_upload_name);
 						analyseTaskSuccess(pointUploads);
@@ -1601,7 +1481,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 
 
 	private void sendResetCommand() {
-		// TODO Auto-generated method stub
 		if(prepareReset){
 			/************************ add begin ************************/
 			buffer = new byte[ORDER_BUFFER_LENTH];
@@ -1609,12 +1488,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 			MessageMgr.INSTANCE.writeData(buffer, orderLength);
 			/************************ end ******************************/
 			prepareReset=false;
-//			mPointsCur.get(selectRadioIDCur).setX(0);
-//			mPointsCur.get(selectRadioIDCur).setY(0);
-//			mPointsCur.get(selectRadioIDCur).setZ(0);
-//			mPointsCur.get(selectRadioIDCur).setU(0);
-//			mAdapter.setData(mPointsCur);
-//			mAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -1625,9 +1498,6 @@ public class TaskListActivity extends AutoLayoutActivity implements OnClickListe
 	 * Description: 数据接收Handler
 	 * <p>
 	 * Company: MingSeal .Ltd
-	 *
-	 * @author lyq
-	 * @date 2015年11月6日
 	 */
 	private class RevHandler extends Handler {
 

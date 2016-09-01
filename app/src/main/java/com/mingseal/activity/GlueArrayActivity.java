@@ -64,13 +64,11 @@ import java.util.TimerTask;
 /**
  * 阵列
  *
- * @author 商炎炳
+ * @author wj
  *
  */
 public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickListener {
 
-//	private MyCircleView myCircleUp;
-//	private MyCircleView myCircleDown;
 
 	private TextView tv_title;
 	private RelativeLayout rl_back;
@@ -306,7 +304,6 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 		} else if ("1".equals(numberType)) {
 			points = intent.getParcelableArrayListExtra(TaskActivity.ARRAY_KEY);
 		}
-		// Log.d(TAG, "numberType:"+numberType+",长度:"+points.size());
 		settingParam = SharePreferenceUtils.readFromSharedPreference(this);
 		initView();
 		handler = new RevHandler();
@@ -354,9 +351,6 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 		arrayParam = new ArrayParam();
 		//使用自定义的ArrayAdapter
 		adapterSpinner = new TestArrayAdapter(GlueArrayActivity.this,getResources().getStringArray(R.array.arrayMethods));
-//		// 将数组内容与ArrayAdapter连接起来
-//		adapterSpinner = ArrayAdapter.createFromResource(this, R.array.arrayMethods,
-//				android.R.layout.simple_spinner_item);
 		// 设置下拉列表的风格
 		adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// 将adapter添加到Spinner中
@@ -429,13 +423,6 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 						RobotParam.INSTANCE.GetZJourney()-mPoint.getZ(),
 						-mPoint.getZ(), et_y_offset_z));
 
-//		et_x_offset_x.addTextChangedListener(mTextWatcher);
-//		et_x_offset_y.addTextChangedListener(mTextWatcher);
-//		et_x_offset_z.addTextChangedListener(mTextWatcher);
-//		et_y_offset_x.addTextChangedListener(mTextWatcher);
-//		et_y_offset_y.addTextChangedListener(mTextWatcher);
-//		et_y_offset_z.addTextChangedListener(mTextWatcher);
-
 
 		et_x_offset_x.setOnFocusChangeListener(new OnKeyFocusChangeListener(arrayParam, et_x_offset_x, KEY_X_X));
 		et_x_offset_y.setOnFocusChangeListener(new OnKeyFocusChangeListener(arrayParam, et_x_offset_y, KEY_X_Y));
@@ -460,24 +447,6 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 		super.onDestroy();
 	}
 
-//	//监听edittext变化，如果变化了先定位
-//	private TextWatcher mTextWatcher=new TextWatcher() {
-//		@Override
-//		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//		}
-//
-//		@Override
-//		public void onTextChanged(CharSequence s, int start, int before, int count) {
-//			locateFirst=1;
-//
-//		}
-//
-//		@Override
-//		public void afterTextChanged(Editable s) {
-//				locateFirst=1;
-//		}
-//	};
 	/**
 	 * 判断Edittext输入框里面是否有数据,如果没有数据则置为0
 	 *
@@ -646,33 +615,6 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 		linear_x = (LinearLayout) findViewById(R.id.array_lin_x);
 		linear_y = (LinearLayout) findViewById(R.id.array_lin_y);
 		linear_e = (LinearLayout) findViewById(R.id.array_lin_e);
-//		linear_x.setOnTouchListener(new OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				linear_x.setFocusable(true);
-//				linear_x.setFocusableInTouchMode(true);
-//				linear_x.requestFocus();
-//				return false;
-//			}
-//		});
-//		linear_y.setOnTouchListener(new OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				linear_y.setFocusable(true);
-//				linear_y.setFocusableInTouchMode(true);
-//				linear_y.requestFocus();
-//				return false;
-//			}
-//		});
-//		linear_e.setOnTouchListener(new OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				linear_e.setFocusable(true);
-//				linear_e.setFocusableInTouchMode(true);
-//				linear_e.requestFocus();
-//				return false;
-//			}
-//		});
 		linear_x.setOnClickListener(this);
 		linear_y.setOnClickListener(this);
 		linear_e.setOnClickListener(this);
@@ -739,9 +681,7 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 	}
 	/**
 	 * @ClassName MoveListener
-	 * @Description x,y,z,u移动
-	 * @author 商炎炳
-	 * @date 2016年1月28日 下午2:36:18
+	 * @Description x,y,z,u移
 	 *
 	 */
 	private class MoveListener implements OnTouchListener{
@@ -757,12 +697,10 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 
 							if (event.getAction() == MotionEvent.ACTION_DOWN) {
 								MoveUtils.move(0, 0, 0, speed);
-//								System.out.println("x轴move");
 								stopTimer();
 							} else if (event.getAction() == MotionEvent.ACTION_UP) {
 								MoveUtils.stop(0);
 								stopTimer();
-//								System.out.println("x轴stop");
 								prepareStopRetry(0);
 							}
 
@@ -946,18 +884,12 @@ public class 	GlueArrayActivity extends AutoLayoutActivity implements OnClickLis
 				xPoint.setX((float) getStringToDouble(et_x_offset_x)+mPoint.getX());
 				xPoint.setY((float) getStringToDouble(et_x_offset_y)+mPoint.getY());
 				xPoint.setZ((float) getStringToDouble(et_y_offset_z)+mPoint.getZ());
-//				System.out.println("定位点x轴坐标："+RobotParam.INSTANCE.XCenterPulse2Journey(xPoint.getX()));
-//				System.out.println("定位点y轴坐标："+RobotParam.INSTANCE.YCenterPulse2Journey(xPoint.getY()));
-//				System.out.println("定位点z轴坐标："+RobotParam.INSTANCE.ZCenterPulse2Journey(xPoint.getZ()));
 				MoveUtils.locationCoord(xPoint);
 				getUpdateInfo();
 			} else if (selectFocus == 1) {
 				yPoint.setX((float) getStringToDouble(et_y_offset_x)+mPoint.getX());
 				yPoint.setY((float) getStringToDouble(et_y_offset_y)+mPoint.getY());
 				yPoint.setZ((float) getStringToDouble(et_y_offset_z)+mPoint.getZ());
-//				System.out.println("定位点y_x轴坐标："+RobotParam.INSTANCE.XCenterPulse2Journey(yPoint.getX()));
-//				System.out.println("定位点y_y轴坐标："+RobotParam.INSTANCE.YCenterPulse2Journey(yPoint.getY()));
-//				System.out.println("定位点y_z轴坐标："+RobotParam.INSTANCE.ZCenterPulse2Journey(yPoint.getZ()));
 				MoveUtils.locationCoord(yPoint);
 			} else if (selectFocus == 2) {
 				ePoint.setX((float) getStringToDouble(et_end_x)+mPoint.getX());

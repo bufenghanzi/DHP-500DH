@@ -425,10 +425,8 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 
 
 	/**
-	 * @author 商炎炳
 	 * @ClassName MoveListener
 	 * @Description x, y, z, u移动
-	 * @date 2016年1月28日 下午3:29:26
 	 */
 	private class MoveListener implements OnTouchListener {
 
@@ -918,8 +916,6 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 			if (isChange) {
 //				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
 				saveBackActivity();
-//				showBackDialog();
-//				GlueViewActivity.this.finish();
 			} else {
 				showBackDialog();
 			}
@@ -936,8 +932,6 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 				if (isChange) {
 //				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
 					saveBackActivity();
-//				showBackDialog();
-//				GlueViewActivity.this.finish();
 				} else {
 					showBackDialog();
 				}
@@ -970,9 +964,6 @@ public class GlueViewActivity extends AutoLayoutActivity implements OnClickListe
 				SetDatasAndUpdateUI();
 				isChange = PointCopyTools.comparePoints(pointListsFirst, pointListsCur);
 				if (isChange) {
-//				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
-//				GlueViewActivity.this.finish();
-//				showBackDialog();
 					saveBackActivity();
 				} else {
 					showBackDialog();

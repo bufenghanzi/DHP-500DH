@@ -69,7 +69,7 @@
                 android:layout_marginLeft="150px"
                 android:layout_marginTop="5px">
 
-                <com.mingseal.ui.SwitchButton
+                <com.kyleduo.switchbutton.SwitchButton
                     android:id="@+id/sw_single"
                     style="@style/SwitchButtonStyle"
                     android:layout_width="wrap_content"

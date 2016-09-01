@@ -32,6 +32,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.kyleduo.switchbutton.SwitchButton;
 import com.mingseal.adapter.TaskMainBaseAdapter;
 import com.mingseal.adapter.TaskMainBaseAdapter.onMyCheckboxChangedListener;
 import com.mingseal.adapter.TaskMainBaseAdapter.onMyRadioButtonChangedListener;
@@ -67,10 +68,10 @@ import com.mingseal.data.point.weldparam.PointWeldWorkParam;
 import com.mingseal.data.protocol.Protocol_400_1;
 import com.mingseal.dhp_500dh.R;
 import com.mingseal.listener.MyPopWindowClickListener;
-import com.mingseal.ui.SwitchButton;
 import com.mingseal.utils.CommonArithmetic;
 import com.mingseal.utils.CustomProgressDialog;
 import com.mingseal.utils.CustomUploadDialog;
+import com.mingseal.utils.L;
 import com.mingseal.utils.MoveUtils;
 import com.mingseal.utils.ParamsSetting;
 import com.mingseal.utils.PointCopyTools;
@@ -452,12 +453,11 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		} else {
 			task = intent.getParcelableExtra(TaskListActivity.TASK_KEY);
 		}
-		Log.d(TAG, "接收到的task:" + task.toString());
+		L.d(TAG, "接收到的task:" + task.toString());
 
 		settingParam = SharePreferenceUtils.readFromSharedPreference(this);
 
 		mList = (ListView) findViewById(R.id.lv_show);
-//		mHeaderView = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.activity_task_main_listview_header, null);
 		mHeaderView = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.activity_task_main_listview_header, mList, false);
 		//对于listview，注意添加这一行，即可在item上使用高度
 		/*===================== 适配首行文字 =====================*/
@@ -816,8 +816,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 	/**
 	 * @ClassName MoveListener
 	 * @Description 触摸移动x,y,z,u
-	 * @author 商炎炳
-	 * @date 2016年1月28日 上午9:48:47
 	 *
 	 */
 	private class MoveListener implements OnTouchListener {
@@ -829,7 +827,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				mAdapter.setSelectID(selectRadioIDCur);// 选中位置
 			}
 			if (selectRadioIDCur != -1) {
-				System.out.println("预定位点坐标：" + mPointsCur.get(selectRadioIDCur).getX() + "," +
+				L.d("预定位点坐标：" + mPointsCur.get(selectRadioIDCur).getX() + "," +
 						mPointsCur.get(selectRadioIDCur).getY() + "," + mPointsCur.get(selectRadioIDCur).getZ());
 				if (selectRadioIDPrev == selectRadioIDCur && ifInfoChange()) {
 					if (modeFlagCur == 0) {
@@ -839,13 +837,11 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 
 								if (event.getAction() == MotionEvent.ACTION_DOWN) {
 									MoveUtils.move(0, 0, 0, speed);
-//								Log.d(TAG,"X+_DOWN被点击了");
 									stopTimer();
 								} else if (event.getAction() == MotionEvent.ACTION_UP) {
 									MoveUtils.stop(0);
 									stopTimer();
 									prepareStopRetry(0);
-//								Log.d(TAG,"X+_up被点击了-->发送了第一次停止指令");
 								}
 								break;
 							case R.id.nav_x_minus:// x-
@@ -1302,7 +1298,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			ToastUtil.displayPromptInfo(this, "请先增加一个任务点");
 		}else {
 			PointType type = mPointsCur.get(selectRadioIDCur).getPointParam().getPointType();
-			System.out.println("TaskActivity打开的方案为："+mPointsCur.get(selectRadioIDCur).getPointParam());
+			L.d("TaskActivity打开的方案为："+mPointsCur.get(selectRadioIDCur).getPointParam());
 			Intent intent = null;
 			switch (type) {
 				case POINT_WELD_WORK:
@@ -1418,7 +1414,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 	 */
 	@Override
 	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-		Log.d(TAG,"onActivityResult被调用了");
+		L.d(TAG,"onActivityResult被调用了");
 		if (_requestCode == requestCode) {
 			if (_resultCode == resultCode) {
 				// point = (Point)
@@ -1427,9 +1423,8 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				point = (Point) _data.getParcelableExtra(MyPopWindowClickListener.POPWINDOW_KEY);
 				//准备更新的方案
 				ArrayList list= _data.getParcelableArrayListExtra(MyPopWindowClickListener.TYPE_UPDATE);
-				System.out.println(TAG+point.toString());
-				Log.d(TAG ,point.toString());
-//				Log.d(TAG + ":onActivityResult", "ParcelableMap:" + list.get(0));
+				L.d(TAG+point.toString());
+				L.d(TAG ,point.toString());
 				if (mFlag == 0) {
 					if (mPointsCur.size() != 0) {
 						selectRadioIDCur = selectRadioIDCur + 1;
@@ -1445,7 +1440,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				selectCheckboxCur.clear();
 				singleSwitch.setChecked(false);
 				startUpdatePointParam(point,list);
-//				Log.d(TAG + ":onActivityResult-->", mPointsCur.toString());
 			} else if (_resultCode == resultViewCode) {
 				// 视图保存回来的点
 				String type = _data.getStringExtra(KEY_NUMBER);
@@ -1455,7 +1449,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				} else if ("1".equals(type)) {
 					mPointsCur = _data.getParcelableArrayListExtra(VIEW_KEY);
 				}
-				System.out.println("视图回来的点的长度："+mPointsCur.size());
+				L.d("视图回来的点的长度："+mPointsCur.size());
 			} else if (_resultCode == resultArrayCode) {
 				List<Point> pLists = new ArrayList<>();
 					String array_type = _data.getStringExtra(KEY_NUMBER);
@@ -1465,7 +1459,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 					} else if ("1".equals(array_type)) {
 					pLists = _data.getParcelableArrayListExtra(ARRAY_KEY);
 				}
-				Log.d(TAG, "阵列回来的点的长度："+pLists.size());
+				L.d(TAG, "阵列回来的点的长度："+pLists.size());
 				mPointsCur.addAll(sCheckViewIDLast + 1, pLists);
 			} else if (_resultCode == resultOffsetCode) {
 				// 偏移
@@ -1476,13 +1470,13 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				} else {
 					pLists = _data.getParcelableArrayListExtra(OFFSET_KEY);
 				}
-				Log.i(TAG, "偏移：" + offsetCheckBox.toString());
+				L.d(TAG, "偏移：" + offsetCheckBox.toString());
 				for (int i = 0; i < offsetCheckBox.size(); i++) {
 					mPointsCur.remove((int) offsetCheckBox.get(i));
 					mPointsCur.add((int) offsetCheckBox.get(i), pLists.get(i));
 				}
 				offsetCheckBox.clear();
-				Log.d(TAG, "偏移保存回来的点:" + pLists.toString());
+				L.d(TAG, "偏移保存回来的点:" + pLists.toString());
 			} else if (_resultCode == resultSettingCode) {
 				// 任务参数设置
 				settingParam = SharePreferenceUtils.readFromSharedPreference(this);
@@ -1496,7 +1490,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				} else if ("1".equals(array_type)) {
 					mPointsCur = _data.getParcelableArrayListExtra(DOWNLOAD_KEY);
 				}
-				Log.d(TAG, "下载回来的点的长度："+mPointsCur.size());
+				L.d(TAG, "下载回来的点的长度："+mPointsCur.size());
 				selectRadioIDCur=0;
 			} else if (_resultCode == resultCameraCode) {
 				// 视觉
@@ -1508,7 +1502,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		}
 		// 返回时需要将上次选中id置为初始值
 		selectRadioIDPrev = -1;
-		Log.d(TAG,"mpoints:"+mPointsCur.toString());
+		L.d(TAG,"mpoints:"+mPointsCur.toString());
 		mAdapter.setData(mPointsCur);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -1528,7 +1522,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_WORK:
 			 ArrayList<Map<Integer, PointWeldWorkParam>> maplist=(ArrayList<Map<Integer, PointWeldWorkParam>>) list.get(0);
 			 HashMap<Integer, PointWeldWorkParam> map=(HashMap<Integer, PointWeldWorkParam>) maplist.get(0);
-//			 Log.d(TAG + ":onActivityResult", "ParcelableMap:" + map);
 			 for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : map.entrySet()) {
@@ -1544,7 +1537,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_LINE_START:
 			ArrayList<Map<Integer, PointWeldLineStartParam>> line_startList=(ArrayList<Map<Integer, PointWeldLineStartParam>>) list.get(0);
 			HashMap<Integer, PointWeldLineStartParam> gluestartmap=(HashMap<Integer, PointWeldLineStartParam>) line_startList.get(0);
-//			Log.d(TAG + ":onActivityResult", "ParcelableMap:" + gluestartmap);
 			for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : gluestartmap.entrySet()) {
@@ -1561,7 +1553,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_LINE_MID:
 			ArrayList<Map<Integer, PointWeldLineMidParam>> line_midList=(ArrayList<Map<Integer, PointWeldLineMidParam>>) list.get(0);
 			HashMap<Integer, PointWeldLineMidParam> glueMidMap=(HashMap<Integer, PointWeldLineMidParam>) line_midList.get(0);
-//			Log.d(TAG + ":onActivityResult", "ParcelableMap:" + glueMidMap);
 			for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : glueMidMap.entrySet()) {
@@ -1578,7 +1569,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_LINE_END:
 			ArrayList<Map<Integer, PointWeldLineEndParam>> line_endList=(ArrayList<Map<Integer, PointWeldLineEndParam>>) list.get(0);
 			HashMap<Integer, PointWeldLineEndParam> glueEndMap=(HashMap<Integer, PointWeldLineEndParam>) line_endList.get(0);
-//			Log.d(TAG + ":onActivityResult", "ParcelableMap:" + glueEndMap);
 			for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : glueEndMap.entrySet()) {
@@ -1595,7 +1585,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_BLOW:
 			ArrayList<Map<Integer, PointWeldBlowParam>> clearlList=(ArrayList<Map<Integer, PointWeldBlowParam>>) list.get(0);
 			HashMap<Integer, PointWeldBlowParam> clearMap=(HashMap<Integer, PointWeldBlowParam>) clearlList.get(0);
-//			Log.d(TAG + ":onActivityResult", "ParcelableMap:" + clearMap);
 			for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : clearMap.entrySet()) {
@@ -1612,7 +1601,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_INPUT:
 			ArrayList<Map<Integer, PointWeldInputIOParam>> inputList=(ArrayList<Map<Integer, PointWeldInputIOParam>>) list.get(0);
 			HashMap<Integer, PointWeldInputIOParam> inputMap=(HashMap<Integer, PointWeldInputIOParam>) inputList.get(0);
-//			Log.d(TAG + ":onActivityResult", "ParcelableMap:" + inputMap);
 			for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : inputMap.entrySet()) {
@@ -1629,7 +1617,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			case POINT_WELD_OUTPUT:
 			ArrayList<Map<Integer, PointWeldOutputIOParam>> outputlList=(ArrayList<Map<Integer, PointWeldOutputIOParam>>) list.get(0);
 			HashMap<Integer, PointWeldOutputIOParam> outputMap=(HashMap<Integer, PointWeldOutputIOParam>) outputlList.get(0);
-//			Log.d(TAG + ":onActivityResult", "ParcelableMap:" + outputMap);
 			for (Point pointCur : mPointsCur) {
 				if (pointCur.getPointParam().getPointType().equals(point.getPointParam().getPointType())) {
 					for (Map.Entry entry : outputMap.entrySet()) {
@@ -1728,7 +1715,6 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		case R.id.rl_back:// 点击头文件的返回按钮
 			isChange  = PointCopyTools.comparePoints(mPointStorages, mPointsCur);
 			if(isChange){
-//				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.data_not_changed));
 				TaskActivity.this.finish();
 				overridePendingTransition(R.anim.in_from_left, R.anim.out_from_right);
 			}else{
@@ -1774,7 +1760,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 
 			break;
 		case R.id.rl_dingwei:// 定位
-			Log.d(TAG, "--------->定位");
+			L.d(TAG, "--------->定位");
 			if (!mPointsCur.isEmpty()) {
 				OrderParam.INSTANCE.setnXCoord(RobotParam.INSTANCE.XJourney2Pulse(mPointsCur.get(selectRadioIDCur).getX()));
 				OrderParam.INSTANCE.setnYCoord(RobotParam.INSTANCE.YJourney2Pulse(mPointsCur.get(selectRadioIDCur).getY()));
@@ -1786,7 +1772,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			}
 			break;
 		case R.id.rl_pianyi:// 偏移
-			Log.d(TAG, "--------->偏移" + selectCheckboxCur.toString());
+			L.d(TAG, "--------->偏移" + selectCheckboxCur.toString());
 			if (selectCheckboxCur.size() != 0 && selectCheckboxCur != null) {
 				List<Point> pointArrays = new ArrayList<Point>();
 				
@@ -1809,7 +1795,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 
 			break;
 		case R.id.rl_moni:// 模拟
-			Log.d(TAG, "--------->模拟");
+			L.d(TAG, "--------->模拟");
 			if (checkForValidity(mPointsCur)) {
 				CheckSimulationUpHeightAsynctask check = new CheckSimulationUpHeightAsynctask();
 				check.execute(mPointsCur);
@@ -1823,7 +1809,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			}
 			break;
 		case R.id.rl_shijue:// 视觉
-			Log.d(TAG, "--------->视觉");
+			L.d(TAG, "--------->视觉");
 			if (!mPointsCur.isEmpty()) {
 				arrayIntent = new Intent(this, GlueCameraActivity.class);
 				Bundle extras = new Bundle();
@@ -1836,7 +1822,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			}
 			break;
 		case R.id.rl_moshi:// 模式
-			Log.d(TAG, "--------->模式");
+			L.d(TAG, "--------->模式");
 			if (modeFlagCur == 0) {
 				modeFlagCur = 1;// 点击一次变为单步
 				ToastUtil.displayPromptInfo(this, getResources().getString(R.string.step_single));
@@ -1856,7 +1842,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 //			sendResetCommand();
 			break;
 		case R.id.rl_zhenlie:// 阵列
-			Log.d(TAG, "--------->阵列");
+			L.d(TAG, "--------->阵列");
 
 			if (selectCheckboxCur.size() != 0 && selectCheckboxCur != null) {
 				List<Point> pointArrays = new ArrayList<Point>();
@@ -1900,9 +1886,9 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			}
 			break;
 		case R.id.rl_shitu:// 视图
-			Log.d(TAG, "--------->视图");
+			L.d(TAG, "--------->视图");
 			arrayIntent = new Intent(this, GlueViewActivity.class);
-			Log.d(TAG, "视图：" + mPointsCur.toString());
+			L.d(TAG, "视图：" + mPointsCur.toString());
 			save2Activity(arrayIntent, mPointsCur);
 			break;
 		case R.id.rl_xiazai:// 下载
@@ -1925,9 +1911,9 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			break;
 		case R.id.rl_shanchu:// 删除
 			if (selectCheckboxCur.size() != 0 && selectCheckboxCur != null) {
-				Log.i(TAG, "数组：" + selectCheckboxCur.toString());
+				L.d(TAG, "数组：" + selectCheckboxCur.toString());
 				for (int i = selectCheckboxCur.size() - 1; i >= 0; i--) {
-					Log.d(TAG, "Integer.parseInt(checkBox[i])" + selectCheckboxCur.get(i));
+					L.d(TAG, "Integer.parseInt(checkBox[i])" + selectCheckboxCur.get(i));
 					mPointsCur.remove((int) selectCheckboxCur.get(i));
 				}
 				selectCheckboxCur.clear();
@@ -1969,14 +1955,13 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			mAdapter.notifyDataSetChanged();
 			break;
 		case R.id.rl_shezhi:// 任务设置
-			Log.d(TAG, "--------->设置");
+			L.d(TAG, "--------->设置");
 			arrayIntent = new Intent(this, GlueTaskSettingActivity.class);
 			startActivityForResult(arrayIntent, requestCode);
 			break;
 		case R.id.rl_fangan:// 方案
-			Log.d(TAG, "--------->方案");
+			L.d(TAG, "--------->方案");
 			processTaskActivity();
-			// Log.d(TAG, mPoints.get(selectRadioID).toString());
 
 			break;
 
@@ -2050,8 +2035,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
 			if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
 				Point coordPoint = MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
-//                    Log.d(TAG, "解析坐标值->:" + coordPoint.toString());
-				System.out.println("解析坐标值");
+				L.d("解析坐标值"+coordPoint);
 				StopSuccessFlag = true;//说明下位机成功返回消息
 				StopRetryTimes = 5;//重新设置重传次数
 				mPointsCur.get(selectRadioIDCur).setX(coordPoint.getX());

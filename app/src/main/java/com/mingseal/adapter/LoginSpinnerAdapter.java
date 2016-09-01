@@ -62,7 +62,6 @@ public class LoginSpinnerAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
 			holder = new ViewHolder();
-//			convertView = mInflater.inflate(R.layout.item_login_spinner, null);
 			convertView = mInflater.inflate(R.layout.item_login_spinner,parent,false);
 			holder.tv_num = (TextView) convertView.findViewById(R.id.item_admin);
 

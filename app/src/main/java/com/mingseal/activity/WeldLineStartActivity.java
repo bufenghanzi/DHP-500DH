@@ -37,6 +37,7 @@ import com.mingseal.listener.MaxMinFocusChangeListener;
 import com.mingseal.listener.MyPopWindowClickListener;
 import com.mingseal.ui.PopupListView;
 import com.mingseal.ui.PopupView;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -187,7 +188,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         defaultNum = SharePreferenceUtils.getParamNumberFromPref(
                 WeldLineStartActivity.this,
                 SettingParam.DefaultNum.ParamGlueLineStartNumber);
-        Log.d(TAG, point.toString());
+        L.d(TAG, point.toString());
 
         weldStartDao = new WeldLineStartDao(WeldLineStartActivity.this);
         weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
@@ -406,9 +407,9 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         for (PointWeldLineStartParam pointWeldLineStartParam : weldStartLists) {
             list.add(pointWeldLineStartParam.get_id());
         }
-        System.out.println("存放主键id的集合---->" + list);
-        System.out.println("当前选择的方案号---->" + currentTaskNum);
-        System.out.println("list是否存在------------》"
+        L.d("存放主键id的集合---->" + list);
+        L.d("当前选择的方案号---->" + currentTaskNum);
+        L.d("list是否存在------------》"
                 + list.contains(currentTaskNum));
         if (list.contains(currentTaskNum)) {
             // 已经保存在数据库中的数据
@@ -478,7 +479,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                             .insertWeldLineStart(upglueStartParam,taskname);
                     firstExist = true;
                     weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
-                    Log.i(TAG, "保存之后新方案-->" + weldStartLists.toString());
+                    L.d(TAG, "保存之后新方案-->" + weldStartLists.toString());
                     ToastUtil.displayPromptInfo(WeldLineStartActivity.this,
                             getResources().getString(R.string.save_success));
                     list.clear();
@@ -714,9 +715,9 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                 mIndex = itemPopuViews.indexOf(popupView) + 1;
             }
         }
-        System.out.println("返回的方案号为================》" + mIndex);
+        L.d("返回的方案号为================》" + mIndex);
         point.setPointParam(weldStartDao.getPointWeldLineStartParamByID(mIndex,taskname));
-        System.out.println("返回的Point为================》" + point);
+        L.d("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldLineStartParam>> list = new ArrayList<Map<Integer, PointWeldLineStartParam>>();
         list.add(update_id);

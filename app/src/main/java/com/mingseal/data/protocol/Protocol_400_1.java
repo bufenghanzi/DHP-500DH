@@ -148,7 +148,7 @@ public class Protocol_400_1 extends Protocol {
 
 		case Cmd_Device:// 读取机器类型
 			FillHead(buf, P_400_HEAD, P_400_READ_S, 0, cmd, index);
-			FillCommand(buf, P_400_READ_S, 0x5220, (byte) 0x27, index);
+			FillCommand(buf, P_400_READ_S, 0x5220, (byte) 0x25, index);
 			FillData(buf, cmd, index);
 			break;
 		case Cmd_Coord:// 读取当前坐标

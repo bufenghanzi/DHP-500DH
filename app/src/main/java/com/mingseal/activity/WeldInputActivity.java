@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +36,7 @@ import com.mingseal.listener.MaxMinFocusChangeListener;
 import com.mingseal.listener.MyPopWindowClickListener;
 import com.mingseal.ui.PopupListView;
 import com.mingseal.ui.PopupView;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -320,9 +320,9 @@ public class WeldInputActivity extends AutoLayoutActivity implements OnClickList
         for (PointWeldInputIOParam pointWeldInputIOParam : inputIOLists) {
             list.add(pointWeldInputIOParam.get_id());
         }
-        System.out.println("存放主键id的集合---->" + list);
-        System.out.println("当前选择的方案号---->" + currentTaskNum);
-        System.out.println("list是否存在------------》"
+        L.d("存放主键id的集合---->" + list);
+        L.d("当前选择的方案号---->" + currentTaskNum);
+        L.d("list是否存在------------》"
                 + list.contains(currentTaskNum));
         if (list.contains(currentTaskNum)) {
             // 已经保存在数据库中的数据
@@ -378,17 +378,15 @@ public class WeldInputActivity extends AutoLayoutActivity implements OnClickList
                 if (flag) {
                     // 更新数据
                     int rowid = inputDao.upDateGlueInput(upInputIOParam);
-                    // System.out.println("影响的行数"+rowid);
                     update_id.put(upInputIOParam.get_id(), upInputIOParam);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
-                    System.out.println("修改的方案号为：" + upInputIOParam.get_id());
-                    // System.out.println(glueAloneDao.getPointGlueAloneParamById(currentTaskNum).toString());
+                    L.d("修改的方案号为：" + upInputIOParam.get_id());
                 } else {
                     // 插入一条数据
                     long rowid = inputDao.insertWeldInput(upInputIOParam);
                     firstExist = true;
                     inputIOLists = inputDao.findAllWeldInputParams();
-                    Log.i(TAG, "保存之后新方案-->" + inputIOLists.toString());
+                    L.d(TAG, "保存之后新方案-->" + inputIOLists.toString());
                     ToastUtil.displayPromptInfo(WeldInputActivity.this,
                             getResources().getString(R.string.save_success));
                     list.clear();
@@ -554,13 +552,13 @@ public class WeldInputActivity extends AutoLayoutActivity implements OnClickList
                 mIndex = itemPopuViews.indexOf(popupView) + 1;
             }
         }
-        System.out.println("返回的方案号为================》" + mIndex);
+        L.d("返回的方案号为================》" + mIndex);
         point.setPointParam(inputDao.getInputPointByID(mIndex));
-        System.out.println("返回的Point为================》" + point);
+        L.d("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldInputIOParam>> list = new ArrayList<Map<Integer, PointWeldInputIOParam>>();
         list.add(update_id);
-        Log.i(TAG, point.toString());
+        L.d(TAG, point.toString());
         Bundle extras = new Bundle();
         extras.putParcelable(MyPopWindowClickListener.POPWINDOW_KEY, point);
         extras.putInt(MyPopWindowClickListener.FLAG_KEY, mFlag);
@@ -596,9 +594,9 @@ public class WeldInputActivity extends AutoLayoutActivity implements OnClickList
         public void handleMessage(Message msg) {
             if (msg.what== SocketInputThread.SocketError){
                 //wifi中断
-                System.out.println("wifi连接断开。。");
+                L.d("wifi连接断开。。");
                 SocketThreadManager.releaseInstance();
-                System.out.println("单例被释放了-----------------------------");
+                L.d("单例被释放了-----------------------------");
                 //设置全局变量，跟新ui
                 userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
@@ -834,7 +832,6 @@ public class WeldInputActivity extends AutoLayoutActivity implements OnClickList
             // 显示point的参数方案
             // PointGlueAloneParam glueAloneParam= (PointGlueAloneParam)
             // point.getPointParam();
-            // System.out.println("传进来的方案号为----------》"+glueAloneParam.get_id());
             popupListView.setPosition(point.getPointParam().get_id() - 1);
         }
         ArrayList<Integer> list = new ArrayList<>();

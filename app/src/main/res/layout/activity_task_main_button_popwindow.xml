@@ -24,57 +24,57 @@
             android:textColor="@color/color_white"
             android:textSize="@dimen/activity_task_popwindow_text_size" />
 
-        <Button
-            android:id="@+id/but_qishi"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_line_start"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
+        <!--<Button-->
+            <!--android:id="@+id/but_qishi"-->
+            <!--android:layout_width="180px"-->
+            <!--android:layout_height="70px"-->
+            <!--android:layout_marginTop="9px"-->
+            <!--android:background="@drawable/task_bottom_pop_button"-->
+            <!--android:text="@string/activity_glue_line_start"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:textSize="@dimen/activity_task_popwindow_text_size" />-->
 
-        <Button
-            android:id="@+id/but_zhongjian"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_line_mid"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
+        <!--<Button-->
+            <!--android:id="@+id/but_zhongjian"-->
+            <!--android:layout_width="180px"-->
+            <!--android:layout_height="70px"-->
+            <!--android:layout_marginTop="9px"-->
+            <!--android:background="@drawable/task_bottom_pop_button"-->
+            <!--android:text="@string/activity_glue_line_mid"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:textSize="@dimen/activity_task_popwindow_text_size" />-->
 
 
 
-        <Button
-            android:id="@+id/but_jieshu"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_line_end"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
+        <!--<Button-->
+            <!--android:id="@+id/but_jieshu"-->
+            <!--android:layout_width="180px"-->
+            <!--android:layout_height="70px"-->
+            <!--android:layout_marginTop="9px"-->
+            <!--android:background="@drawable/task_bottom_pop_button"-->
+            <!--android:text="@string/activity_glue_line_end"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:textSize="@dimen/activity_task_popwindow_text_size" />-->
 
-        <Button
-            android:id="@+id/but_chuixi"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_base"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
+        <!--<Button-->
+            <!--android:id="@+id/but_chuixi"-->
+            <!--android:layout_width="180px"-->
+            <!--android:layout_height="70px"-->
+            <!--android:layout_marginTop="9px"-->
+            <!--android:background="@drawable/task_bottom_pop_button"-->
+            <!--android:text="@string/activity_glue_base"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:textSize="@dimen/activity_task_popwindow_text_size" />-->
 
-        <Button
-            android:id="@+id/but_jizhun"
-            android:layout_width="180px"
-            android:layout_height="70px"
-            android:layout_marginTop="9px"
-            android:background="@drawable/task_bottom_pop_button"
-            android:text="@string/activity_glue_jizhun"
-            android:textColor="@color/color_white"
-            android:textSize="@dimen/activity_task_popwindow_text_size" />
+        <!--<Button-->
+            <!--android:id="@+id/but_jizhun"-->
+            <!--android:layout_width="180px"-->
+            <!--android:layout_height="70px"-->
+            <!--android:layout_marginTop="9px"-->
+            <!--android:background="@drawable/task_bottom_pop_button"-->
+            <!--android:text="@string/activity_glue_jizhun"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:textSize="@dimen/activity_task_popwindow_text_size" />-->
 
 
 

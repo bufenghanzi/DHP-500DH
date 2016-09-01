@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +35,7 @@ import com.mingseal.listener.MaxMinFocusChangeListener;
 import com.mingseal.listener.MyPopWindowClickListener;
 import com.mingseal.ui.PopupListView;
 import com.mingseal.ui.PopupView;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -318,9 +318,9 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         for (PointWeldBlowParam pointWeldBlowParam : weldBlowLists) {
             list.add(pointWeldBlowParam.get_id());
         }
-        System.out.println("存放主键id的集合---->" + list);
-        System.out.println("当前选择的方案号---->" + currentTaskNum);
-        System.out.println("list是否存在------------》"
+        L.d("存放主键id的集合---->" + list);
+        L.d("当前选择的方案号---->" + currentTaskNum);
+        L.d("list是否存在------------》"
                 + list.contains(currentTaskNum));
         if (list.contains(currentTaskNum)) {
             // 已经保存在数据库中的数据
@@ -379,14 +379,14 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                     // System.out.println("影响的行数"+rowid);
                     update_id.put(upInputIOParam.get_id(), upInputIOParam);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
-                    System.out.println("修改的方案号为：" + upInputIOParam.get_id());
+                    L.d("修改的方案号为：" + upInputIOParam.get_id());
                     // System.out.println(glueAloneDao.getPointGlueAloneParamById(currentTaskNum).toString());
                 } else {
                     // 插入一条数据
                     long rowid = weldBlowDao.insertWeldOutput(upInputIOParam,taskname);
                     firstExist = true;
                     weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
-                    Log.i(TAG, "保存之后新方案-->" + weldBlowLists.toString());
+                    L.d(TAG, "保存之后新方案-->" + weldBlowLists.toString());
                     ToastUtil.displayPromptInfo(WeldBlowActivity.this,
                             getResources().getString(R.string.save_success));
                     list.clear();
@@ -444,18 +444,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         et_input_goTimeNext = (EditText) extendView
                 .findViewById(R.id.et_input_goTimeNext);
 
-//        ioSwitch = new ToggleButton[GWOutPort.USER_O_NO_ALL.ordinal()];
         ioSwitch = (ToggleButton) extendView.findViewById(R.id.switch_glueport1);
-//        ioSwitch[1] = (ToggleButton) extendView
-//                .findViewById(R.id.switch_glueport2);
-//        ioSwitch[2] = (ToggleButton) extendView
-//                .findViewById(R.id.switch_glueport3);
-//        ioSwitch[3] = (ToggleButton) extendView
-//                .findViewById(R.id.switch_glueport4);
-        // rl_moren = (RelativeLayout) findViewById(R.id.rl_moren);
-        // iv_add = (ImageView) findViewById(R.id.iv_add);
-        // rl_save = (RelativeLayout) findViewById(R.id.rl_save);
-        // iv_moren = (ImageView) findViewById(R.id.iv_moren);
         tv_goTimePrev = (TextView) extendView.findViewById(R.id.tv_goTimePrev);
         extend_ms = (TextView) extendView.findViewById(R.id.extend_ms);
         tv_goTimeNext = (TextView) extendView.findViewById(R.id.tv_goTimeNext);
@@ -551,13 +540,13 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 mIndex = itemPopuViews.indexOf(popupView) + 1;
             }
         }
-        System.out.println("返回的方案号为================》" + mIndex);
+        L.d("返回的方案号为================》" + mIndex);
         point.setPointParam(weldBlowDao.getOutPutPointByID(mIndex,taskname));
-        System.out.println("返回的Point为================》" + point);
+        L.d("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldBlowParam>> list = new ArrayList<Map<Integer, PointWeldBlowParam>>();
         list.add(update_id);
-        Log.i(TAG, point.toString());
+        L.d(TAG, point.toString());
         Bundle extras = new Bundle();
         extras.putParcelable(MyPopWindowClickListener.POPWINDOW_KEY, point);
         extras.putInt(MyPopWindowClickListener.FLAG_KEY, mFlag);
@@ -593,9 +582,9 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         public void handleMessage(Message msg) {
             if (msg.what== SocketInputThread.SocketError){
                 //wifi中断
-                System.out.println("wifi连接断开。。");
+                L.d("wifi连接断开。。");
                 SocketThreadManager.releaseInstance();
-                System.out.println("单例被释放了-----------------------------");
+                L.d("单例被释放了-----------------------------");
                 //设置全局变量，跟新ui
                 userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);

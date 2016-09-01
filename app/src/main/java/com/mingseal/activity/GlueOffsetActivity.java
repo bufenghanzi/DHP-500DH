@@ -314,9 +314,6 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 					offset_z_max=point.getZ();
 				}
 			}
-//			System.out.println("offset_x_min:"+RobotParam.INSTANCE.XPulse2Journey(offset_x_min)+","+"offset_x_max:"+RobotParam.INSTANCE.XPulse2Journey(offset_x_max));
-//			int i=RobotParam.INSTANCE.XJourney2Pulse(RobotParam.INSTANCE.GetXJourney())-offset_x_max;
-//			System.out.println("x/y/z分别向左向右偏移范围："+"-"+RobotParam.INSTANCE.XPulse2Journey(offset_x_min)+"-"+RobotParam.INSTANCE.XPulse2Journey(i));
 		}else {
 			offset_x_max=offset_x_min =points.get(0).getX();//初始化默认第一个点的x脉冲最小和最大
 			offset_y_max=offset_y_min =points.get(0).getY();
@@ -522,8 +519,6 @@ public class GlueOffsetActivity extends AutoLayoutActivity implements OnClickLis
 	/**
 	 * @ClassName MoveListener
 	 * @Description x,y,z,u控制移动
-	 * @author 商炎炳
-	 * @date 2016年1月28日 下午3:07:15
 	 *
 	 */
 	private class MoveListener implements OnTouchListener{

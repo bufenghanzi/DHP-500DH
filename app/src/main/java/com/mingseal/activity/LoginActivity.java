@@ -15,7 +15,7 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +40,7 @@ import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.protocol.Protocol_400_1;
 import com.mingseal.data.user.User;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.utils.L;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -107,12 +108,18 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 		setImmersionStatus();
 		setContentView(R.layout.activity_login);
 		protocol = new Protocol_400_1();
-		Log.d(TAG, "loginActivity--->onCreate()");
+		L.d(TAG, "loginActivity--->onCreate()");
 		initView();
 		sp_admin.setAdapter(spinnerAdapter);
 		sp_admin.setOnItemSelectedListener(new SpinnerXMLSelectedListener());
 		initUserData();
 		userApplication = (UserApplication) getApplication();
+		DisplayMetrics metric = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metric);
+		int width = metric.widthPixels;     // 屏幕宽度（像素）
+		int height = metric.heightPixels;   // 屏幕高度（像素）
+		L.d("屏幕宽度："+width);
+		L.d("屏幕高度："+height);
 	}
 
 	private void setImmersionStatus() {
@@ -144,8 +151,6 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 		et_username.setText("admin");
 		et_password.setText("admin");
 		
-//		View view = View.inflate(this, R.layout.activity_task_list, null);
-//		iv_connect_tip = (ImageView) view.findViewById(R.id.iv_connect_tip);
 	}
 
 	/**
@@ -257,10 +262,6 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 						//跳转到管理员界面
 						intent = new Intent(this, TaskListActivity.class);
 					}
-//					else if(loginAdmin.equals(getResources().getString(R.string.login_user))){
-//						//跳转到操作员界面
-//						intent = new Intent(this, TaskListUserActivity.class);
-//					}
 					String ssid_info=getSSIDInfo();
 					String ssid=null;
 					int _id=-1;
@@ -268,7 +269,7 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 					if (ssid_info.contains("\"")){
 						//联入了网络
 						ssid=ssid_info.substring(1,ssid_info.lastIndexOf("\""));
-						System.out.println("ssid:======"+ssid);
+						L.d("ssid:======"+ssid);
 						//查询数据库
 						_id=wifiDao.findNumbySSID(ssid);
 					}
@@ -327,7 +328,7 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 		case 1: {
 			int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] & 0x00ff);
 			if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
-				Log.d(TAG, RobotParam.INSTANCE.GetXJourney() + ",分辨率：x" + RobotParam.INSTANCE.GetXDifferentiate()+",y:"+ RobotParam.INSTANCE.GetYDifferentiate()+",z:"+ RobotParam.INSTANCE.GetZDifferentiate());
+				L.d(TAG, RobotParam.INSTANCE.GetXJourney() + ",分辨率：x" + RobotParam.INSTANCE.GetXDifferentiate()+",y:"+ RobotParam.INSTANCE.GetYDifferentiate()+",z:"+ RobotParam.INSTANCE.GetZDifferentiate());
 				ToastUtil.displayPromptInfo(LoginActivity.this, "获取参数成功!");
 			}
 		}
@@ -436,12 +437,6 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 			orderLength = protocol.CreaterOrder(buffer, CmdParam.Cmd_Reset);
 			MessageMgr.INSTANCE.writeData(buffer, orderLength);
 			/************************ end ******************************/
-//			mPointsCur.get(selectRadioIDCur).setX(0);
-//			mPointsCur.get(selectRadioIDCur).setY(0);
-//			mPointsCur.get(selectRadioIDCur).setZ(0);
-//			mPointsCur.get(selectRadioIDCur).setU(0);
-//			mAdapter.setData(mPointsCur);
-//			mAdapter.notifyDataSetChanged();
 	}
 
 	private class RevHandler extends Handler {
@@ -451,7 +446,6 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 			// 如果消息来自子线程
 			if (msg.what == SocketInputThread.SocketInputWhat) {
 				userApplication.setWifiConnecting(true);
-//				WifiConnectTools.processWifiConnect(userApplication, iv_connect_tip);
 				// 获取下位机上传的数据
 				ByteBuffer temp = (ByteBuffer) msg.obj;
 				byte[] buffer;
@@ -461,7 +455,4 @@ public class LoginActivity extends AutoLayoutActivity implements OnClickListener
 			}
 		}
 	}
-
-	
-
 }

@@ -41,6 +41,7 @@ import com.mingseal.utils.CameraInterface;
 import com.mingseal.utils.CameraInterface.CamOpenOverCallback;
 import com.mingseal.utils.DisplayUtil;
 import com.mingseal.utils.FloatUtil;
+import com.mingseal.utils.L;
 import com.mingseal.utils.MoveUtils;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
@@ -206,7 +207,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 
 		intent = getIntent();
 		point = intent.getParcelableExtra(TaskActivity.ARRAY_KEY);
-		Log.d(TAG, "任务点：之前：" + point.toString());
+		L.d(TAG, "任务点：之前：" + point.toString());
 
 		initUI();
 		initViewParams();
@@ -249,7 +250,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 
 	@Override
 	protected void onStart() {
-		Log.d(TAG,"----------->onStart()");
+		L.d(TAG,"----------->onStart()");
 		Thread openThread = new Thread() {
 			@Override
 			public void run() {
@@ -369,8 +370,6 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 	/**
 	 * @ClassName MoveListener
 	 * @Description x,y,z,u移动
-	 * @author 商炎炳
-	 * @date 2016年1月28日 下午2:39:53
 	 *
 	 */
 	private class MoveListener implements OnTouchListener{
@@ -703,8 +702,7 @@ public class GlueCameraActivity extends AutoLayoutActivity implements CamOpenOve
 			point.setY(RobotParam.INSTANCE.YJourney2Pulse(position_y));
 			point.setZ(RobotParam.INSTANCE.ZJourney2Pulse(position_z));
 			point.setU(RobotParam.INSTANCE.UJourney2Pulse(position_u));
-			Log.d(TAG, "任务点：" + point.toString());
-
+			L.d(TAG, "任务点：" + point.toString());
 			Bundle extras = new Bundle();
 			extras.putParcelable(TaskActivity.CAMERA_KEY, point);
 

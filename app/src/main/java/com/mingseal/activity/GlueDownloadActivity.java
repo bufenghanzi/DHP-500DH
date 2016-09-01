@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +34,7 @@ import com.mingseal.listener.MaxMinEditWatcher;
 import com.mingseal.listener.MaxMinFocusChangeListener;
 import com.mingseal.utils.CustomUploadDialog;
 import com.mingseal.utils.DateUtil;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -129,7 +129,6 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 	private TextView tv_mms2;
 	private TextView tv_z;
 	private TextView tv_z_kongzou;
-	private TextView tv_max;
 	private ImageView iv_complete;
 	private ImageView iv_cancel;
 	private TextView tv_xiazai;
@@ -232,7 +231,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		rl_back = (RelativeLayout) findViewById(R.id.rl_back);
 		rl_cancel = (RelativeLayout) findViewById(R.id.rl_cancel);
 		et_number = (EditText) findViewById(R.id.et_download_tasknumber);
-		et_download_nBackSnSpeedFir = (EditText) findViewById(R.id.et_download_accelerate_time);
+		et_download_nBackSnSpeedFir = (EditText) findViewById(R.id.et_download_nBackSnSpeedFir);
 		et_upHeight = (EditText) findViewById(R.id.et_upHeight);
 		et_download_nBackSnSpeedSec = (EditText) findViewById(R.id.et_download_nBackSnSpeedSec);
 		et_download_nBackSnSpeedThird = (EditText) findViewById(R.id.et_download_nBackSnSpeedThird);
@@ -260,7 +259,6 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_nBackSnSpeedSec = (TextView) findViewById(R.id.tv_nBackSnSpeedSec);
 		tv_nBackSnSpeedThird = (TextView) findViewById(R.id.tv_nBackSnSpeedThird);
 		tv_nBackSnSpeedFour = (TextView) findViewById(R.id.tv_nBackSnSpeedFour);
-		tv_max = (TextView) findViewById(R.id.tv_max);
 		tv_nBackSnSumSec = (TextView) findViewById(R.id.tv_nBackSnSumSec);
 		tv_nBackSnSumThird = (TextView) findViewById(R.id.tv_nBackSnSumThird);
 		rl_download = (RelativeLayout) findViewById(R.id.rl_download);
@@ -302,7 +300,6 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_nBackSnSpeedSec.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSpeedThird.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSpeedFour.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-		tv_max.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		tv_nBackSnSumSec.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSumThird.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_xiazai.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
@@ -525,9 +522,12 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		TaskParam.INSTANCE.setnStartY(RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getY()));
 		TaskParam.INSTANCE.setnStartZ(RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getZ()));
 		TaskParam.INSTANCE.setnStartU(RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getU()));
+		L.d("基准点坐标X："+RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getX()));
+		L.d("基准点坐标y："+RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getY()));
+		L.d("基准点坐标z："+RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getZ()));
+		L.d("基准点坐标u："+RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getU()));
 		TaskParam.INSTANCE.setnTaskNum(Integer.parseInt(et_number.getText().toString()));
 		TaskParam.INSTANCE.setnSnHeight(Integer.parseInt(et_upHeight.getText().toString()));// 设置出锡高度
-		TaskParam.INSTANCE.setnWorkMode(1);// 设置工作模式默认电机
 		TaskParam.INSTANCE.setnBackSnSpeedFir(Integer.parseInt(et_download_nBackSnSpeedFir.getText().toString()));// 设置一次回锡速度
 		TaskParam.INSTANCE.setnBackSnSpeedSec(Integer.parseInt(et_download_nBackSnSpeedSec.getText().toString()));// 设置二次回锡速度
 		TaskParam.INSTANCE.setnBackSnSpeedThird(Integer.parseInt(et_download_nBackSnSpeedThird.getText().toString()));// 设置三次回锡速度
@@ -689,7 +689,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 					field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
 					field.setAccessible(true);
 					field.set(dialog, true);// true表示要关闭
-					System.out.println("下载的任务点集："+points.get(0).getPointParam().toString());
+					L.d("下载的任务点集：" + points.get(0).getPointParam().toString());
 					//开启进度框
 					startProgressDialog();
 					MessageMgr.INSTANCE.taskDownload(points);
@@ -706,15 +706,15 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 
 		@Override
 		protected Integer doInBackground(byte[]... params) {
-			Log.d(TAG, "下载1：" + DateUtil.getCurrentTime());
+			L.d(TAG, "下载1：" + DateUtil.getCurrentTime());
 			int i = MessageMgr.INSTANCE.managingMessage(params[0]);
-			Log.d(TAG, "下载2：" + DateUtil.getCurrentTime());
+			L.d(TAG, "下载2：" + DateUtil.getCurrentTime());
 			return i;
 		}
 
 		@Override
 		protected void onPostExecute(Integer result) {
-			Log.d(TAG, "下载3：" + DateUtil.getCurrentTime() + ",result=" + result);
+			L.d(TAG, "下载3：" + DateUtil.getCurrentTime() + ",result=" + result);
 			switch (result) {
 			case 0:
 				ToastUtil.displayPromptInfo(GlueDownloadActivity.this, "校验失败");
@@ -815,7 +815,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 			ToastUtil.displayPromptInfo(GlueDownloadActivity.this, "校验失败");
 			if (((revBuffer[3] & 0x00ff) == 0x31) && ((revBuffer[2] & 0x00ff) == 0x79)) {
 				if ((revBuffer[5] & 0x00ff) == 0) {
-					Log.d(TAG, "任务不存在");
+					L.d(TAG, "任务不存在");
 					// 任务不存在的话，就可以直接下载
 					startProgressDialog();
 					MessageMgr.INSTANCE.taskDownload(points);
@@ -823,39 +823,15 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 			}
 			break;
 		case 1: {
-			// int cmdFlag = ((revBuffer[2] & 0x00ff) << 8) | (revBuffer[3] &
-			// 0x00ff);
-			// if (cmdFlag == 0x1a00) {// 若是获取坐标命令返回的数据,解析坐标值
-			// Point coordPoint =
-			// MessageMgr.INSTANCE.analyseCurCoord(revBuffer);
-			//
-			// } else if (revBuffer[2] == 0x4A) {// 获取下位机参数成功
-			// ToastUtil.showToast(GlueDownloadActivity.this, "获取参数成功!");
-			// }
-			// for(int i=0;i<revBuffer.length;i++){
-			// Log.d(TAG, ""+revBuffer[i]);
-			// }
 			if (revBuffer[3] == 0x30) {
-				Log.e(TAG, "询问");
+				L.d(TAG, "询问");
 			} else if (revBuffer[3] == 0x52) {
-				Log.e(TAG, "下载预处理");
+				L.d(TAG, "下载预处理");
 				startProgressDialog();
-//				Bundle extras = new Bundle();
-//				if (points.size() > TaskActivity.MAX_SIZE) {
-//					extras.putString(TaskActivity.KEY_NUMBER, "0");
-//					userApplication.setPoints(points);
-//				} else {
-//					extras.putString(TaskActivity.KEY_NUMBER, "1");
-//					extras.putParcelableArrayList(TaskActivity.DOWNLOAD_KEY, (ArrayList<? extends Parcelable>) points);
-//				}
-//				intent.putExtras(extras);
-//				setResult(TaskActivity.resultDownLoadCode, intent);
-//				finish();
-//				overridePendingTransition(R.anim.in_from_left, R.anim.out_from_right);
 			}
 			if ((revBuffer[3] & 0x00ff) == 0x31) {
 				if ((revBuffer[5] & 0x00ff) == 1) {
-					Log.d(TAG, "任务存在");
+					L.d(TAG, "任务存在");
 					// 任务存在的话，需要给个提示框
 					displayTaskNumExist();
 				}
@@ -952,15 +928,13 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 				// new ManagingMessage().execute(buffer);
 			}else if (msg.what== SocketInputThread.SocketError){
 				//wifi中断
-				System.out.println("wifi连接断开。。");
+				L.d("wifi连接断开。。");
 				SocketThreadManager.releaseInstance();
-				System.out.println("单例被释放了-----------------------------");
+				L.d("单例被释放了-----------------------------");
 				//设置全局变量，跟新ui
 				userApplication.setWifiConnecting(false);
-//				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
 				ToastUtil.displayPromptInfo(GlueDownloadActivity.this,"wifi连接断开。。");
 			}
 		}
 	}
-
 }

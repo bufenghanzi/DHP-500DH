@@ -2,7 +2,6 @@ package com.mingseal.data.manager;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 import com.mingseal.application.UserApplication;
 import com.mingseal.communicate.SocketThreadManager;
@@ -22,6 +21,7 @@ import com.mingseal.data.point.weldparam.PointWeldWorkParam;
 import com.mingseal.data.protocol.Protocol_400_1;
 import com.mingseal.utils.DataCheckout;
 import com.mingseal.utils.DateUtil;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SocketThread;
 
 import java.io.UnsupportedEncodingException;
@@ -633,7 +633,6 @@ public enum MessageMgr {
         task.setValue(49, TaskParam.INSTANCE.getnBackSnSpeedFour());
         task.setValue(50, TaskParam.INSTANCE.getnBackSnSumSecFour());
         task.setValue(51, TaskParam.INSTANCE.getnSnHeight());
-        task.setValue(52, TaskParam.INSTANCE.getnWorkMode());
 
 		/*=====================  end =====================*/
 
@@ -744,7 +743,7 @@ public enum MessageMgr {
         TaskParam.INSTANCE.setnBackSnSpeedFour(Protocol_400_1.READ2BYTES(_buf, 98));
         TaskParam.INSTANCE.setnBackSnSumSecFour(Protocol_400_1.READ2BYTES(_buf, 100));
         TaskParam.INSTANCE.setnSnHeight(Protocol_400_1.READ2BYTES(_buf, 102));
-        TaskParam.INSTANCE.setnWorkMode(Protocol_400_1.READ2BYTES(_buf, 104));
+//        TaskParam.INSTANCE.setnWorkMode(Protocol_400_1.READ2BYTES(_buf, 104));
 //		TaskParam.INSTANCE.setnTurnAccelerateMax(Protocol_400_1.READ2BYTES(_buf, 82));
         if ((val & 0x4000) > 0) {//判断有无基准点0：无基准点，1：有基准点
             if (isDH) {
@@ -1071,59 +1070,6 @@ public enum MessageMgr {
 //                        }
                     }
                     break;
-//                case 5:
-//                    //面起点
-//                    if (isDH) {
-//                        //C++源码为 ASSERT(0);
-//                    } else {
-//                        Point pt = new Point(PointType.POINT_GLUE_FACE_START);
-//                        pt.setX(Protocol_400_1.READ4BYTES(buf, primaryOffset, 6));
-//                        pt.setY(Protocol_400_1.READ4BYTES(buf, primaryOffset, 10));
-//                        pt.setZ(Protocol_400_1.READ4BYTES(buf, primaryOffset, 14));
-//                        pt.setU(Protocol_400_1.READ4BYTES(buf, primaryOffset, 18));
-//                        PointGlueFaceStartParam pParam = (PointGlueFaceStartParam) pt.getPointParam();
-//                        pParam.setOutGlue(info.getSurfaceChangeDrop() > 0 ? true : false);
-//                        pParam.setStartDir(info.getSurfaceDir() == 0 ? true : false);
-//                        // C++源码为 SetGWOutput(*info, pt.sGlue);
-//                        pParam.setGluePort(info.reverseBytePerBit(info.getIOPort()));
-//                        pParam.setMoveSpeed(Protocol_400_1.READ4BYTES(buf, primaryOffset, 22));
-//                        pParam.setOutGlueTimePrev(Protocol_400_1.READ2BYTES(buf, primaryOffset, 26));
-//                        pParam.setOutGlueTime(Protocol_400_1.READ2BYTES(buf, primaryOffset, 28));
-//                        _pointMgr.add(pt);
-//
-//                        pFaceStart = _pointMgr.get(_pointMgr.size() - 1);
-//                    }
-//                    break;
-//                case 6:
-//                    //面终点
-//                    if (isDH) {
-//                        //C++源码为 ASSERT(0);
-//                    } else {
-//                        Point pt = new Point(PointType.POINT_GLUE_FACE_END);
-//                        pt.setX(Protocol_400_1.READ4BYTES(buf, primaryOffset, 6));
-//                        pt.setY(Protocol_400_1.READ4BYTES(buf, primaryOffset, 10));
-//                        pt.setZ(Protocol_400_1.READ4BYTES(buf, primaryOffset, 14));
-//                        pt.setU(Protocol_400_1.READ4BYTES(buf, primaryOffset, 18));
-//                        PointGlueFaceEndParam pParam = (PointGlueFaceEndParam) pt.getPointParam();
-//                        pParam.setPause(info.getIfPause());
-////					C++源码：pt.nStartDir = (EFaceDirection)info->surfaceDir;
-////					pParam.setStartDir(info.getSurfaceDir());
-//                        pParam.setLineNum(Protocol_400_1.READ2BYTES(buf, primaryOffset, 22));
-//                        pParam.setStopGlueTime(Protocol_400_1.READ2BYTES(buf, primaryOffset, 24));
-//                        pParam.setUpHeight((int) (RobotParam.INSTANCE.ZPulse2Journey(Protocol_400_1.READ2BYTES(buf, primaryOffset, 26)) + 0.5));
-//                        _pointMgr.add(pt);
-//
-//                        if (pFaceStart != null) {//将废弃
-//                            PointGlueFaceStartParam pFaceStartParam = (PointGlueFaceStartParam) pFaceStart.getPointParam();
-////						C++源码:pFaceStart->nStartDir = pt.nStartDir;已废弃
-////						pFaceStartParam.setStartDir(pParam.getStartDir);
-////						pFaceStartParam.setLineNum(pParam.getLineNum());
-//                            pFaceStartParam.setStopGlueTime(pParam.getStopGlueTime());
-////						pFaceStartParam.setUpHeight(pParam.getUpHeight());
-//                            pFaceStart = null;
-//                        }
-//                    }
-//                    break;
                 case 7:
                     if (isDH) {
                         //ASSERT(0);
@@ -1360,7 +1306,7 @@ public enum MessageMgr {
                     case 0x32://获取读取功能列表响应的字节数字段1个字节
                         cmd = CmdParam.Cmd_Read_Funclist;
                         break;
-                    case 0x4E://获取设备信息响应的字节数字段1个字节
+                    case 0x4A://获取设备信息响应的字节数字段1个字节
                         cmd = CmdParam.Cmd_Device;
                         break;
                     case 0x1A://获取当前点坐标响应的字节数字段1个字节
@@ -1676,9 +1622,9 @@ public enum MessageMgr {
                             break;
                         case Cmd_DownLoad:
                             TaskDataStream task400 = new TaskDataStream();
-                            Log.d(TAG, "下载1:" + DateUtil.getCurrentTime());
+                            L.d(TAG, "下载1:" + DateUtil.getCurrentTime());
                             size = createTask400(mPointList, mPointList.size(), task400);
-                            Log.d(TAG, "下载2:" + DateUtil.getCurrentTime());
+                            L.d(TAG, "下载2:" + DateUtil.getCurrentTime());
                             Object[] temp = task400.getByteTask().toArray();
                             data = new byte[size];
                             for (int i = 0; i < size; i++) {
@@ -1730,7 +1676,7 @@ public enum MessageMgr {
                 //-----------------------收到的长数据处理-----------------------
                 else if (cmdFlag == 0x7938) {// 若是示教停止或者复位,再发送获取坐标命令
                     getCurCoord();// 发送获取
-                } else if (revBuffer[2] == 0x4E) {// 获取下位机参数
+                } else if (revBuffer[2] == 0x4A) {// 获取下位机参数
                     RobotParam.INSTANCE.InitRobot(revBuffer);
                     cmdDelayFlag = CmdParam.Cmd_Null;
                 } else if (revBuffer[2] == 0x32) {//获取功能列表参数
@@ -1768,10 +1714,10 @@ public enum MessageMgr {
      * @Description: 解析获取到的点坐标
      */
     public Point analyseCurCoord(byte[] buffer) {
-        point.setX(Protocol_400_1.READ4BYTES_R(buffer, 3));
-        point.setY(Protocol_400_1.READ4BYTES_R(buffer, 7));
-        point.setZ(Protocol_400_1.READ4BYTES_R(buffer, 11));
-        point.setU(Protocol_400_1.READ4BYTES_R(buffer, 15));
+        point.setX((float) RobotParam.INSTANCE.XPulse2Journey(Protocol_400_1.READ4BYTES_R(buffer, 3)));
+        point.setY((float) RobotParam.INSTANCE.YPulse2Journey(Protocol_400_1.READ4BYTES_R(buffer, 7)));
+        point.setZ((float) RobotParam.INSTANCE.ZPulse2Journey(Protocol_400_1.READ4BYTES_R(buffer, 11)));
+        point.setU((float) RobotParam.INSTANCE.UPulse2Journey(Protocol_400_1.READ4BYTES_R(buffer, 15)));
         return point;
     }
 

@@ -3,7 +3,6 @@ package com.mingseal.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -33,6 +32,7 @@ import com.mingseal.data.point.weldparam.PointWeldOutputIOParam;
 import com.mingseal.dhp_500dh.R;
 import com.mingseal.listener.MyPopWindowClickListener;
 import com.mingseal.utils.FloatUtil;
+import com.mingseal.utils.L;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -113,6 +113,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 	}
 
 	public TaskMainBaseAdapter() {
+
 	}
 
 	/**
@@ -257,7 +258,7 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 			holder.cb.setVisibility(View.GONE);
 			holder.rb.setVisibility(View.VISIBLE);
 			//选中行，改变当前行的颜色
-			Log.d(TAG, "position:"+position);
+			L.d(TAG, "position:" + position);
 			if(position == selectID){
 				convertView.setBackgroundColor(activity.getResources().getColor(R.color.listview_selected));
 			}else{
@@ -319,11 +320,6 @@ public class TaskMainBaseAdapter extends BaseAdapter {
 				holder.tv_u.setOnFocusChangeListener(new OnKeyFocusChangeListener(point, et_u, KEY_U));
 			}
 
-
-//			final EditText et_x = holder.tv_x;
-//			final EditText et_y = holder.tv_y;
-//			final EditText et_z = holder.tv_z;
-//			final EditText et_u = holder.tv_u;
 
 			/*
 			 * //点击时全选 et_x.setSelectAllOnFocus(true);

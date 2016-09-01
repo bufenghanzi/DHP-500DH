@@ -21,6 +21,7 @@ import com.mingseal.communicate.SocketInputThread;
 import com.mingseal.communicate.SocketThreadManager;
 import com.mingseal.data.param.SettingParam;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.utils.L;
 import com.mingseal.utils.SharePreferenceUtils;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -113,7 +114,6 @@ public class GlueTaskSettingActivity extends AutoLayoutActivity implements OnCli
 		setContentView(R.layout.activity_setting);
 		userApplication = (UserApplication) getApplication();
 		setting = SharePreferenceUtils.readFromSharedPreference(this);
-//		System.out.println("任务设置-------->"+setting);
 		initView();
 		handler = new RevHandler();
 	}
@@ -280,9 +280,9 @@ public class GlueTaskSettingActivity extends AutoLayoutActivity implements OnCli
 		public void handleMessage(Message msg) {
 			 if (msg.what== SocketInputThread.SocketError){
 				//wifi中断
-				System.out.println("wifi连接断开。。");
+				L.d("wifi连接断开。。");
 				SocketThreadManager.releaseInstance();
-				System.out.println("单例被释放了-----------------------------");
+				L.d("单例被释放了-----------------------------");
 				//设置全局变量，跟新ui
 				userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);

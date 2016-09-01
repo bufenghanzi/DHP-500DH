@@ -22,6 +22,7 @@ import com.mingseal.listener.MaxMinEditFloatWatcher;
 import com.mingseal.listener.MaxMinEditWatcher;
 import com.mingseal.listener.MaxMinFocusChangeFloatListener;
 import com.mingseal.listener.MaxMinFocusChangeListener;
+import com.mingseal.utils.L;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.AutoLayoutActivity;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -444,9 +445,9 @@ public class FuncListActivity extends AutoLayoutActivity implements View.OnClick
                 // new ManagingMessage().execute(buffer);
             }else if (msg.what== SocketInputThread.SocketError){
                 //wifi中断
-                System.out.println("wifi连接断开。。");
+                L.d("wifi连接断开。。");
                 SocketThreadManager.releaseInstance();
-                System.out.println("单例被释放了-----------------------------");
+                L.d("单例被释放了-----------------------------");
                 //设置全局变量，跟新ui
                 userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
@@ -465,9 +466,7 @@ public class FuncListActivity extends AutoLayoutActivity implements View.OnClick
                 if (revBuffer[2] == 0x2E) {
                     ToastUtil.displayPromptInfo(FuncListActivity.this, "读取功能列表成功！");
                     refreshData();
-//                    System.out.println("读取功能列表成功！");
                 }else if (cmdFlag==0x7A47){
-//                    ToastUtil.displayPromptInfo(FuncListActivity.this,"写入功能列表成功！");
                     this.finish();
                 }
             }
