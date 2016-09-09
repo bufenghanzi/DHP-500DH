@@ -155,6 +155,13 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 	private TextView tv_mm5;
 	private EditText et_upHeight;
 	private CustomUploadDialog progressDialog = null;
+	private TextView tv_nBackSnSumSecFour;
+	private TextView tv_accelerate_time;
+	private TextView tv_decelerate_time;
+	private TextView tv_mms7;
+	private TextView tv_mms8;
+	private EditText et_download_accelerate_time;
+	private EditText et_download_decelerate_time;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -240,6 +247,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_download_nBackSnSumSec = (EditText) findViewById(R.id.et_download_nBackSnSumSec);
 		et_download_nBackSnSumThird = (EditText) findViewById(R.id.et_download_nBackSnSumThird);
 		et_download_nBackSnSumSecFour = (EditText) findViewById(R.id.et_download_nBackSnSumSecFour);
+		et_download_accelerate_time = (EditText) findViewById(R.id.et_download_accelerate_time);
+		et_download_decelerate_time = (EditText) findViewById(R.id.et_download_decelerate_time);
 		et_xy_move = (EditText) findViewById(R.id.et_download_xy_move);
 		et_z_move = (EditText) findViewById(R.id.et_download_z_move);
 		/*===================== begin =====================*/
@@ -259,8 +268,11 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_nBackSnSpeedSec = (TextView) findViewById(R.id.tv_nBackSnSpeedSec);
 		tv_nBackSnSpeedThird = (TextView) findViewById(R.id.tv_nBackSnSpeedThird);
 		tv_nBackSnSpeedFour = (TextView) findViewById(R.id.tv_nBackSnSpeedFour);
+		tv_nBackSnSumSecFour = (TextView) findViewById(R.id.tv_nBackSnSumSecFour);
 		tv_nBackSnSumSec = (TextView) findViewById(R.id.tv_nBackSnSumSec);
 		tv_nBackSnSumThird = (TextView) findViewById(R.id.tv_nBackSnSumThird);
+		tv_decelerate_time = (TextView) findViewById(R.id.tv_decelerate_time);
+		tv_accelerate_time = (TextView) findViewById(R.id.tv_accelerate_time);
 		rl_download = (RelativeLayout) findViewById(R.id.rl_download);
 		iv_complete = (ImageView) findViewById(R.id.iv_complete);
 		rl_cancel = (RelativeLayout) findViewById(R.id.rl_cancel);
@@ -272,6 +284,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_mms6 = (TextView) findViewById(R.id.tv_mms6);
 		tv_mms5 = (TextView) findViewById(R.id.tv_mms5);
 		tv_mm4 = (TextView) findViewById(R.id.tv_mm4);
+		tv_mms8 = (TextView) findViewById(R.id.tv_mms8);
+		tv_mms7 = (TextView) findViewById(R.id.tv_mms7);
 
 		tv_canshu.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_task_number.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
@@ -293,6 +307,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_download_nBackSnSumSec.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_download_nBackSnSumThird.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		et_download_nBackSnSumSecFour.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		et_download_decelerate_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		et_download_accelerate_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_mms2.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		tv_z.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		et_z_move.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
@@ -300,8 +316,11 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_nBackSnSpeedSec.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSpeedThird.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSpeedFour.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_nBackSnSumSecFour.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSumSec.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_nBackSnSumThird.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_decelerate_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+		tv_accelerate_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		tv_xiazai.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
 		tv_quxiao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
 		tv_mms3.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
@@ -310,6 +329,8 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		tv_mms6.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		tv_mms5.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 		tv_mm4.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+		tv_mms8.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+		tv_mms7.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 
 		/*=====================  end =====================*/
 		// num_number = (NumberPicker) findViewById(R.id.num_task_number);
@@ -340,29 +361,29 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_download_nBackSnSpeedFir.addTextChangedListener(new MaxMinEditWatcher(200, 0, et_download_nBackSnSpeedFir));
 		et_download_nBackSnSpeedFir.setOnFocusChangeListener(new MaxMinFocusChangeListener(200, 0, et_download_nBackSnSpeedFir));
 		et_download_nBackSnSpeedFir.setSelectAllOnFocus(true);
-		et_download_nBackSnSpeedFir.setText(TaskParam.INSTANCE.getnBackSnSpeedFir()+"");
+		et_download_nBackSnSpeedFir.setText(SharePreferenceUtils.getnBackSnSpeedFir(this)+"");
 
 		et_upHeight.addTextChangedListener(new MaxMinEditWatcher(RobotParam.INSTANCE.GetZJourney(), 0, et_upHeight));
 		et_upHeight.setOnFocusChangeListener(new MaxMinFocusChangeListener(RobotParam.INSTANCE.GetZJourney(), 0, et_upHeight));
 		et_upHeight.setSelectAllOnFocus(true);
-		et_upHeight.setText(TaskParam.INSTANCE.getnSnHeight()+"");
+		et_upHeight.setText(SharePreferenceUtils.getnSnHeight(this)+"");
 
 
 
 		et_download_nBackSnSpeedSec.addTextChangedListener(new MaxMinEditWatcher(200, 0, et_download_nBackSnSpeedSec));
 		et_download_nBackSnSpeedSec.setOnFocusChangeListener(new MaxMinFocusChangeListener(200, 0, et_download_nBackSnSpeedSec));
 		et_download_nBackSnSpeedSec.setSelectAllOnFocus(true);
-		et_download_nBackSnSpeedSec.setText(TaskParam.INSTANCE.getnBackSnSpeedSec()+"");
+		et_download_nBackSnSpeedSec.setText(SharePreferenceUtils.getnBackSnSpeedSec(this)+"");
 
 		et_download_nBackSnSpeedThird.addTextChangedListener(new MaxMinEditWatcher(200, 0, et_download_nBackSnSpeedThird));
 		et_download_nBackSnSpeedThird.setOnFocusChangeListener(new MaxMinFocusChangeListener(200, 0, et_download_nBackSnSpeedThird));
 		et_download_nBackSnSpeedThird.setSelectAllOnFocus(true);
-		et_download_nBackSnSpeedThird.setText(TaskParam.INSTANCE.getnBackSnSpeedThird()+"");
+		et_download_nBackSnSpeedThird.setText(SharePreferenceUtils.getnBackSnSpeedThird(this)+"");
 
 		et_download_nBackSnSpeedFour.addTextChangedListener(new MaxMinEditWatcher(200, 0, et_download_nBackSnSpeedFour));
 		et_download_nBackSnSpeedFour.setOnFocusChangeListener(new MaxMinFocusChangeListener(200, 0, et_download_nBackSnSpeedFour));
 		et_download_nBackSnSpeedFour.setSelectAllOnFocus(true);
-		et_download_nBackSnSpeedFour.setText(TaskParam.INSTANCE.getnBackSnSpeedFour()+"");
+		et_download_nBackSnSpeedFour.setText(SharePreferenceUtils.getnBackSnSpeedFour(this)+"");
 
 		// num_decelerate_time.setMaxValue(10000);
 		// num_decelerate_time.setMinValue(100);
@@ -371,22 +392,32 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_download_nBackSnSumFir.addTextChangedListener(new MaxMinEditWatcher(50, 0, et_download_nBackSnSumFir));
 		et_download_nBackSnSumFir.setOnFocusChangeListener(new MaxMinFocusChangeListener(50, 0, et_download_nBackSnSumFir));
 		et_download_nBackSnSumFir.setSelectAllOnFocus(true);
-		et_download_nBackSnSumFir.setText(TaskParam.INSTANCE.getnBackSnSumFir() + "");
+		et_download_nBackSnSumFir.setText(SharePreferenceUtils.getnBackSnSumFir(this) + "");
 
 		et_download_nBackSnSumSec.addTextChangedListener(new MaxMinEditWatcher(50, 0, et_download_nBackSnSumSec));
 		et_download_nBackSnSumSec.setOnFocusChangeListener(new MaxMinFocusChangeListener(50, 0, et_download_nBackSnSumSec));
 		et_download_nBackSnSumSec.setSelectAllOnFocus(true);
-		et_download_nBackSnSumSec.setText(TaskParam.INSTANCE.getnBackSnSumSec() + "");
+		et_download_nBackSnSumSec.setText(SharePreferenceUtils.getnBackSnSumSec(this) + "");
 
 		et_download_nBackSnSumThird.addTextChangedListener(new MaxMinEditWatcher(50, 0, et_download_nBackSnSumThird));
 		et_download_nBackSnSumThird.setOnFocusChangeListener(new MaxMinFocusChangeListener(50, 0, et_download_nBackSnSumThird));
 		et_download_nBackSnSumThird.setSelectAllOnFocus(true);
-		et_download_nBackSnSumThird.setText(TaskParam.INSTANCE.getnBackSnSumThird() + "");
+		et_download_nBackSnSumThird.setText(SharePreferenceUtils.getnBackSnSumThird(this) + "");
 
 		et_download_nBackSnSumSecFour.addTextChangedListener(new MaxMinEditWatcher(50, 0, et_download_nBackSnSumSecFour));
 		et_download_nBackSnSumSecFour.setOnFocusChangeListener(new MaxMinFocusChangeListener(50, 0, et_download_nBackSnSumSecFour));
 		et_download_nBackSnSumSecFour.setSelectAllOnFocus(true);
-		et_download_nBackSnSumSecFour.setText(TaskParam.INSTANCE.getnBackSnSumSecFour() + "");
+		et_download_nBackSnSumSecFour.setText(SharePreferenceUtils.getnBackSnSumSecFour(this) + "");
+
+		et_download_decelerate_time.addTextChangedListener(new MaxMinEditWatcher(10000, 100, et_download_decelerate_time));
+		et_download_decelerate_time.setOnFocusChangeListener(new MaxMinFocusChangeListener(10000, 100, et_download_decelerate_time));
+		et_download_decelerate_time.setSelectAllOnFocus(true);
+		et_download_decelerate_time.setText(SharePreferenceUtils.getnDecelerate(this) + "");
+
+		et_download_accelerate_time.addTextChangedListener(new MaxMinEditWatcher(10000, 100, et_download_accelerate_time));
+		et_download_accelerate_time.setOnFocusChangeListener(new MaxMinFocusChangeListener(10000, 100, et_download_accelerate_time));
+		et_download_accelerate_time.setSelectAllOnFocus(true);
+		et_download_accelerate_time.setText(SharePreferenceUtils.getnAccelerate(this) + "");
 		// num_xy_move.setMaxValue(800);
 		// num_xy_move.setMinValue(1);
 		// num_xy_move.setValue(200);
@@ -394,7 +425,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_xy_move.addTextChangedListener(new MaxMinEditWatcher(RobotParam.INSTANCE.GetXSpeed(), 1, et_xy_move));
 		et_xy_move.setOnFocusChangeListener(new MaxMinFocusChangeListener(RobotParam.INSTANCE.GetXSpeed(), 1, et_xy_move));
 		et_xy_move.setSelectAllOnFocus(true);
-		et_xy_move.setText(TaskParam.INSTANCE.getnXYNullSpeed() + "");
+		et_xy_move.setText(SharePreferenceUtils.getnXYNullSpeed(this) + "");
 
 		// num_z_move.setMaxValue(400);
 		// num_z_move.setMinValue(1);
@@ -402,7 +433,7 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		et_z_move.addTextChangedListener(new MaxMinEditWatcher(RobotParam.INSTANCE.GetZSpeed(), 1, et_z_move));
 		et_z_move.setOnFocusChangeListener(new MaxMinFocusChangeListener(RobotParam.INSTANCE.GetZSpeed(), 1, et_z_move));
 		et_z_move.setSelectAllOnFocus(true);
-		et_z_move.setText(TaskParam.INSTANCE.getnZNullSpeed() + "");
+		et_z_move.setText(SharePreferenceUtils.getnZNullSpeed(this) + "");
 
 
 		// num_inflexion_time.setMaxValue(800);
@@ -458,6 +489,10 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 			return false;
 		}else if ("".equals(et_download_nBackSnSumSecFour.getText().toString())) {
 			return false;
+		}else if ("".equals(et_download_decelerate_time.getText().toString())) {
+			return false;
+		}else if ("".equals(et_download_accelerate_time.getText().toString())) {
+			return false;
 		} else if ("".equals(et_xy_move.getText().toString())) {
 			return false;
 		} else if ("".equals(et_z_move.getText().toString())) {
@@ -492,6 +527,10 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 			return false;
 		}else if (Integer.parseInt(et_download_nBackSnSumSecFour.getText().toString()) < 0) {
 			return false;
+		} else if (Integer.parseInt(et_download_decelerate_time.getText().toString()) < 0) {
+			return false;
+		} else if (Integer.parseInt(et_download_accelerate_time.getText().toString()) < 0) {
+			return false;
 		} else if (Integer.parseInt(et_xy_move.getText().toString()) < 1) {
 			return false;
 		} else if (Integer.parseInt(et_z_move.getText().toString()) < 1) {
@@ -516,7 +555,6 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		intent.putExtras(extras);
 		setResult(TaskActivity.resultDownLoadCode, intent);
 
-		SharePreferenceUtils.saveTaskNumberAndDatesToPref(this, Integer.parseInt(et_number.getText().toString()));
 		TaskParam.INSTANCE.setStrTaskName(taskName);
 		TaskParam.INSTANCE.setnStartX(RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getX()));
 		TaskParam.INSTANCE.setnStartY(RobotParam.INSTANCE.XJourney2Pulse(points.get(0).getY()));
@@ -533,12 +571,18 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 		TaskParam.INSTANCE.setnBackSnSpeedThird(Integer.parseInt(et_download_nBackSnSpeedThird.getText().toString()));// 设置三次回锡速度
 		TaskParam.INSTANCE.setnBackSnSpeedFour(Integer.parseInt(et_download_nBackSnSpeedFour.getText().toString()));// 设置四次回锡速度
 		TaskParam.INSTANCE.setnBackSnSumFir(Integer.parseInt(et_download_nBackSnSumFir.getText().toString()));// 设置一次回锡量
-		TaskParam.INSTANCE.setnBackSnSumFir(Integer.parseInt(et_download_nBackSnSumSec.getText().toString()));// 设置二次回锡量
+		TaskParam.INSTANCE.setnBackSnSumSec(Integer.parseInt(et_download_nBackSnSumSec.getText().toString()));// 设置二次回锡量
 		TaskParam.INSTANCE.setnBackSnSumThird(Integer.parseInt(et_download_nBackSnSumThird.getText().toString()));// 设置三次回锡量
 		TaskParam.INSTANCE.setnBackSnSumSecFour(Integer.parseInt(et_download_nBackSnSumSecFour.getText().toString()));// 设置四次回锡量
 		TaskParam.INSTANCE.setnXYNullSpeed(Integer.parseInt(et_xy_move.getText().toString()));// 设置XY轴空走速度
 		TaskParam.INSTANCE.setnZNullSpeed(Integer.parseInt(et_z_move.getText().toString()));// 设置Z轴空走速度
+		TaskParam.INSTANCE.setnAccelerate(Integer.parseInt(et_download_accelerate_time.getText().toString()));// 设置加速度
+		TaskParam.INSTANCE.setnDecelerate(Integer.parseInt(et_download_decelerate_time.getText().toString()));// 设置减速度
 		OrderParam.INSTANCE.setnTaskNum(Integer.parseInt(et_number.getText().toString()));
+		SharePreferenceUtils.saveTaskNumberAndDatesToPref(this, Integer.parseInt(et_number.getText().toString()),TaskParam.INSTANCE.getnSnHeight(),TaskParam.INSTANCE.getnBackSnSpeedFir()
+				,TaskParam.INSTANCE.getnBackSnSpeedSec(),TaskParam.INSTANCE.getnBackSnSpeedThird(),TaskParam.INSTANCE.getnBackSnSpeedFour(),TaskParam.INSTANCE.getnBackSnSumFir()
+				,TaskParam.INSTANCE.getnBackSnSumSec(),TaskParam.INSTANCE.getnBackSnSumThird(),TaskParam.INSTANCE.getnBackSnSumSecFour(),TaskParam.INSTANCE.getnXYNullSpeed()
+				,TaskParam.INSTANCE.getnZNullSpeed(),TaskParam.INSTANCE.getnAccelerate(),TaskParam.INSTANCE.getnDecelerate());
 		MessageMgr.INSTANCE.isTaskExist();
 	}
 
@@ -594,7 +638,6 @@ public class GlueDownloadActivity extends AutoLayoutActivity implements OnClickL
 								e.printStackTrace();
 							}
 						}
-
 					}
 				});
 		builder.setNegativeButton(getResources().getString(R.string.is_need_no), new DialogInterface.OnClickListener() {

@@ -370,7 +370,7 @@ public class PointWeldWorkParam extends PointParam {
         this.sendSnSumFourth = 0;
         this.stopSnTimeFourth = 0;
         this.dipDistance = 0;
-        this.upHeight = 10;
+        this.upHeight = 0;
         this.isSn = true;
         this.isPause = false;
         this.dipDistance_angle=0;

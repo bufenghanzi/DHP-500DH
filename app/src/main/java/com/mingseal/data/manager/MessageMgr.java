@@ -367,14 +367,12 @@ public enum MessageMgr {
      */
     private void createTask400WeldBlow(Point p, TaskDataStream task) {
         PointInfo400 info = new PointInfo400();
-        info.setPointType((byte) 7);
+        info.setPointType((byte) 8);
         info.setIoFlag((byte) 0);// 输入标记 0:输出 1:输入
-        info.setLen((byte) 10);
+        info.setLen((byte) 8);
         PointWeldBlowParam pParam = userApplication.getBlowParamMaps().get(p.getPointParam().get_id());
-        boolean[] ioStatus = pParam.getOutputPort();
-        for (int i = 0, j = ioStatus.length - 1; i < ioStatus.length; i++, j--) {
-            info.setOutputIOPort(j, ioStatus[i]);
-        }
+        boolean ioStatus = pParam.isSn();
+        info.setOutputIOPort(11, ioStatus);
         byte[] temp = info.getPointInfo();
         task.pushBackByByte(temp[0]);
         task.pushBackByByte(temp[1]);
@@ -383,7 +381,6 @@ public enum MessageMgr {
         task.pushBackByByte(temp[4]);
         task.pushBackByByte(temp[5]);
         task.pushBack(pParam.getGoTimePrev());
-        task.pushBack(pParam.getGoTimeNext());
         nNum++;
     }
 
@@ -401,7 +398,7 @@ public enum MessageMgr {
         info.setPointType((byte) 0);//作业点
         info.setIfSn((byte) (pParam.isSn() ? 1 : 0));//是否出锡
         info.setIfSus((byte) (pParam.isSus() ? 1 : 0));//是否减速
-        info.setLen((byte) 54);//记录总字节数
+        info.setLen((byte) 58);//记录总字节数
         info.setIfPause((byte) (pParam.isPause() ? 1 : 0));//是否暂停
         byte[] temp = info.getPointInfo();
         task.pushBackByByte(temp[0]);
@@ -434,7 +431,8 @@ public enum MessageMgr {
         task.pushBack(pParam.getSendSnSpeedFourth());//四次送锡速度
         task.pushBack(pParam.getSendSnSumFourth());//四次送锡量
         task.pushBack(pParam.getStopSnTimeFourth());//四次停锡时间
-        task.pushBack(pParam.getUpHeight());//抬起高度
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(pParam.getUpHeight()));//抬起高度
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(pParam.getUpHeight())>>>16);//抬起高度
         task.pushBack(pParam.getDipDistance());//倾斜距离
         task.pushBack(pParam.getDipDistance_angle());//倾斜距离
         nNum++;
@@ -537,7 +535,7 @@ public enum MessageMgr {
         PointInfo400 info = new PointInfo400();
         info.setAllValueDefault();
         info.setPointType((byte) 4);
-        info.setLen((byte) 30);
+        info.setLen((byte) 32);
         info.setIfPause((byte) (pParam.isPause() ? 1 : 0));
         byte[] temp = info.getPointInfo();
         task.pushBackByByte(temp[0]);
@@ -557,7 +555,8 @@ public enum MessageMgr {
         task.pushBack(0);// 组号
         task.pushBack(0);// 组号
         task.pushBack(pParam.getStopSnTime());
-        task.pushBack(pParam.getUpHeight());
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(pParam.getUpHeight()));//抬起高度
+        task.pushBack(RobotParam.INSTANCE.ZJourney2Pulse(pParam.getUpHeight())>>>16);//抬起高度
         nNum++;
     }
 
@@ -635,8 +634,6 @@ public enum MessageMgr {
         task.setValue(51, TaskParam.INSTANCE.getnSnHeight());
 
 		/*=====================  end =====================*/
-
-
         task.setValue(14, TaskParam.INSTANCE.getnStartX());
         task.setValue(15, (short) ((TaskParam.INSTANCE.getnStartX() >>> 16) & 0x00ff));
         task.setValue(16, TaskParam.INSTANCE.getnStartY());
@@ -789,10 +786,10 @@ public enum MessageMgr {
                     if (isDH) {
                         Point pt = new Point(PointType.POINT_WELD_WORK);
                         PointWeldWorkParam pParam = (PointWeldWorkParam) pt.getPointParam();
-                        pt.setX(Protocol_400_1.READ4BYTES(buf, primaryOffset, 6));
-                        pt.setY(Protocol_400_1.READ4BYTES(buf, primaryOffset, 10));
-                        pt.setZ(Protocol_400_1.READ4BYTES(buf, primaryOffset, 14));
-                        pt.setU(Protocol_400_1.READ4BYTES(buf, primaryOffset, 18));
+                        pt.setX((float) RobotParam.INSTANCE.XPulse2Journey(Protocol_400_1.READ4BYTES(buf, primaryOffset, 6)));
+                        pt.setY((float)RobotParam.INSTANCE.YPulse2Journey(Protocol_400_1.READ4BYTES(buf, primaryOffset, 10)));
+                        pt.setZ((float) RobotParam.INSTANCE.ZPulse2Journey(Protocol_400_1.READ4BYTES(buf, primaryOffset, 14)));
+                        pt.setU((float)RobotParam.INSTANCE.UPulse2Journey(Protocol_400_1.READ4BYTES(buf, primaryOffset, 18)));
                         pParam.setSn(info.getIfSn());
                         pParam.setSus(info.getifSus());
                         pParam.setPause(info.getIfPause());
@@ -808,9 +805,9 @@ public enum MessageMgr {
 					    pParam.setSendSnSpeedFourth(Protocol_400_1.READ2BYTES(buf, primaryOffset, 44));//四次送锡速度
 					    pParam.setSendSnSumFourth((int)(Protocol_400_1.READ2BYTES(buf, primaryOffset, 46)+0.5));//四次送锡量
 					    pParam.setStopSnTimeFourth(Protocol_400_1.READ2BYTES(buf, primaryOffset, 48));//四次停锡时间
-                        pParam.setUpHeight((int) (Protocol_400_1.READ2BYTES(buf, primaryOffset, 50) + 0.5));
-                        pParam.setDipDistance(Protocol_400_1.READ2BYTES(buf, primaryOffset, 52));//倾斜距离
-                        pParam.setDipDistance_angle(Protocol_400_1.READ2BYTES(buf, primaryOffset, 54));//倾斜jiaodu
+                        pParam.setUpHeight((int) RobotParam.INSTANCE.ZPulse2Journey(Protocol_400_1.READ4BYTES(buf, primaryOffset, 50)));
+                        pParam.setDipDistance(Protocol_400_1.READ2BYTES(buf, primaryOffset, 54));//倾斜距离
+                        pParam.setDipDistance_angle(Protocol_400_1.READ2BYTES(buf, primaryOffset, 56));//倾斜jiaodu
                         _pointMgr.add(pt);
                     } else {
 //                        Point pt = new Point(PointType.POINT_GLUE_ALONE);
@@ -1044,7 +1041,7 @@ public enum MessageMgr {
 					    PointWeldLineEndParam pParam = (PointWeldLineEndParam) pt.getPointParam();
                         pParam.setPause(info.getIfPause());
                         pParam.setStopSnTime(Protocol_400_1.READ2BYTES(buf, primaryOffset, 26));
-                        pParam.setUpHeight(Protocol_400_1.READ2BYTES(buf, primaryOffset, 28));
+                        pParam.setUpHeight((int) RobotParam.INSTANCE.ZPulse2Journey(Protocol_400_1.READ4BYTES(buf, primaryOffset, 28)));
                         _pointMgr.add(pt);
                     } else {
 //                        Point pt = new Point(PointType.POINT_GLUE_LINE_END);

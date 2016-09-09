@@ -461,20 +461,16 @@ public class DBInfo {
          * 动作前延时
          */
         public static final String GO_TIME_PREV = "goTimePrev";
-        /**
-         * 动作后延时
-         */
-        public static final String GO_TIME_NEXT = "goTimeNext";
-        /**
-         * 输入口
-         */
-        public static final String INPUT_PORT = "inputPort";
 
+        /**
+         * 是否出锡
+         */
+        public static final String ISSN = "isSn";
 
         public static String create_WELD_BLOW_table(String taskname) {
             return "create table if not exists " + WELD_BLOW_TABLE + taskname + "(" + _ID
-                    + " integer primary key autoincrement, " + GO_TIME_PREV + " integer, " + GO_TIME_NEXT + " integer, "
-                    + INPUT_PORT + " BLOB" + ");";
+                    + " integer primary key autoincrement, " + GO_TIME_PREV + " integer, "
+                    + ISSN + " integer" + ");";
         }
 
         public static String drop_WELD_BLOW_table(String taskname) {

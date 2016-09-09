@@ -296,7 +296,7 @@ public class CustomView extends View {
 				paint.setColor(basePointColor);
 				paint.setStyle(Paint.Style.FILL);
 				canvas.drawCircle(point_first.getFoldX(fold), point_first.getFoldY(fold), radius, paint);
-			} else if (getPointType(point_first).equals(PointType.POINT_GLUE_ALONE)) {
+			} else if (getPointType(point_first).equals(PointType.POINT_WELD_WORK)) {
 				// 如果是独立点，不需要画线段
 				paint.setColor(pointColor);
 				paint.setStyle(Paint.Style.FILL);
@@ -324,7 +324,7 @@ public class CustomView extends View {
 					i = i + 1;
 				}
 
-			} else if (getPointType(point_first).equals(PointType.POINT_GLUE_LINE_START)) {
+			} else if (getPointType(point_first).equals(PointType.POINT_WELD_LINE_START)) {
 				for (int j = i + 1; j < points.size(); j++) {
 					if (getPointType(points.get(j)).equals(PointType.POINT_GLUE_LINE_ARC)) {
 						// 圆弧点，画弧
@@ -381,13 +381,13 @@ public class CustomView extends View {
 
 						j = j + 1;
 						i = j;
-					} else if (getPointType(points.get(j)).equals(PointType.POINT_GLUE_LINE_END)) {
+					} else if (getPointType(points.get(j)).equals(PointType.POINT_WELD_LINE_END)) {
 						paint.setColor(lineColor);
 						canvas.drawLine(points.get(j - 1).getFoldX(fold), points.get(j - 1).getFoldY(fold),
 								points.get(j).getFoldX(fold), points.get(j).getFoldY(fold), paint);
 						i = j;
 						break;
-					} else if (getPointType(points.get(j)).equals(PointType.POINT_GLUE_LINE_MID)) {
+					} else if (getPointType(points.get(j)).equals(PointType.POINT_WELD_LINE_MID)) {
 						paint.setColor(lineColor);
 						canvas.drawLine(points.get(j - 1).getFoldX(fold), points.get(j - 1).getFoldY(fold),
 								points.get(j).getFoldX(fold), points.get(j).getFoldY(fold), paint);

@@ -22,7 +22,7 @@
             android:id="@+id/tv_canshu"
             android:layout_width="match_parent"
             android:layout_height="60px"
-            android:layout_marginBottom="80px"
+            android:layout_marginBottom="30px"
             android:layout_marginLeft="36px"
             android:layout_marginTop="36px"
             android:gravity="center"
@@ -36,7 +36,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210px"
+            android:layout_height="190px"
             android:layout_marginLeft="10px"
             android:layout_marginRight="10px">
 
@@ -102,7 +102,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210px"
+            android:layout_height="190px"
             android:layout_marginLeft="10px"
             android:layout_marginRight="10px">
 
@@ -177,7 +177,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210px"
+            android:layout_height="190px"
             android:layout_marginLeft="18px"
             android:layout_marginRight="18px">
 
@@ -252,7 +252,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210px"
+            android:layout_height="190px"
             android:layout_marginLeft="18px"
             android:layout_marginRight="18px">
 
@@ -327,7 +327,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210px"
+            android:layout_height="190px"
             android:layout_marginLeft="18px"
             android:layout_marginRight="18px">
 
@@ -402,7 +402,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210px"
+            android:layout_height="190px"
             android:layout_marginLeft="18px"
             android:layout_marginRight="18px">
 
@@ -473,6 +473,80 @@
                 android:gravity="center"
                 android:text="@string/activity_task_nBackSnSumSecFour"
                 android:textSize="@dimen/activity_download_textsize_sub"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="190px"
+            android:layout_marginLeft="18px"
+            android:layout_marginRight="18px">
+
+            <TextView
+                android:id="@+id/tv_accelerate_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10px"
+                android:gravity="center"
+                android:text="@string/activity_task_accelerate"
+                android:textSize="@dimen/activity_download_textsize_sub" />
+
+            <EditText
+                android:id="@+id/et_download_accelerate_time"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toRightOf="@id/tv_accelerate_time"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="3000"
+                android:textSize="@dimen/activity_glue_edittext_textsize" />
+
+            <TextView
+                android:id="@+id/tv_mms7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/et_download_accelerate_time"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub" />
+
+
+            <TextView
+                android:id="@+id/tv_mms8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/activity_mm_s"
+                android:textSize="@dimen/activity_download_textsize_sub" />
+            <EditText
+                android:id="@+id/et_download_decelerate_time"
+                android:layout_width="200px"
+                android:layout_height="90px"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="18px"
+                android:layout_toLeftOf="@id/tv_mms8"
+                android:background="@drawable/task_edittext_bg"
+                android:gravity="right|center"
+                android:inputType="number"
+                android:paddingLeft="18px"
+                android:paddingRight="18px"
+                android:text="3000"
+                android:textSize="@dimen/activity_glue_edittext_textsize" />
+
+            <TextView
+                android:id="@+id/tv_decelerate_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18px"
+                android:layout_toLeftOf="@id/et_download_decelerate_time"
+                android:gravity="center"
+                android:text="@string/activity_task_decelerate"
+                android:textSize="@dimen/activity_download_textsize_sub" />
         </RelativeLayout>
     </LinearLayout>
 

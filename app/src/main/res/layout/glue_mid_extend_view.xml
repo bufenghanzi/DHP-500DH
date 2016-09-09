@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
@@ -52,14 +53,17 @@
                 android:textColor="#000000"
                 />
 
-            <ToggleButton
+            <com.kyleduo.switchbutton.SwitchButton
                 android:id="@+id/switch_isSn"
+                style="@style/SwitchButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
-                android:background="@android:color/transparent"
-                android:button="@drawable/checkbox_iphone"
+                app:kswTextOff="@string/activity_no"
+                app:kswTextOn="@string/activity_yes"
+                app:kswThumbHeight="68px"
+                app:kswThumbWidth="90px"
                 android:checked="true"/>
 
             <TextView
@@ -175,22 +179,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="140px"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="18px"
+        android:layout_marginRight="18px"
         android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/rl_moren"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="130px"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/task_bottom_imagebutton"
@@ -198,8 +196,8 @@
 
             <ImageView
                 android:id="@+id/iv_moren"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="54px"
+                android:layout_height="54px"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_playlist_add_check_white_48dp"/>
 
@@ -215,16 +213,11 @@
                 />
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/rl_save"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="130px"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
@@ -236,8 +229,8 @@
 
             <ImageView
                 android:id="@+id/iv_save"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="54px"
+                android:layout_height="54px"
                 android:scaleType="centerInside"
                 android:src="@drawable/save"/>
 
@@ -250,13 +243,8 @@
                 android:gravity="center"
                 android:text="@string/activity_glue_save"
                 android:textColor="@color/color_white"
-               />
+                />
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

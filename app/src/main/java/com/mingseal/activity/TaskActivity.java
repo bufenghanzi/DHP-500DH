@@ -490,7 +490,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 		NetManager.instance().init(this);
 
 		initComponent();
-		tv_title.setText(task.getTaskName());
+		tv_title.setText(task.getTaskName()+"("+task.getPointids().size()+")");
 
 		singleSwitch.setOnCheckedChangeListener(new myCheckedChangeListener());
 
@@ -543,7 +543,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				mAdapter.notifyDataSetChanged();
 			}
 		});
-		System.out.println("TaskActivity--------->OnCreate()");
+		L.d("TaskActivity--------->OnCreate()");
 		
 
 	}
@@ -553,7 +553,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		System.out.println("TaskActivity--------->OnResume()");
+		L.d("TaskActivity--------->OnResume()");
 		// handler = new RevHandler();
 		// // 线程管理单例初始化
 		WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
@@ -1316,9 +1316,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				case POINT_WELD_BLOW:
 				intent = new Intent(this, WeldBlowActivity.class);
 				break;
-				case POINT_WELD_INPUT:
-				intent = new Intent(this, WeldInputActivity.class);
-				break;
+
 				case POINT_WELD_OUTPUT:
 				intent = new Intent(this, WeldOutputActivity.class);
 				break;
@@ -1439,6 +1437,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 				selectCheckboxCur.clear();
 				singleSwitch.setChecked(false);
+				tv_title.setText(task.getTaskName()+"("+mPointsCur.size()+")");
 				startUpdatePointParam(point,list);
 			} else if (_resultCode == resultViewCode) {
 				// 视图保存回来的点
@@ -1461,6 +1460,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 				L.d(TAG, "阵列回来的点的长度："+pLists.size());
 				mPointsCur.addAll(sCheckViewIDLast + 1, pLists);
+				tv_title.setText(task.getTaskName()+"("+mPointsCur.size()+")");
 			} else if (_resultCode == resultOffsetCode) {
 				// 偏移
 				String type = _data.getStringExtra(KEY_NUMBER);
@@ -1881,6 +1881,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				mPointsCur.addAll(pointArrays);
 				mAdapter.setData(mPointsCur);
 				mAdapter.notifyDataSetChanged();
+				tv_title.setText(task.getTaskName()+"("+mPointsCur.size()+")");
 			} else {
 				ToastUtil.displayPromptInfo(TaskActivity.this, "请选择要粘贴的选项");
 			}
@@ -1923,6 +1924,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 				mAdapter.setData(mPointsCur);
 				mAdapter.notifyDataSetChanged();
+				tv_title.setText(task.getTaskName()+"("+mPointsCur.size()+")");
 			} else {
 				ToastUtil.displayPromptInfo(TaskActivity.this, "请选择要删除的选项");
 			}
@@ -2056,7 +2058,7 @@ public class TaskActivity extends AutoLayoutActivity implements OnClickListener 
 				}
 			}
 			else if (revBuffer[2] == 0x4E) {// 获取下位机参数成功
-				ToastUtil.displayPromptInfo(TaskActivity.this, "获取参数成功!");
+				ToastUtil.displayPromptInfo(TaskActivity.this, "连接成功!");
 			}
 //			sendResetCommand();
 		}

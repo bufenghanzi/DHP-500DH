@@ -11,10 +11,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.mingseal.data.db.DBHelper;
 import com.mingseal.data.db.DBInfo;
 import com.mingseal.data.point.weldparam.PointWeldBlowParam;
-import com.mingseal.utils.ArraysComprehension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,8 +24,7 @@ public class WeldBlowDao {
 	private SQLiteDatabase db = null;
 	private ContentValues values = null;
 
-	String[] columns = { DBInfo.TableWeldBlow._ID, DBInfo.TableWeldBlow.GO_TIME_PREV, DBInfo.TableWeldBlow.GO_TIME_NEXT,
-			DBInfo.TableWeldBlow.INPUT_PORT };
+	String[] columns = { DBInfo.TableWeldBlow._ID, DBInfo.TableWeldBlow.GO_TIME_PREV, DBInfo.TableWeldBlow.ISSN};
 
 	public WeldBlowDao(Context context) {
 		dbHelper = new DBHelper(context);
@@ -46,11 +43,7 @@ public class WeldBlowDao {
 			db.beginTransaction();
 			values = new ContentValues();
 			values.put(DBInfo.TableWeldBlow.GO_TIME_PREV, param.getGoTimePrev());
-			values.put(DBInfo.TableWeldBlow.GO_TIME_NEXT, param.getGoTimeNext());
-			values.put(DBInfo.TableWeldBlow.INPUT_PORT, Arrays.toString(param.getOutputPort()));
-//			values.put(TableInputIO.GO_TIME_PREV, param.getGoTimePrev());
-//			values.put(TableInputIO.GO_TIME_NEXT, param.getGoTimeNext());
-//			values.put(TableInputIO.INPUT_PORT, Arrays.toString(param.getOutputPort()));
+			values.put(DBInfo.TableWeldBlow.ISSN, (boolean) param.isSn() ? 1 : 0);
 			rowid = db.update(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, values, DBInfo.TableWeldBlow._ID +"=?", new String[]{String.valueOf(param.get_id())});
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -75,8 +68,7 @@ public class WeldBlowDao {
 			values = new ContentValues();
 			values.put(DBInfo.TableWeldBlow._ID, param.get_id());
 			values.put(DBInfo.TableWeldBlow.GO_TIME_PREV, param.getGoTimePrev());
-			values.put(DBInfo.TableWeldBlow.GO_TIME_NEXT, param.getGoTimeNext());
-			values.put(DBInfo.TableWeldBlow.INPUT_PORT, Arrays.toString(param.getOutputPort()));
+			values.put(DBInfo.TableWeldBlow.ISSN, (boolean) param.isSn() ? 1 : 0);
 			rowID = db.insert(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, DBInfo.TableWeldBlow._ID, values);
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -109,9 +101,7 @@ public class WeldBlowDao {
                     output = new PointWeldBlowParam();
                     output.set_id(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow._ID)));
                     output.setGoTimePrev(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.GO_TIME_PREV)));
-                    output.setGoTimeNext(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.GO_TIME_NEXT)));
-                    output.setOutputPort(ArraysComprehension
-                            .boooleanParse(cursor.getString(cursor.getColumnIndex(DBInfo.TableWeldBlow.INPUT_PORT))));
+                    output.setSn(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.ISSN)) != 0);
 
                     outputIOParams.add(output);
                 }
@@ -149,9 +139,7 @@ public class WeldBlowDao {
 						param = new PointWeldBlowParam();
 						param.set_id(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow._ID)));
 						param.setGoTimePrev(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.GO_TIME_PREV)));
-						param.setGoTimeNext(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.GO_TIME_NEXT)));
-						param.setOutputPort(ArraysComprehension
-								.boooleanParse(cursor.getString(cursor.getColumnIndex(DBInfo.TableWeldBlow.INPUT_PORT))));
+						param.setSn(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.ISSN)) != 0);
 
 						params.add(param);
 					}
@@ -182,11 +170,9 @@ public class WeldBlowDao {
 		Cursor cursor = null;
 		try {
 			cursor = db.query(DBInfo.TableWeldBlow.WELD_BLOW_TABLE+taskname, columns,
-					DBInfo.TableWeldBlow.GO_TIME_PREV + "=? and " + DBInfo.TableWeldBlow.GO_TIME_NEXT + "=? and "
-                            + DBInfo.TableWeldBlow.INPUT_PORT + "=?",
+					DBInfo.TableWeldBlow.GO_TIME_PREV + "=? and " + DBInfo.TableWeldBlow.ISSN + "=?",
                     new String[] { String.valueOf(pointWeldOutputIOParam.getGoTimePrev()),
-                            String.valueOf(pointWeldOutputIOParam.getGoTimeNext()),
-                            Arrays.toString(pointWeldOutputIOParam.getOutputPort()) },
+							String.valueOf(pointWeldOutputIOParam.isSn() ? 1 : 0) },
                     null, null, null);
 			if (cursor != null && cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
@@ -224,9 +210,7 @@ public class WeldBlowDao {
 					param = new PointWeldBlowParam();
 					param.set_id(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow._ID)));
 					param.setGoTimePrev(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.GO_TIME_PREV)));
-					param.setGoTimeNext(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.GO_TIME_NEXT)));
-					param.setOutputPort(ArraysComprehension
-							.boooleanParse(cursor.getString(cursor.getColumnIndex(DBInfo.TableWeldBlow.INPUT_PORT))));
+					param.setSn(cursor.getInt(cursor.getColumnIndex(DBInfo.TableWeldBlow.ISSN)) != 0);
 
 				}
 			}

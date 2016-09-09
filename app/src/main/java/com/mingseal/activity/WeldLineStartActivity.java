@@ -5,6 +5,7 @@ package com.mingseal.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.kyleduo.switchbutton.SwitchButton;
 import com.mingseal.application.UserApplication;
 import com.mingseal.communicate.SocketInputThread;
 import com.mingseal.communicate.SocketThreadManager;
@@ -123,7 +125,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
      * 轨迹速度
      */
     private EditText et_preSendSnSpeed;
-    private ToggleButton switch_isSn;
+    private SwitchButton switch_isSn;
 
     private RelativeLayout rl_moren;
     /**
@@ -170,6 +172,29 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
     private ImageView iv_moren;
     private static final int DECIMAL_DIGITS = 1;//小数的位数
     private String taskname;
+    private TextView extend_isSn;
+    private TextView mTitle_sendSnSpeed;
+    private TextView mTitle_et_linestart_sendSnSpeed;
+    private TextView mActivity_mm_s;
+    private TextView mActivity_fenghao;
+    private TextView mTitle_preSendSnSum;
+    private TextView mTitle_et_preSendSnSum;
+    private TextView mActivity_mm;
+    private TextView mActivity_second_fenghao;
+    private TextView mTitle_preSendSnSpeed;
+    private TextView mTitle_et_preSendSnSpeed;
+    private TextView mActivity_sec_mm_s;
+    private TextView mActivity_third_fenghao;
+    private TextView mTitle_moveSpeed;
+    private TextView mTitle_et_linestart_moveSpeed;
+    private TextView mActivity_third_mm_s;
+    private TextView mActivity_four_fenghao;
+    private TextView mTitle_preHeatTime;
+    private TextView mTitle_et_preHeatTime;
+    private TextView mActivity_ms;
+    private TextView mActivity_five_fenghao;
+    private TextView mTitle_isSn;
+    private TextView mTitle_et_isSn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -262,138 +287,106 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
 
     protected void setTitleInfos(List<PointWeldLineStartParam> weldStartLists,
                                  View view, int p) {
-//        title_outGlueTimePrev = (TextView) view.findViewById(R.id.title_outGlueTimePrev);
-//        title_et_linestart_outGlueTimePrev = (TextView) view.findViewById(R.id.title_et_linestart_outGlueTimePrev);
-//        activity_ms = (TextView) view.findViewById(R.id.activity_ms);
-//        activity_fenghao = (TextView) view.findViewById(R.id.activity_fenghao);
-//        title_outGlueTime = (TextView) view.findViewById(R.id.title_outGlueTime);
-//        title_et_outGlueTime = (TextView) view.findViewById(R.id.title_et_outGlueTime);
-//        activity_second_ms = (TextView) view.findViewById(R.id.activity_second_ms);
-//        activity_second_fenghao = (TextView) view.findViewById(R.id.activity_second_fenghao);
-//        title_moveSpeed = (TextView) view.findViewById(R.id.title_moveSpeed);
-//        title_et_linestart_moveSpeed = (TextView) view.findViewById(R.id.title_et_linestart_moveSpeed);
-//        activity_mm_s = (TextView) view.findViewById(R.id.activity_mm_s);
-//        activity_third_fenghao = (TextView) view.findViewById(R.id.activity_third_fenghao);
-//        title_activity_glue_alone_isOutGlue = (TextView) view.findViewById(R.id.title_activity_glue_alone_isOutGlue);
-//        title_et_isOutGlue = (TextView) view.findViewById(R.id.title_et_isOutGlue);
-//        activity_four_fenghao = (TextView) view.findViewById(R.id.activity_four_fenghao);
-//        title_activity_glue_timeMode = (TextView) view.findViewById(R.id.title_activity_glue_timeMode);
-//        title_et_activity_glue_timeMode = (TextView) view.findViewById(R.id.title_et_activity_glue_timeMode);
-//        activity_five_fenghao = (TextView) view.findViewById(R.id.activity_five_fenghao);
-//        activity_glue_port = (TextView) view.findViewById(R.id.activity_glue_port);
-//        title_et_glue_port = (TextView) view.findViewById(R.id.title_et_glue_port);
-//        for (PointWeldLineStartParam pointWeldLineStartParam : weldStartLists) {
-//            if (p == pointWeldLineStartParam.get_id()) {
-//                /*===================== begin =====================*/
-//                title_outGlueTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_et_linestart_outGlueTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_outGlueTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_et_outGlueTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_second_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_second_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_moveSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_et_linestart_moveSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_mm_s.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_third_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_activity_glue_alone_isOutGlue.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_et_isOutGlue.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_four_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_activity_glue_timeMode.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_et_activity_glue_timeMode.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_five_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                activity_glue_port.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//                title_et_glue_port.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(35));
-//
-//				/*=====================  end =====================*/
-//                title_outGlueTimePrev.setText(getResources().getString(
-//                        R.string.activity_glue_outGlueTimePrev)
-//                        + " ");
-//                activity_ms.setText(getResources().getString(
-//                        R.string.activity_ms));
-//                activity_fenghao.setText(getResources().getString(
-//                        R.string.activity_fenghao)
-//                        + " ");
-//                title_outGlueTime.setText(getResources().getString(
-//                        R.string.activity_glue_outGlueTime)
-//                        + " ");
-//                activity_second_ms.setText(getResources().getString(
-//                        R.string.activity_ms));
-//                activity_second_fenghao.setText(getResources().getString(
-//                        R.string.activity_fenghao)
-//                        + " ");
-//                title_moveSpeed.setText(getResources().getString(
-//                        R.string.activity_glue_moveSpeed)
-//                        + " ");
-//                activity_mm_s.setText(getResources().getString(
-//                        R.string.activity_mm_s));
-//                activity_third_fenghao.setText(getResources().getString(
-//                        R.string.activity_fenghao)
-//                        + " ");
-//                title_activity_glue_alone_isOutGlue.setText(getResources()
-//                        .getString(R.string.activity_glue_alone_isOutGlue)
-//                        + " ");
-//                activity_four_fenghao.setText(getResources().getString(
-//                        R.string.activity_fenghao)
-//                        + " ");
-//                title_activity_glue_timeMode.setText(getResources().getString(
-//                        R.string.activity_glue_timeMode)
-//                        + " ");
-//                activity_five_fenghao.setText(getResources().getString(
-//                        R.string.activity_fenghao)
-//                        + " ");
-//                activity_glue_port.setText(getResources().getString(
-//                        R.string.activity_glue_port)
-//                        + " ");
-//                for (int j = 0; j < 5; j++) {
-//                    if (pointWeldLineStartParam.getGluePort()[j]) {
-//                        GluePort[j] = "开";
-//                    } else {
-//                        GluePort[j] = "关";
-//                    }
-//                }
-//
-//                title_et_linestart_outGlueTimePrev.getPaint().setFlags(
-//                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-//                title_et_linestart_outGlueTimePrev.getPaint()
-//                        .setAntiAlias(true); // 抗锯齿
-//                title_et_outGlueTime.getPaint().setFlags(
-//                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-//                title_et_outGlueTime.getPaint().setAntiAlias(true); // 抗锯齿
-//                title_et_linestart_moveSpeed.getPaint().setFlags(
-//                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-//                title_et_linestart_moveSpeed.getPaint().setAntiAlias(true); // 抗锯齿
-//                title_et_isOutGlue.getPaint().setFlags(
-//                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-//                title_et_isOutGlue.getPaint().setAntiAlias(true); // 抗锯齿
-//                title_et_activity_glue_timeMode.getPaint().setFlags(
-//                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-//                title_et_activity_glue_timeMode.getPaint().setAntiAlias(true); // 抗锯齿
-//                title_et_glue_port.getPaint().setFlags(
-//                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-//                title_et_glue_port.getPaint().setAntiAlias(true); // 抗锯齿
-//
-//                title_et_linestart_outGlueTimePrev.setText(pointWeldLineStartParam
-//                        .getOutGlueTimePrev() + "");
-//                title_et_outGlueTime.setText(pointWeldLineStartParam
-//                        .getOutGlueTime() + "");
-//                title_et_linestart_moveSpeed.setText(pointWeldLineStartParam.getMoveSpeed()
-//                        + "");
-//                if (pointWeldLineStartParam.isOutGlue()) {
-//                    title_et_isOutGlue.setText("是");
-//                } else {
-//                    title_et_isOutGlue.setText("否");
-//                }
-//                if (pointWeldLineStartParam.isTimeMode()) {
-//                    title_et_activity_glue_timeMode.setText("是");
-//                } else {
-//                    title_et_activity_glue_timeMode.setText("否");
-//                }
-//                title_et_glue_port.setText(GluePort[0] + GluePort[1]
-//                        + GluePort[2] + GluePort[3] + GluePort[4]);
-//            }
-//        }
+        mTitle_sendSnSpeed = (TextView) view.findViewById(R.id.title_sendSnSpeed);
+        mTitle_et_linestart_sendSnSpeed = (TextView) view.findViewById(R.id.title_et_linestart_sendSnSpeed);
+        mActivity_mm_s = (TextView) view.findViewById(R.id.activity_mm_s);
+        mActivity_fenghao = (TextView) view.findViewById(R.id.activity_fenghao);
+        mTitle_preSendSnSum = (TextView) view.findViewById(R.id.title_preSendSnSum);
+        mTitle_et_preSendSnSum = (TextView) view.findViewById(R.id.title_et_preSendSnSum);
+        mActivity_mm = (TextView) view.findViewById(R.id.activity_mm);
+        mActivity_second_fenghao = (TextView) view.findViewById(R.id.activity_second_fenghao);
+        mTitle_preSendSnSpeed = (TextView) view.findViewById(R.id.title_preSendSnSpeed);
+        mTitle_et_preSendSnSpeed = (TextView) view.findViewById(R.id.title_et_preSendSnSpeed);
+        mActivity_sec_mm_s = (TextView) view.findViewById(R.id.activity_sec_mm_s);
+        mActivity_third_fenghao = (TextView) view.findViewById(R.id.activity_third_fenghao);
+        mTitle_moveSpeed = (TextView) view.findViewById(R.id.title_moveSpeed);
+        mTitle_et_linestart_moveSpeed = (TextView) view.findViewById(R.id.title_et_linestart_moveSpeed);
+        mActivity_third_mm_s = (TextView) view.findViewById(R.id.activity_third_mm_s);
+        mActivity_four_fenghao = (TextView) view.findViewById(R.id.activity_four_fenghao);
+        mTitle_preHeatTime = (TextView) view.findViewById(R.id.title_preHeatTime);
+        mTitle_et_preHeatTime = (TextView) view.findViewById(R.id.title_et_preHeatTime);
+        mActivity_ms = (TextView)  view.findViewById(R.id.activity_ms);
+        mActivity_five_fenghao = (TextView)  view.findViewById(R.id.activity_five_fenghao);
+        mTitle_isSn = (TextView)  view.findViewById(R.id.title_isSn);
+        mTitle_et_isSn = (TextView)  view.findViewById(R.id.title_et_isSn);
+        for (PointWeldLineStartParam pointWeldLineStartParam : weldStartLists) {
+            if (p == pointWeldLineStartParam.get_id()) {
+                /*===================== begin =====================*/
+                mTitle_sendSnSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_preSendSnSum.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_preSendSnSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_moveSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_preHeatTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_et_linestart_sendSnSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_et_linestart_moveSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_et_preHeatTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_et_preSendSnSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_et_preSendSnSum.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mTitle_et_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_mm_s.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_mm.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_sec_mm_s.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_third_mm_s.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_second_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_third_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_four_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+                mActivity_five_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+
+				/*=====================  end =====================*/
+                mTitle_sendSnSpeed.setText(getResources().getString(R.string.activity_weld_work_sendSnSpeed) + " ");
+                mTitle_preSendSnSum.setText(getResources().getString(R.string.activity_weld_work_preSendSnSum) + " ");
+                mTitle_preSendSnSpeed.setText(getResources().getString(R.string.activity_weld_work_preSendSnSpeed) + " ");
+                mTitle_moveSpeed.setText(getResources().getString(R.string.activity_weld_work_moveSpeed) + " ");
+                mTitle_preHeatTime.setText(getResources().getString(R.string.activity_weld_work_preHeatTime) + " ");
+                mTitle_isSn.setText(getResources().getString(R.string.activity_glue_alone_isSn) + " ");
+
+                mActivity_mm_s.setText(getResources().getString(R.string.activity_mm_s) + " ");
+                mActivity_mm.setText(getResources().getString(R.string.activity_mm) + " ");
+                mActivity_sec_mm_s.setText(getResources().getString(R.string.activity_mm_s) + " ");
+                mActivity_ms.setText(getResources().getString(R.string.activity_ms) + " ");
+                mActivity_third_mm_s.setText(getResources().getString(R.string.activity_mm_s) + " ");
+                mActivity_fenghao.setText(getResources().getString(R.string.activity_fenghao) + " ");
+                mActivity_second_fenghao.setText(getResources().getString(R.string.activity_fenghao) + " ");
+                mActivity_third_fenghao.setText(getResources().getString(R.string.activity_fenghao) + " ");
+                mActivity_four_fenghao.setText(getResources().getString(R.string.activity_fenghao) + " ");
+                mActivity_five_fenghao.setText(getResources().getString(R.string.activity_fenghao) + " ");
+
+
+
+                mTitle_et_linestart_sendSnSpeed.getPaint().setFlags(
+                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
+                mTitle_et_linestart_sendSnSpeed.getPaint()
+                        .setAntiAlias(true); // 抗锯齿
+                mTitle_et_linestart_moveSpeed.getPaint().setFlags(
+                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
+                mTitle_et_linestart_moveSpeed.getPaint().setAntiAlias(true); // 抗锯齿
+                mTitle_et_preHeatTime.getPaint().setFlags(
+                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
+                mTitle_et_preHeatTime.getPaint().setAntiAlias(true); // 抗锯齿
+                mTitle_et_preSendSnSpeed.getPaint().setFlags(
+                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
+                mTitle_et_preSendSnSpeed.getPaint().setAntiAlias(true); // 抗锯齿
+                mTitle_et_preSendSnSum.getPaint().setFlags(
+                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
+                mTitle_et_preSendSnSum.getPaint().setAntiAlias(true); // 抗锯齿
+                mTitle_et_isSn.getPaint().setFlags(
+                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
+                mTitle_et_isSn.getPaint().setAntiAlias(true); // 抗锯齿
+                mTitle_et_linestart_sendSnSpeed.setText(pointWeldLineStartParam.getSnSpeed()+"");
+                mTitle_et_linestart_moveSpeed.setText(pointWeldLineStartParam.getMoveSpeed()+"");
+                mTitle_et_preHeatTime.setText(pointWeldLineStartParam.getPreHeatTime()+"");
+                mTitle_et_preSendSnSpeed.setText(pointWeldLineStartParam.getPreSendSnSpeed()+"");
+                mTitle_et_preSendSnSum.setText(pointWeldLineStartParam.getPreSendSnSum()/10+"");
+                if (pointWeldLineStartParam.isSn()) {
+                    mTitle_et_isSn.setText("是");
+                } else {
+                    mTitle_et_isSn.setText("否");
+                }
+            }
+        }
     }
 
     /**
@@ -535,7 +528,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         et_preSendSnSpeed = (EditText) extendView.findViewById(R.id.et_preSendSnSpeed);
         et_moveSpeed = (EditText) extendView.findViewById(R.id.et_moveSpeed);
         et_preHeatTime = (EditText) extendView.findViewById(R.id.et_preHeatTime);
-        switch_isSn = (ToggleButton) extendView.findViewById(R.id.switch_isSn);
+        switch_isSn = (SwitchButton) extendView.findViewById(R.id.switch_isSn);
 
         tv_outGlueTimePrev = (TextView) extendView.findViewById(R.id.tv_outGlueTimePrev);
         tv_preHeatTime = (TextView) extendView.findViewById(R.id.tv_preHeatTime);
@@ -545,6 +538,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         tv_movespeed_ms = (TextView) extendView.findViewById(R.id.tv_movespeed_ms);
         tv_moveSpeed = (TextView) extendView.findViewById(R.id.tv_moveSpeed);
         tv_moveSpeed2 = (TextView) extendView.findViewById(R.id.tv_moveSpeed2);
+        extend_isSn = (TextView) extendView.findViewById(R.id.extend_isSn);
         extend_line_start_mms = (TextView) extendView.findViewById(R.id.extend_line_start_mms);
         extend_preHeatTime_ms = (TextView) extendView.findViewById(R.id.extend_preHeatTime_ms);
         extend_default = (TextView) extendView.findViewById(R.id.extend_default);
@@ -563,6 +557,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         tv_moveSpeed.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         tv_movespeed_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         tv_moveSpeed2.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+        extend_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         tv_preHeatTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_line_start_mms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_preHeatTime_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
@@ -588,7 +583,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                 .findViewById(R.id.et_moveSpeed);
         et_preHeatTime = (EditText) extendView
                 .findViewById(R.id.et_preHeatTime);
-        switch_isSn = (ToggleButton) extendView
+        switch_isSn = (SwitchButton) extendView
                 .findViewById(R.id.switch_isSn);
 
         try {
@@ -739,9 +734,9 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
         public void handleMessage(Message msg) {
             if (msg.what == SocketInputThread.SocketError) {
                 //wifi中断
-                System.out.println("wifi连接断开。。");
+                L.d("wifi连接断开。。");
                 SocketThreadManager.releaseInstance();
-                System.out.println("单例被释放了-----------------------------");
+                L.d("单例被释放了-----------------------------");
                 //设置全局变量，跟新ui
                 userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
@@ -771,30 +766,34 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                             .findViewById(R.id.title_num);
                     if (p == 1) {// 方案列表第一位对应一号方案
                         title_num.setImageResource(R.drawable.green1);
-//                        setTitleInfos(weldStartLists, view, p);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 2) {
                         title_num.setImageResource(R.drawable.green2);
-//                        setTitleInfos(weldStartLists, view, p);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 3) {
                         title_num.setImageResource(R.drawable.green3);
-//                        setTitleInfos(weldStartLists, view, p);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 4) {
                         title_num.setImageResource(R.drawable.green4);
-//                        setTitleInfos(weldStartLists, view, p);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 5) {
                         title_num.setImageResource(R.drawable.green5);
-//                        setTitleInfos(weldStartLists, view, p);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 6) {
                         title_num.setImageResource(R.drawable.green6);
-//                        setTitleInfos(weldStartLists, view, p);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 7) {
                         title_num.setImageResource(R.drawable.green7);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 8) {
                         title_num.setImageResource(R.drawable.green8);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 9) {
                         title_num.setImageResource(R.drawable.green9);
+                        setTitleInfos(weldStartLists, view, p);
                     } else if (p == 10) {
                         title_num.setImageResource(R.drawable.green10);
+                        setTitleInfos(weldStartLists, view, p);
                     }
                 }
 
@@ -898,7 +897,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                             .findViewById(R.id.et_moveSpeed);
                     et_preHeatTime = (EditText) extendView
                             .findViewById(R.id.et_preHeatTime);
-                    switch_isSn = (ToggleButton) extendView
+                    switch_isSn = (SwitchButton) extendView
                             .findViewById(R.id.switch_isSn);
 
 
@@ -988,8 +987,7 @@ public class WeldLineStartActivity extends AutoLayoutActivity implements OnClick
                                 mMorenTextView.setText("当前默认方案号(" + currentTaskNum
                                         + ")");
                                 // 默认号存到sp
-                                SharePreferenceUtils
-                                        .saveParamNumberToPref(
+                                SharePreferenceUtils.saveParamNumberToPref(
                                                 WeldLineStartActivity.this,
                                                 SettingParam.DefaultNum.ParamGlueLineStartNumber,
                                                 currentTaskNum);

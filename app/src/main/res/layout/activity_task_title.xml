@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="75px"
-    android:background="@color/button_normal" >
+    android:background="@color/button_normal"
+    >
 
     <RelativeLayout
         android:id="@+id/rl_back"
@@ -25,7 +26,6 @@
         android:text="abs-02"
         android:textColor="@color/color_white"
         android:textSize="30sp" />
-
     <RelativeLayout
         android:id="@+id/rl_title_wifi_connecting"
         android:layout_width="90px"

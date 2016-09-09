@@ -29,7 +29,7 @@
             android:layout_marginRight="18px" >
 
             <TextView
-                android:id="@+id/title_outGlueTimePrev"
+                android:id="@+id/title_sendSnSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -38,19 +38,19 @@
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_et_linestart_outGlueTimePrev"
+                android:id="@+id/title_et_linestart_sendSnSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_outGlueTimePrev"
+                android:layout_toRightOf="@id/title_sendSnSpeed"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/activity_ms"
+                android:id="@+id/activity_mm_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_linestart_outGlueTimePrev"
+                android:layout_toRightOf="@id/title_et_linestart_sendSnSpeed"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
@@ -58,11 +58,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_ms"
+                android:layout_toRightOf="@id/activity_mm_s"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_outGlueTime"
+                android:id="@+id/title_preSendSnSum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -70,19 +70,19 @@
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_et_outGlueTime"
+                android:id="@+id/title_et_preSendSnSum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_outGlueTime"
+                android:layout_toRightOf="@id/title_preSendSnSum"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/activity_second_ms"
+                android:id="@+id/activity_mm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_outGlueTime"
+                android:layout_toRightOf="@id/title_et_preSendSnSum"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
@@ -90,11 +90,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_second_ms"
+                android:layout_toRightOf="@id/activity_mm"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_activity_glue_alone_isOutGlue"
+                android:id="@+id/title_preSendSnSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -102,19 +102,25 @@
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_et_isOutGlue"
+                android:id="@+id/title_et_preSendSnSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_activity_glue_alone_isOutGlue"
+                android:layout_toRightOf="@id/title_preSendSnSpeed"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
-
+            <TextView
+                android:id="@+id/activity_sec_mm_s"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_preSendSnSpeed"
+                android:textSize="@dimen/activity_title_item_mid_textsize" />
             <TextView
                 android:id="@+id/activity_third_fenghao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_isOutGlue"
+                android:layout_toRightOf="@id/activity_sec_mm_s"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
         </RelativeLayout>
 
@@ -141,7 +147,7 @@
                 android:layout_toRightOf="@id/title_moveSpeed"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
             <TextView
-                android:id="@+id/activity_mm_s"
+                android:id="@+id/activity_third_mm_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -153,11 +159,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_mm_s"
+                android:layout_toRightOf="@id/activity_third_mm_s"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_activity_glue_timeMode"
+                android:id="@+id/title_preHeatTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -165,23 +171,29 @@
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_et_activity_glue_timeMode"
+                android:id="@+id/title_et_preHeatTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_activity_glue_timeMode"
+                android:layout_toRightOf="@id/title_preHeatTime"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
-
+            <TextView
+                android:id="@+id/activity_ms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13px"
+                android:layout_toRightOf="@id/title_et_preHeatTime"
+                android:textSize="@dimen/activity_title_item_mid_textsize" />
             <TextView
                 android:id="@+id/activity_five_fenghao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_activity_glue_timeMode"
+                android:layout_toRightOf="@id/activity_ms"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/activity_glue_port"
+                android:id="@+id/title_isSn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -189,11 +201,11 @@
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
 
             <TextView
-                android:id="@+id/title_et_glue_port"
+                android:id="@+id/title_et_isSn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_glue_port"
+                android:layout_toRightOf="@id/title_isSn"
                 android:textSize="@dimen/activity_title_item_mid_textsize" />
         </RelativeLayout>
     </LinearLayout>

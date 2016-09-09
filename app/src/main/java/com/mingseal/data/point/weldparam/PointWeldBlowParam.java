@@ -3,21 +3,17 @@ package com.mingseal.data.point.weldparam;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.mingseal.data.point.IOPort;
 import com.mingseal.data.point.PointParam;
 import com.mingseal.data.point.PointType;
 
-import java.util.Arrays;
-
 /**
  * 焊锡吹锡点参数类
- * @author lyq
+ * @author wj
  */
 public class PointWeldBlowParam extends PointParam {
 	
 	private int goTimePrev; // 动作前延时(单位:毫秒ms)
-	private int goTimeNext; // 动作后延时(单位:毫秒ms)
-	private boolean[] outputPort; // 5号输出口
+	private boolean isSn;//是否出锡
 
 	/**
 	 * @return 获取动作前延时
@@ -36,37 +32,37 @@ public class PointWeldBlowParam extends PointParam {
 		this.goTimePrev = goTimePrev;
 	}
 
+//	/**
+//	 * @return 获取动作后延时
+//	 */
+//	public int getGoTimeNext() {
+//		return goTimeNext;
+//	}
+//
+//	/**
+//	 * 设置动作后延时
+//	 *
+//	 * @param goTimeNext
+//	 *            动作后延时
+//	 */
+//	public void setGoTimeNext(int goTimeNext) {
+//		this.goTimeNext = goTimeNext;
+//	}
+
+
 	/**
-	 * @return 获取动作后延时
+	 * @return 获取是否出锡
 	 */
-	public int getGoTimeNext() {
-		return goTimeNext;
+	public boolean isSn() {
+		return isSn;
 	}
 
 	/**
-	 * 设置动作后延时
-	 *
-	 * @param goTimeNext
-	 *            动作后延时
+	 * 设置是否出锡
+	 * @param isSn 是否出锡
 	 */
-	public void setGoTimeNext(int goTimeNext) {
-		this.goTimeNext = goTimeNext;
-	}
-
-
-	/**
-	 * @return 获取输出口数据
-	 */
-	public boolean[] getOutputPort() {
-		return outputPort;
-	}
-
-	/**
-	 * 5号输出口
-	 * @param outputPort
-	 */
-	public void setOutputPort(boolean[] outputPort) {
-		this.outputPort = outputPort;
+	public void setSn(boolean isSn) {
+		this.isSn = isSn;
 	}
 
 	/**
@@ -75,48 +71,40 @@ public class PointWeldBlowParam extends PointParam {
 	 * @blowSnTime 吹锡时间 0
 	 */
 	public PointWeldBlowParam(){
-		PointWeldBlowParamInit(0,0);
+		PointWeldBlowParamInit(true,0);
 		super.setPointType(PointType.POINT_WELD_BLOW);
-		this.outputPort=new boolean[IOPort.IO_NO_ALL.ordinal()];
 	}
 
-	private void PointWeldBlowParamInit(int goTimePrev, int goTimeNext) {
-		this.goTimeNext=goTimeNext;
+	private void PointWeldBlowParamInit(boolean isSn,int goTimePrev) {
+		this.isSn = isSn;
 		this.goTimePrev=goTimePrev;
-	}
-
-	public PointWeldBlowParam(int goTimePrev, int goTimeNext, boolean[] outputPort) {
-		PointWeldBlowParamInit(goTimePrev,goTimeNext);
-		super.setPointType(PointType.POINT_WELD_BLOW);
-		this.outputPort = outputPort;
 	}
 
 	@Override
 	public String toString() {
-		return "PoinWeldBlowParam{" +
+		return "PointWeldBlowParam{" +
 				"goTimePrev=" + goTimePrev +
-				", goTimeNext=" + goTimeNext +
-				", outputPort=" + Arrays.toString(outputPort) +
+				", isSn=" + isSn +
 				'}';
 	}
+
 	public String getString(){
-		return "PoinWeldBlowParam{" +
+		return  "PointWeldBlowParam{" +
 				"goTimePrev=" + goTimePrev +
-				", goTimeNext=" + goTimeNext +
-				", outputPort=" + Arrays.toString(outputPort) +
+				", isSn=" + isSn +
 				'}';
 	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
 
-		PointWeldBlowParam that = (PointWeldBlowParam) o;
+		PointWeldBlowParam blowParam = (PointWeldBlowParam) o;
 
-		if (goTimePrev != that.goTimePrev) return false;
-		if (goTimeNext != that.goTimeNext) return false;
-		return Arrays.equals(outputPort, that.outputPort);
+		if (goTimePrev != blowParam.goTimePrev) return false;
+		return isSn == blowParam.isSn;
 
 	}
 
@@ -124,8 +112,7 @@ public class PointWeldBlowParam extends PointParam {
 	public int hashCode() {
 		int result = super.hashCode();
 		result = 31 * result + goTimePrev;
-		result = 31 * result + goTimeNext;
-		result = 31 * result + Arrays.hashCode(outputPort);
+		result = 31 * result + (isSn ? 1 : 0);
 		return result;
 	}
 
@@ -133,12 +120,8 @@ public class PointWeldBlowParam extends PointParam {
 		@Override
 		public PointWeldBlowParam createFromParcel(Parcel source) {
 			PointWeldBlowParam point=new PointWeldBlowParam();
+			point.isSn = source.readInt() != 0;
 			point.goTimePrev = source.readInt();
-			point.goTimeNext = source.readInt();
-			boolean[] val = null;
-			val = new boolean[IOPort.IO_NO_ALL.ordinal()];
-			source.readBooleanArray(val);
-			point.outputPort = val;
 			point.set_id(source.readInt());
 			return point;
 		}
@@ -156,9 +139,8 @@ public class PointWeldBlowParam extends PointParam {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(isSn?1:0);
 		dest.writeInt(goTimePrev);
-		dest.writeInt(goTimeNext);
-		dest.writeBooleanArray(outputPort);
 		dest.writeInt(get_id());
 	}
 }

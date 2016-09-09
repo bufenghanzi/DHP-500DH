@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.mingseal.data.param.SettingParam;
-import com.mingseal.data.param.TaskParam;
 
 /**
  * @author 商炎炳
@@ -108,25 +107,39 @@ public class SharePreferenceUtils {
 	 * @Title saveTaskNumberToPref
 	 * @Description 将任务号保存到SharePreferences
 	 * @param context
-	 * @param number
+	 * @param number 任务号
+	 * @param nSnHeight 出锡高度
+	 * @param nBackSnSpeedFir 一次回锡速度
+	 * @param nBackSnSpeedSec 二次回锡速度
+	 * @param nBackSnSpeedThird 三次回锡速度
+	 * @param nBackSnSpeedFour 四次回锡速度
+	 * @param nBackSnSumFir 一次送锡量
+	 * @param nBackSnSumSec 二次送锡量
+	 * @param nBackSnSumThird 三次送锡量
+	 * @param nBackSnSumSecFour 四次送锡量
+	 * @param nXYNullSpeed
+	 * @param nZNullSpeed
 	 *            任务号
-	 * @param max_accelerate_time 设置拐点最大加速度
-	 * @param z_move  设置Z轴空走速度
-	 * @param xy_move 设置XY轴空走速度
-	 * @param inflexion_time 拐点速度
-	 * @param decelerate_time 设置减速度
-	 * @param accelerate_time 设置加速度
 	 */
-	public static void saveTaskNumberAndDatesToPref(Context context, int number) {
+	public static void saveTaskNumberAndDatesToPref(Context context, int number, int nSnHeight, int nBackSnSpeedFir, int nBackSnSpeedSec, int nBackSnSpeedThird
+			, int nBackSnSpeedFour, int nBackSnSumFir, int nBackSnSumSec, int nBackSnSumThird, int nBackSnSumSecFour
+			, int nXYNullSpeed, int nZNullSpeed,int nAccelerate,int nDecelerate) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
 		editor.putInt(SettingParam.Task.TaskNumber, number);
-//		editor.putInt(TaskParam.INSTANCE.Accelerate, accelerate_time);
-//		editor.putInt(TaskParam.INSTANCE.Decelerate, decelerate_time);
-//		editor.putInt(TaskParam.INSTANCE.TurnSpeed, inflexion_time);
-//		editor.putInt(TaskParam.INSTANCE.XYNullSpeed, xy_move);
-//		editor.putInt(TaskParam.INSTANCE.ZNullSpeed, z_move);
-//		editor.putInt(TaskParam.INSTANCE.TurnAccelerateMax, max_accelerate_time);
+		editor.putInt(SettingParam.Setting.nSnHeight, nSnHeight);
+		editor.putInt(SettingParam.Setting.nBackSnSpeedFir, nBackSnSpeedFir);
+		editor.putInt(SettingParam.Setting.nBackSnSpeedSec, nBackSnSpeedSec);
+		editor.putInt(SettingParam.Setting.nBackSnSpeedThird, nBackSnSpeedThird);
+		editor.putInt(SettingParam.Setting.nBackSnSpeedFour, nBackSnSpeedFour);
+		editor.putInt(SettingParam.Setting.nBackSnSumFir, nBackSnSumFir);
+		editor.putInt(SettingParam.Setting.nBackSnSumSec, nBackSnSumSec);
+		editor.putInt(SettingParam.Setting.nBackSnSumThird, nBackSnSumThird);
+		editor.putInt(SettingParam.Setting.nBackSnSumSecFour, nBackSnSumSecFour);
+		editor.putInt(SettingParam.Setting.nXYNullSpeed, nXYNullSpeed);
+		editor.putInt(SettingParam.Setting.nZNullSpeed, nZNullSpeed);
+		editor.putInt(SettingParam.Setting.nAccelerate, nAccelerate);
+		editor.putInt(SettingParam.Setting.nDecelerate, nDecelerate);
 		editor.apply();
 	}
 
@@ -143,34 +156,69 @@ public class SharePreferenceUtils {
 		int number = sp.getInt(SettingParam.Task.TaskNumber, 1);
 		return number;
 	}
-	public static int getAccelerate (Context context) {
+	public static int getnSnHeight (Context context) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
-		int number = sp.getInt(TaskParam.INSTANCE.Accelerate, 1);
+		int number = sp.getInt(SettingParam.Setting.nSnHeight, 8);
 		return number;
 	}
-	public static int getDecelerate (Context context) {
+	public static int getnAccelerate (Context context) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
-		int number = sp.getInt(TaskParam.INSTANCE.Decelerate, 1);
+		int number = sp.getInt(SettingParam.Setting.nAccelerate, 3000);
 		return number;
 	}
-	public static int getTurnSpeed (Context context) {
+	public static int getnDecelerate (Context context) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
-		int number = sp.getInt(TaskParam.INSTANCE.TurnSpeed, 1);
+		int number = sp.getInt(SettingParam.Setting.nDecelerate, 3000);
 		return number;
 	}
-	public static int getXYNullSpeed (Context context) {
+	public static int getnBackSnSpeedFir(Context context) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
-		int number = sp.getInt(TaskParam.INSTANCE.XYNullSpeed, 1);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSpeedFir, 50);
 		return number;
 	}
-	public static int getZNullSpeed (Context context) {
+	public static int getnBackSnSpeedSec (Context context) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
-		int number = sp.getInt(TaskParam.INSTANCE.ZNullSpeed, 1);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSpeedSec,50);
 		return number;
 	}
-	public static int getTurnAccelerateMax (Context context) {
+	public static int getnBackSnSpeedThird (Context context) {
 		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
-		int number = sp.getInt(TaskParam.INSTANCE.TurnAccelerateMax, 1);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSpeedThird, 50);
+		return number;
+	}
+	public static int getnBackSnSpeedFour (Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSpeedFour, 50);
+		return number;
+	}
+	public static int getnBackSnSumFir(Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSumFir, 0);
+		return number;
+	}
+	public static int getnBackSnSumSec (Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSumSec, 0);
+		return number;
+	}
+	public static int getnBackSnSumThird (Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSumThird, 0);
+		return number;
+	}
+	public static int getnBackSnSumSecFour (Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nBackSnSumSecFour, 0);
+		return number;
+	}
+	public static int getnXYNullSpeed(Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nXYNullSpeed, 200);
+		return number;
+	}
+	public static int getnZNullSpeed (Context context) {
+		SharedPreferences sp = context.getSharedPreferences(SettingParam.Task.TaskName, Context.MODE_PRIVATE);
+		int number = sp.getInt(SettingParam.Setting.nZNullSpeed, 200);
 		return number;
 	}
 	/**

@@ -10,11 +10,15 @@ import android.widget.Button;
 import android.widget.PopupWindow;
 
 import com.mingseal.activity.TaskActivity;
+import com.mingseal.activity.WeldBlowActivity;
+import com.mingseal.activity.WeldLineEndActivity;
+import com.mingseal.activity.WeldLineStartActivity;
 import com.mingseal.activity.WeldWorkActivity;
 import com.mingseal.adapter.TaskMainBaseAdapter;
 import com.mingseal.data.point.Point;
 import com.mingseal.data.point.PointType;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -119,25 +123,25 @@ public class MyPopWindowClickListener implements OnClickListener {
      */
     private View initMenuView(Activity mParent) {
         View menuView = mParent.getLayoutInflater().inflate(R.layout.activity_task_main_button_popwindow, null);
-//        Button but_jieshu = (Button) menuView.findViewById(R.id.but_jieshu);
-//        Button but_qishi = (Button) menuView.findViewById(R.id.but_qishi);
+        Button but_jieshu = (Button) menuView.findViewById(R.id.but_jieshu);
+        Button but_qishi = (Button) menuView.findViewById(R.id.but_qishi);
         Button but_duli = (Button) menuView.findViewById(R.id.but_duli);
 //        Button but_zhongjian = (Button) menuView.findViewById(R.id.but_zhongjian);
-//        Button but_jizhun = (Button) menuView.findViewById(R.id.but_jizhun);
-//        Button but_chuixi = (Button) menuView.findViewById(R.id.but_chuixi);
-//        but_jieshu.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//        but_qishi.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+        Button but_jizhun = (Button) menuView.findViewById(R.id.but_jizhun);
+        Button but_chuixi = (Button) menuView.findViewById(R.id.but_chuixi);
+        but_jieshu.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+        but_qishi.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
         but_duli.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 //        but_zhongjian.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//        but_chuixi.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
-//        but_jizhun.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+        but_chuixi.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
+        but_jizhun.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(30));
 
-//        menuView.findViewById(R.id.but_jieshu).setOnClickListener(this);
-//        menuView.findViewById(R.id.but_qishi).setOnClickListener(this);
+        menuView.findViewById(R.id.but_jieshu).setOnClickListener(this);
+        menuView.findViewById(R.id.but_qishi).setOnClickListener(this);
         menuView.findViewById(R.id.but_duli).setOnClickListener(this);
 //        menuView.findViewById(R.id.but_zhongjian).setOnClickListener(this);
-//        menuView.findViewById(R.id.but_chuixi).setOnClickListener(this);
-//        menuView.findViewById(R.id.but_jizhun).setOnClickListener(this);
+        menuView.findViewById(R.id.but_chuixi).setOnClickListener(this);
+        menuView.findViewById(R.id.but_jizhun).setOnClickListener(this);
         return menuView;
     }
 
@@ -163,74 +167,74 @@ public class MyPopWindowClickListener implements OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-//            case R.id.but_jieshu:// 结束点
-//                intent = new Intent(mParent, WeldLineEndActivity.class);
-//                saveToActivity(intent);
+            case R.id.but_jieshu:// 结束点
+                intent = new Intent(mParent, WeldLineEndActivity.class);
+                saveToActivity(intent);
 
-//                break;
-//            case R.id.but_qishi:// 起始点
-//
-//                intent = new Intent(mParent, WeldLineStartActivity.class);
-//                saveToActivity(intent);
-//
-//                break;
+                break;
+            case R.id.but_qishi:// 起始点
+
+                intent = new Intent(mParent, WeldLineStartActivity.class);
+                saveToActivity(intent);
+
+                break;
             case R.id.but_duli:// 作业点
 
                 intent = new Intent(mParent, WeldWorkActivity.class);
                 saveToActivity(intent);
 
                 break;
-//            case R.id.but_jizhun:// 基准点
-//                if (points.size() != 0) {
-//                    if (!points.get(0).getPointParam().getPointType().equals(PointType.POINT_WELD_BASE)) {
-//                        pointBase = new Point(PointType.POINT_WELD_BASE);
-//                        if (mFlag == 0) {
-//                            selectRadio = 0;
-//                            points.add(selectRadio, pointBase);
-//
-//                            mParent.setSelectRadioID(selectRadio);// Activity需要设置选中id
-//                            mAdapter.setSelectID(selectRadio);// 选中位置
-//
-//                        } else if (mFlag == 1) {
-//                            selectRadio = mParent.getSelectRadioID();
-//                            if (selectRadio == 0) {
-//                                points.remove(selectRadio);
-//                                points.add(selectRadio, pointBase);
-//                            } else {
-//                                ToastUtil.displayPromptInfo(mParent, "基准点只允许插在开始位置");
-//                            }
-//                        }
-//
-//                        mAdapter.setData(points);
-//                        mAdapter.notifyDataSetChanged();
-//                    } else {
-//                        ToastUtil.displayPromptInfo(mParent, "只允许有一个基准点");
-//                    }
-//                } else {
-//                    pointBase = new Point(PointType.POINT_WELD_BASE);
-//                    selectRadio = 0;
-//                    points.add(selectRadio, pointBase);
-//
-//                    mParent.setSelectRadioID(selectRadio);// Activity需要设置选中id
-//                    mAdapter.setSelectID(selectRadio);// 选中位置
-//                    mAdapter.setData(points);
-//                    mAdapter.notifyDataSetChanged();
-//                }
-//
-//                disPopWindow(popupWindow);
-//                break;
+            case R.id.but_jizhun:// 基准点
+                if (points.size() != 0) {
+                    if (!points.get(0).getPointParam().getPointType().equals(PointType.POINT_WELD_BASE)) {
+                        pointBase = new Point(PointType.POINT_WELD_BASE);
+                        if (mFlag == 0) {
+                            selectRadio = 0;
+                            points.add(selectRadio, pointBase);
+
+                            mParent.setSelectRadioID(selectRadio);// Activity需要设置选中id
+                            mAdapter.setSelectID(selectRadio);// 选中位置
+
+                        } else if (mFlag == 1) {
+                            selectRadio = mParent.getSelectRadioID();
+                            if (selectRadio == 0) {
+                                points.remove(selectRadio);
+                                points.add(selectRadio, pointBase);
+                            } else {
+                                ToastUtil.displayPromptInfo(mParent, "基准点只允许插在开始位置");
+                            }
+                        }
+
+                        mAdapter.setData(points);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        ToastUtil.displayPromptInfo(mParent, "只允许有一个基准点");
+                    }
+                } else {
+                    pointBase = new Point(PointType.POINT_WELD_BASE);
+                    selectRadio = 0;
+                    points.add(selectRadio, pointBase);
+
+                    mParent.setSelectRadioID(selectRadio);// Activity需要设置选中id
+                    mAdapter.setSelectID(selectRadio);// 选中位置
+                    mAdapter.setData(points);
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                disPopWindow(popupWindow);
+                break;
 //            case R.id.but_zhongjian:// 中间点
 //
 //                intent = new Intent(mParent, WeldLineMidActivity.class);
 //                saveToActivity(intent);
 //
 //                break;
-//            case R.id.but_chuixi:// 吹锡点
-//
-//                intent = new Intent(mParent, WeldBlowActivity.class);
-//                saveToActivity(intent);
-//
-//                break;
+            case R.id.but_chuixi:// 吹锡点
+
+                intent = new Intent(mParent, WeldBlowActivity.class);
+                saveToActivity(intent);
+
+                break;
 
         }
 

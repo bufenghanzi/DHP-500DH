@@ -291,7 +291,7 @@ public class SuperTrackView extends SurfaceView implements SurfaceHolder.Callbac
                     paint.setColor(basePointColor);
                     paint.setStyle(Paint.Style.FILL);
                     canvas.drawCircle(point_first.getFoldX(fold), point_first.getFoldY(fold), radius, paint);
-                } else if (getPointType(point_first).equals(PointType.POINT_GLUE_ALONE)) {
+                } else if (getPointType(point_first).equals(PointType.POINT_WELD_WORK)) {
                     // 如果是独立点，不需要画线段
                     paint.setColor(pointColor);
                     paint.setStyle(Paint.Style.FILL);
@@ -319,7 +319,7 @@ public class SuperTrackView extends SurfaceView implements SurfaceHolder.Callbac
                         i = i + 1;
                     }
 
-                } else if (getPointType(point_first).equals(PointType.POINT_GLUE_LINE_START)) {
+                } else if (getPointType(point_first).equals(PointType.POINT_WELD_LINE_START)) {
                     for (int j = i + 1; j < pointLists.size(); j++) {
                         if (getPointType(pointLists.get(j)).equals(PointType.POINT_GLUE_LINE_ARC)) {
                             // 圆弧点，画弧
@@ -374,13 +374,13 @@ public class SuperTrackView extends SurfaceView implements SurfaceHolder.Callbac
 
                             j = j + 1;
                             i = j;
-                        } else if (getPointType(pointLists.get(j)).equals(PointType.POINT_GLUE_LINE_END)) {
+                        } else if (getPointType(pointLists.get(j)).equals(PointType.POINT_WELD_LINE_END)) {
                             paint.setColor(lineColor);
                             canvas.drawLine(pointLists.get(j - 1).getFoldX(fold), pointLists.get(j - 1).getFoldY(fold),
                                     pointLists.get(j).getFoldX(fold), pointLists.get(j).getFoldY(fold), paint);
                             i = j;
                             break;
-                        } else if (getPointType(pointLists.get(j)).equals(PointType.POINT_GLUE_LINE_MID)) {
+                        } else if (getPointType(pointLists.get(j)).equals(PointType.POINT_WELD_LINE_MID)) {
                             paint.setColor(lineColor);
                             canvas.drawLine(pointLists.get(j - 1).getFoldX(fold), pointLists.get(j - 1).getFoldY(fold),
                                     pointLists.get(j).getFoldX(fold), pointLists.get(j).getFoldY(fold), paint);

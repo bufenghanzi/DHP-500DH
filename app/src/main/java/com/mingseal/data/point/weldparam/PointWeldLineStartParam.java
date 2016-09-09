@@ -241,7 +241,7 @@ public class PointWeldLineStartParam extends PointParam {
 	 *  @preHeatTime 预热时间 0
 	 */
 	public PointWeldLineStartParam(){
-		pointWeldLineStartParamInit(0, 0, 20, true, 5, 0);
+		pointWeldLineStartParamInit(0, 0, 20, true, 50, 0);
 		super.setPointType(PointType.POINT_WELD_LINE_START);
 //		this.snPort = new boolean[GWOutPort.USER_O_NO_ALL.ordinal()];
 //		this.snPort[0] = true;

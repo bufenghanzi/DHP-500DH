@@ -49,7 +49,8 @@ public class PointWeldLineEndParam extends PointParam {
 	/**
 	 * @return 获取是否暂停
 	 */
-	public boolean isPause() {
+	public boolean isPause()
+	{
 		return isPause;
 	}
 	

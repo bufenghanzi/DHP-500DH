@@ -45,6 +45,58 @@ public class SettingParam {
 		 * 循迹定位
 		 */
 		public static final String TrackLocation = "trackLocation";
+		/**
+		 * 一次回锡速度
+		 */
+		public static final String nBackSnSpeedFir = "nBackSnSpeedFir";
+		/**
+		 * 一次回锡量
+		 */
+		public static final String nBackSnSumFir = "nBackSnSumFir";
+		/**
+		 * 二次回锡速度
+		 */
+		public static final String nBackSnSpeedSec = "nBackSnSpeedSec";
+		/**
+		 * 二次回锡量
+		 */
+		public static final String nBackSnSumSec = "nBackSnSumSec";
+		/**
+		 * 三次回锡速度
+		 */
+		public static final String nBackSnSpeedThird = "nBackSnSpeedThird";
+		/**
+		 * 三次回锡量
+		 */
+		public static final String nBackSnSumThird = "nBackSnSumThird";
+		/**
+		 * 四次回锡速度
+		 */
+		public static final String nBackSnSpeedFour = "nBackSnSpeedFour";
+		/**
+		 * 四次回锡量
+		 */
+		public static final String nBackSnSumSecFour = "nBackSnSumSecFour";
+		/**
+		 * 送锡高度
+		 */
+		public static final String nSnHeight = "nSnHeight";
+		/**
+		 * xy空走速度
+		 */
+		public static final String nXYNullSpeed = "nXYNullSpeed";
+		/**
+		 * z轴空走速度
+		 */
+		public static final String nZNullSpeed = "nZNullSpeed";
+		/**
+		 * 加速度
+		 */
+		public static final String nAccelerate = "nAccelerate";
+		/**
+		 * 减速度
+		 */
+		public static final String nDecelerate = "nDecelerate";
 	}
 	/**
 	 * @author wj

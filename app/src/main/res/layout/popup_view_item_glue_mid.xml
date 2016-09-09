@@ -62,7 +62,7 @@
                  />
 
             <TextView
-                android:id="@+id/title_activity_glue_radius"
+                android:id="@+id/title_sendSnSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -70,19 +70,19 @@
                 />
 
             <TextView
-                android:id="@+id/title_et_radius"
+                android:id="@+id/title_et_sendSnSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_activity_glue_radius"
+                android:layout_toRightOf="@id/title_sendSnSpeed"
                 />
 
             <TextView
-                android:id="@+id/activity_mm"
+                android:id="@+id/activity_mm_s2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_radius"
+                android:layout_toRightOf="@id/title_et_sendSnSpeed"
                  />
 
             <TextView
@@ -90,11 +90,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_mm"
+                android:layout_toRightOf="@id/activity_mm_s2"
                 />
 
             <TextView
-                android:id="@+id/title_stopDisPrev"
+                android:id="@+id/title_stopSnTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
@@ -102,19 +102,19 @@
                 />
 
             <TextView
-                android:id="@+id/title_et_stopDisPrev"
+                android:id="@+id/title_et_stopSnTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_stopDisPrev"
+                android:layout_toRightOf="@id/title_stopSnTime"
                  />
 
             <TextView
-                android:id="@+id/activity_second_mm"
+                android:id="@+id/activity_ms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_stopDisPrev"
+                android:layout_toRightOf="@id/title_et_stopSnTime"
                  />
 
             <TextView
@@ -122,7 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_mm_s"
+                android:layout_toRightOf="@id/activity_ms"
                 />
         </RelativeLayout>
 
@@ -133,52 +133,20 @@
             android:layout_marginRight="18px"  >
 
             <TextView
-                android:id="@+id/title_stopDisNext"
+                android:id="@+id/title_isSn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
                 android:gravity="center_vertical"
                 android:paddingLeft="18px"
-                />
-
-            <TextView
-                android:id="@+id/title_et_stopDisNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_stopDisNext"
                  />
 
             <TextView
-                android:id="@+id/activity_third_mm"
+                android:id="@+id/title_et_isSn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_et_stopDisNext"
-                 />
-
-            <TextView
-                android:id="@+id/activity_four_fenghao"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_third_mm"
-                 />
-
-            <TextView
-                android:id="@+id/title_activity_glue_port"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/activity_four_fenghao"
-                 />
-
-            <TextView
-                android:id="@+id/title_et_activity_glue_port"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13px"
-                android:layout_toRightOf="@id/title_activity_glue_port"
+                android:layout_toRightOf="@id/title_isSn"
                 />
 
         </RelativeLayout>

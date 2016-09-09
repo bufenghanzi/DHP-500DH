@@ -18,8 +18,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
+import com.kyleduo.switchbutton.SwitchButton;
 import com.mingseal.application.UserApplication;
 import com.mingseal.communicate.SocketInputThread;
 import com.mingseal.communicate.SocketThreadManager;
@@ -60,7 +60,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
     /**
      * IO口
      */
-    private ToggleButton ioSwitch;
+    private SwitchButton switch_isSn;
 
     /**
      * 返回上级菜单
@@ -89,10 +89,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
      * @Fields goTimePrevInt: 动作前延时的int值
      */
     private int goTimePrevInt = 0;
-    /**
-     * @Fields goTimeNextInt: 动作后延时的int值
-     */
-    private int goTimeNextInt = 0;
+
     /**
      * @Fields isNull: 判断编辑输入框是否为空,false表示为空,true表示不为空
      */
@@ -123,29 +120,16 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
      * @Fields et_input_goTimePrev: 动作前延时
      */
     private EditText et_input_goTimePrev;
-    /**
-     * @Fields et_input_goTimeNext: 动作后延时
-     */
-    private EditText et_input_goTimeNext;
-    String[] GluePort;
+
     private TextView title_goTimePrev;
     private TextView title_et_input_goTimePrev;
     private TextView activity_ms;
     private TextView activity_fenghao;
-    private TextView title_goTimeNext;
-    private TextView title_et_input_goTimeNext;
-    private TextView activity_second_ms;
-    private TextView activity_second_fenghao;
-    private TextView activity_glue_io;
-    private TextView title_et_activity_glue_io;
+    private TextView activity_isSn;
+    private TextView title_et_activity_isSn;
     private TextView tv_goTimePrev;
     private TextView extend_ms;
-    private TextView tv_goTimeNext;
-    private TextView tv_goTimeNext_ms;
-    private TextView extend_io1;
-    private TextView extend_io2;
-    private TextView extend_io3;
-    private TextView extend_io4;
+    private TextView extend_isSn;
     private TextView extend_default;
     private TextView extend_save;
     private TextView mFanganliebiao;
@@ -170,7 +154,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 .getParcelableExtra(MyPopWindowClickListener.POPWINDOW_KEY);
         mFlag = intent.getIntExtra(MyPopWindowClickListener.FLAG_KEY, 0);
         mType = intent.getIntExtra(MyPopWindowClickListener.TYPE_KEY, 0);
-        taskname=intent.getStringExtra("taskname");
+        taskname = intent.getStringExtra("taskname");
         defaultNum = SharePreferenceUtils.getParamNumberFromPref(
                 WeldBlowActivity.this,
                 SettingParam.DefaultNum.ParamGlueInputNumber);
@@ -180,27 +164,26 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         if (weldBlowLists == null || weldBlowLists.isEmpty()) {
             weldBlow = new PointWeldBlowParam();
             weldBlow.set_id(param_id);
-            weldBlowDao.insertWeldOutput(weldBlow,taskname);
+            weldBlowDao.insertWeldOutput(weldBlow, taskname);
             // 插入主键id
+            L.d("weldBlowDao.insertWeldOutput(weldBlow,taskname)成功");
         }
         weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
+        L.d("weldBlowLists:" + weldBlowLists.toString());
         // 初始化数组
         ioBoolean = new boolean[IOPort.IO_NO_ALL.ordinal()];
         popupViews = new ArrayList<>();
-        GluePort = new String[12];
         initPicker();
     }
 
     private void UpdateInfos(PointWeldBlowParam weldBlowParam) {
         if (weldBlowParam == null) {
             et_input_goTimePrev.setText("");
-            et_input_goTimeNext.setText("");
 
         } else {
             et_input_goTimePrev.setText(weldBlowParam.getGoTimePrev() + "");
-            et_input_goTimeNext.setText(weldBlowParam.getGoTimeNext() + "");
 
-            ioSwitch.setChecked(weldBlowParam.getOutputPort()[4]);
+            switch_isSn.setChecked(weldBlowParam.isSn());
         }
     }
 
@@ -238,12 +221,8 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         title_et_input_goTimePrev = (TextView) view.findViewById(R.id.title_et_input_goTimePrev);
         activity_ms = (TextView) view.findViewById(R.id.activity_ms);
         activity_fenghao = (TextView) view.findViewById(R.id.activity_fenghao);
-        title_goTimeNext = (TextView) view.findViewById(R.id.title_goTimeNext);
-        title_et_input_goTimeNext = (TextView) view.findViewById(R.id.title_et_input_goTimeNext);
-        activity_second_ms = (TextView) view.findViewById(R.id.activity_second_ms);
-        activity_second_fenghao = (TextView) view.findViewById(R.id.activity_second_fenghao);
-        activity_glue_io = (TextView) view.findViewById(R.id.activity_glue_io);
-        title_et_activity_glue_io = (TextView) view.findViewById(R.id.title_et_activity_glue_io);
+        activity_isSn = (TextView) view.findViewById(R.id.activity_isSn);
+        title_et_activity_isSn = (TextView) view.findViewById(R.id.title_et_activity_isSn);
 
         for (PointWeldBlowParam pointWeldBlowParam : weldBlowParamList) {
             if (p == pointWeldBlowParam.get_id()) {
@@ -252,57 +231,42 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 title_et_input_goTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
                 activity_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
                 activity_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-                title_goTimeNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-                title_et_input_goTimeNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-                activity_second_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-                activity_second_fenghao.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-                activity_glue_io.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-                title_et_activity_glue_io.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-				/*=====================  end =====================*/
+                activity_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+                title_et_activity_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+                /*=====================  end =====================*/
 
                 activity_ms.setText(getResources().getString(
                         R.string.activity_ms));
-                activity_second_ms.setText(getResources().getString(
-                        R.string.activity_ms));
+
                 activity_fenghao.setText(getResources().getString(
                         R.string.activity_fenghao)
                         + " ");
-                activity_second_fenghao.setText(getResources().getString(
-                        R.string.activity_fenghao)
-                        + " ");
+
                 title_goTimePrev.setText(getResources().getString(
-                        R.string.activity_glue_goTimePrev)
+                        R.string.activity_weld_work_blowSnTime)
                         + " ");
-                title_goTimeNext.setText(getResources().getString(
-                        R.string.activity_glue_goTimeNext)
-                        + " ");
-                activity_glue_io.setText(getResources().getString(
-                        R.string.activity_glue_io)
+
+                activity_isSn.setText(getResources().getString(
+                        R.string.activity_weld_blow_isSn)
                         + " ");
 
                 title_et_input_goTimePrev.getPaint().setFlags(
                         Paint.UNDERLINE_TEXT_FLAG); // 下划线
                 title_et_input_goTimePrev.getPaint()
                         .setAntiAlias(true); // 抗锯齿
-                title_et_input_goTimeNext.getPaint().setFlags(
+
+                title_et_activity_isSn.getPaint().setFlags(
                         Paint.UNDERLINE_TEXT_FLAG); // 下划线
-                title_et_input_goTimeNext.getPaint().setAntiAlias(true); // 抗锯齿
-                title_et_activity_glue_io.getPaint().setFlags(
-                        Paint.UNDERLINE_TEXT_FLAG); // 下划线
-                title_et_activity_glue_io.getPaint().setAntiAlias(true); // 抗锯齿
+                title_et_activity_isSn.getPaint().setAntiAlias(true); // 抗锯齿
 
                 title_et_input_goTimePrev.setText(pointWeldBlowParam
                         .getGoTimePrev() + "");
-                title_et_input_goTimeNext.setText(pointWeldBlowParam
-                        .getGoTimeNext() + "");
-                for (int j = 0; j < 12; j++) {
-                    if (pointWeldBlowParam.getOutputPort()[j]) {
-                        GluePort[j] = "开";
-                    } else {
-                        GluePort[j] = "关";
-                    }
+
+                if (pointWeldBlowParam.isSn()) {
+                    title_et_activity_isSn.setText("开");
+                } else {
+                    title_et_activity_isSn.setText("关");
                 }
-                title_et_activity_glue_io.setText(GluePort[4]);
             }
         }
     }
@@ -320,8 +284,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         }
         L.d("存放主键id的集合---->" + list);
         L.d("当前选择的方案号---->" + currentTaskNum);
-        L.d("list是否存在------------》"
-                + list.contains(currentTaskNum));
+        L.d("list是否存在------------》" + list.contains(currentTaskNum));
         if (list.contains(currentTaskNum)) {
             // 已经保存在数据库中的数据
             for (PointWeldBlowParam pointWeldBlowParam : weldBlowLists) {
@@ -375,7 +338,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 }
                 if (flag) {
                     // 更新数据
-                    int rowid = weldBlowDao.upDateWeldOutput(upInputIOParam,taskname);
+                    int rowid = weldBlowDao.upDateWeldOutput(upInputIOParam, taskname);
                     // System.out.println("影响的行数"+rowid);
                     update_id.put(upInputIOParam.get_id(), upInputIOParam);
                     // mPMap.map.put(upglueAlone.get_id(), upglueAlone);
@@ -383,7 +346,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                     // System.out.println(glueAloneDao.getPointGlueAloneParamById(currentTaskNum).toString());
                 } else {
                     // 插入一条数据
-                    long rowid = weldBlowDao.insertWeldOutput(upInputIOParam,taskname);
+                    long rowid = weldBlowDao.insertWeldOutput(upInputIOParam, taskname);
                     firstExist = true;
                     weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
                     L.d(TAG, "保存之后新方案-->" + weldBlowLists.toString());
@@ -428,11 +391,8 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
     private boolean isEditClean(View extendView) {
         et_input_goTimePrev = (EditText) extendView
                 .findViewById(R.id.et_input_goTimePrev);
-        et_input_goTimeNext = (EditText) extendView
-                .findViewById(R.id.et_input_goTimeNext);
-        if ("".equals(et_input_goTimeNext.getText().toString())) {
-            return false;
-        } else if ("".equals(et_input_goTimePrev.getText().toString())) {
+
+        if ("".equals(et_input_goTimePrev.getText().toString())) {
             return false;
         }
         return true;
@@ -441,31 +401,17 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
     protected void initView(View extendView) {
         et_input_goTimePrev = (EditText) extendView
                 .findViewById(R.id.et_input_goTimePrev);
-        et_input_goTimeNext = (EditText) extendView
-                .findViewById(R.id.et_input_goTimeNext);
-
-        ioSwitch = (ToggleButton) extendView.findViewById(R.id.switch_glueport1);
+        switch_isSn = (SwitchButton) extendView.findViewById(R.id.switch_isSn);
         tv_goTimePrev = (TextView) extendView.findViewById(R.id.tv_goTimePrev);
         extend_ms = (TextView) extendView.findViewById(R.id.extend_ms);
-        tv_goTimeNext = (TextView) extendView.findViewById(R.id.tv_goTimeNext);
-        tv_goTimeNext_ms = (TextView) extendView.findViewById(R.id.tv_goTimeNext_ms);
-        extend_io1 = (TextView) extendView.findViewById(R.id.extend_io1);
-        extend_io2 = (TextView) extendView.findViewById(R.id.extend_io2);
-        extend_io3 = (TextView) extendView.findViewById(R.id.extend_io3);
-        extend_io4 = (TextView) extendView.findViewById(R.id.extend_io4);
+        extend_isSn = (TextView) extendView.findViewById(R.id.extend_isSn);
         extend_default = (TextView) extendView.findViewById(R.id.extend_default);
         extend_save = (TextView) extendView.findViewById(R.id.extend_save);
 		/*===================== begin =====================*/
         et_input_goTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        et_input_goTimeNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         tv_goTimePrev.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        tv_goTimeNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        tv_goTimeNext_ms.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        extend_io1.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        extend_io2.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        extend_io3.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
-        extend_io4.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
+        extend_isSn.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_default.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
         extend_save.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(40));
 		/*=====================  end =====================*/
@@ -482,10 +428,9 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         weldBlow = new PointWeldBlowParam();
         et_input_goTimePrev = (EditText) extendView
                 .findViewById(R.id.et_input_goTimePrev);
-        et_input_goTimeNext = (EditText) extendView
-                .findViewById(R.id.et_input_goTimeNext);
-        ioSwitch = (ToggleButton) extendView
-                .findViewById(R.id.switch_glueport1);
+
+        switch_isSn = (SwitchButton) extendView
+                .findViewById(R.id.switch_isSn);
 
         try {
             goTimePrevInt = Integer.parseInt(et_input_goTimePrev.getText()
@@ -493,27 +438,9 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         } catch (NumberFormatException e) {
             goTimePrevInt = 0;
         }
-        try {
-            goTimeNextInt = Integer.parseInt(et_input_goTimeNext.getText()
-                    .toString());
-        } catch (NumberFormatException e) {
-            goTimeNextInt = 0;
-        }
+
         weldBlow.setGoTimePrev(goTimePrevInt);
-        weldBlow.setGoTimeNext(goTimeNextInt);
-        ioBoolean[0] = false;
-        ioBoolean[1] = false;
-        ioBoolean[2] = false;
-        ioBoolean[3] = false;
-        ioBoolean[4] = ioSwitch.isChecked();
-        ioBoolean[5] = false;
-        ioBoolean[6] = false;
-        ioBoolean[7] = false;
-        ioBoolean[8] = false;
-        ioBoolean[9] = false;
-        ioBoolean[10] = false;
-        ioBoolean[11] = false;
-        weldBlow.setOutputPort(ioBoolean);
+        weldBlow.setSn(switch_isSn.isChecked());
         weldBlow.set_id(currentTaskNum);
 
         return weldBlow;
@@ -527,7 +454,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
         } else {
             complete();
             super.onBackPressed();
-            overridePendingTransition(R.anim.in_from_left,R.anim.out_from_right);
+            overridePendingTransition(R.anim.in_from_left, R.anim.out_from_right);
         }
     }
 
@@ -541,7 +468,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
             }
         }
         L.d("返回的方案号为================》" + mIndex);
-        point.setPointParam(weldBlowDao.getOutPutPointByID(mIndex,taskname));
+        point.setPointParam(weldBlowDao.getOutPutPointByID(mIndex, taskname));
         L.d("返回的Point为================》" + point);
 
         List<Map<Integer, PointWeldBlowParam>> list = new ArrayList<Map<Integer, PointWeldBlowParam>>();
@@ -577,10 +504,11 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 break;
         }
     }
+
     private class RevHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what== SocketInputThread.SocketError){
+            if (msg.what == SocketInputThread.SocketError) {
                 //wifi中断
                 L.d("wifi连接断开。。");
                 SocketThreadManager.releaseInstance();
@@ -588,8 +516,8 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 //设置全局变量，跟新ui
                 userApplication.setWifiConnecting(false);
 //				WifiConnectTools.processWifiConnect(userApplication, iv_wifi_connecting);
-                ToastUtil.displayPromptInfo(WeldBlowActivity.this,"wifi连接断开。。");
-            }else if (msg.what == Activity_Init_View) {
+                ToastUtil.displayPromptInfo(WeldBlowActivity.this, "wifi连接断开。。");
+            } else if (msg.what == Activity_Init_View) {
                 View activity_glue_popuplistview = stub_glue.inflate();
                 popupListView = (PopupListView) activity_glue_popuplistview.findViewById(R.id.popupListView);
                 popupListView.init(null);
@@ -733,11 +661,10 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                 public void initViewAndListener(View extendView) {
                     et_input_goTimePrev = (EditText) extendView
                             .findViewById(R.id.et_input_goTimePrev);
-                    et_input_goTimeNext = (EditText) extendView
-                            .findViewById(R.id.et_input_goTimeNext);
 
-                    ioSwitch = (ToggleButton) extendView
-                            .findViewById(R.id.switch_glueport1);
+
+                    switch_isSn = (SwitchButton) extendView
+                            .findViewById(R.id.switch_isSn);
 
                     // 设置动作前延时的最大最小值
                     et_input_goTimePrev
@@ -750,16 +677,7 @@ public class WeldBlowActivity extends AutoLayoutActivity implements OnClickListe
                                     PointConfigParam.GlueInput.GlueInputMin, et_input_goTimePrev));
                     et_input_goTimePrev.setSelectAllOnFocus(true);
 
-                    // 设置动作后延时的最大最小值
-                    et_input_goTimeNext
-                            .addTextChangedListener(new MaxMinEditWatcher(
-                                    PointConfigParam.GlueInput.GoTimeNextMax,
-                                    PointConfigParam.GlueInput.GlueInputMin, et_input_goTimeNext));
-                    et_input_goTimeNext
-                            .setOnFocusChangeListener(new MaxMinFocusChangeListener(
-                                    PointConfigParam.GlueInput.GoTimeNextMax,
-                                    PointConfigParam.GlueInput.GlueInputMin, et_input_goTimeNext));
-                    et_input_goTimeNext.setSelectAllOnFocus(true);
+
                     rl_moren = (RelativeLayout) extendView
                             .findViewById(R.id.rl_moren);
                     iv_add = (ImageView) extendView.findViewById(R.id.iv_add);

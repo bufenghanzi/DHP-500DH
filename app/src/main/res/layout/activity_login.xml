@@ -190,5 +190,18 @@
                 android:textSize="65px" />
         </RelativeLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
 
+        <TextView
+            android:id="@+id/tv_copyright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="nihao"
+            />
+    </LinearLayout>
 </LinearLayout>
