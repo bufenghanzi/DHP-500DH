@@ -4,6 +4,7 @@
 package com.mingseal.application;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 
 import com.mingseal.data.point.Point;
@@ -39,6 +40,7 @@ public class UserApplication extends Application {
 	private HashMap<Integer, PointWeldOutputIOParam> outputParamMaps;// 输出IO点Map集合
 	private boolean isWifiConnecting = false;// wifi连接情况
 	private static Handler mHandler;
+	private static Context context;
 
 	public static Handler getHandler() {
 		return mHandler;
@@ -279,11 +281,16 @@ public class UserApplication extends Application {
 		this.isWifiConnecting = isWifiConnecting;
 	}
 
+	public static Context getContext(){
+		return context;
+	}
+
 	@Override
 	public void onCreate() {
 		// 定义一个handler
 		mHandler = new Handler();
 		super.onCreate();
+		context = getApplicationContext();
 //		LeakCanary.install(this);
 		AutoLayoutConifg.getInstance().useDeviceSize().init(this);
 	}

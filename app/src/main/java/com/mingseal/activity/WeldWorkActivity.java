@@ -31,7 +31,9 @@ import com.mingseal.data.param.robot.RobotParam;
 import com.mingseal.data.point.Point;
 import com.mingseal.data.point.weldparam.PointWeldWorkParam;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.listener.MaxMinEditFloatWatcher;
 import com.mingseal.listener.MaxMinEditWatcher;
+import com.mingseal.listener.MaxMinFocusChangeFloatListener;
 import com.mingseal.listener.MaxMinFocusChangeListener;
 import com.mingseal.listener.MyPopWindowClickListener;
 import com.mingseal.ui.PopupListView;
@@ -1307,22 +1309,22 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                                     PointConfigParam.GlueAlone.DotGlueTimeMAX,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_yure));
                     et_sendSnSumFir
-                            .addTextChangedListener(new MaxMinEditWatcher(
+                            .addTextChangedListener(new MaxMinEditFloatWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumFir));
                     setPoint(et_sendSnSumFir);//限制小数
                     et_sendSnSumSec
-                            .addTextChangedListener(new MaxMinEditWatcher(
+                            .addTextChangedListener(new MaxMinEditFloatWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumSec));
                     setPoint(et_sendSnSumSec);//限制小数
                     et_sendSnSumThird
-                            .addTextChangedListener(new MaxMinEditWatcher(
+                            .addTextChangedListener(new MaxMinEditFloatWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumThird));
                     setPoint(et_sendSnSumThird);//限制小数
                     et_sendSnSumFourth
-                            .addTextChangedListener(new MaxMinEditWatcher(
+                            .addTextChangedListener(new MaxMinEditFloatWatcher(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumFourth));
                     setPoint(et_sendSnSumFourth);//限制小数
@@ -1355,19 +1357,19 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                                     PointConfigParam.GlueAlone.DotGlueTimeMAX,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_yure));
                     et_sendSnSumFir
-                            .setOnFocusChangeListener(new MaxMinFocusChangeListener(
+                            .setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumFir));
                     et_sendSnSumSec
-                            .setOnFocusChangeListener(new MaxMinFocusChangeListener(
+                            .setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumSec));
                     et_sendSnSumThird
-                            .setOnFocusChangeListener(new MaxMinFocusChangeListener(
+                            .setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumThird));
                     et_sendSnSumFourth
-                            .setOnFocusChangeListener(new MaxMinFocusChangeListener(
+                            .setOnFocusChangeListener(new MaxMinFocusChangeFloatListener(
                                     PointConfigParam.GlueAlone.sendSnSumFir,
                                     PointConfigParam.GlueAlone.GlueAloneMIN, et_sendSnSumFourth));
                     et_dipDistance
@@ -1530,12 +1532,14 @@ public class WeldWorkActivity extends AutoLayoutActivity implements OnClickListe
                         return;
                     }
                 }
+
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,int after) {
             }
             @Override
             public void afterTextChanged(Editable s) {
+
             }
         });
     }

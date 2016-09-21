@@ -7,6 +7,9 @@
     <string name="action_settings">Settings</string>
     <string name="number">序号</string>
     <string name="type">类型</string>
+    <string name="title">选择方案</string>
+    <string name="cancel">取消</string>
+    <string name="allow">确定</string>
     <string name="activity_glue_default">设为默认</string>
     <string name="activity_glue_alone_title">点参数设置</string>
     <string name="activity_glue_alone_liebiao">参数列表</string>
@@ -266,4 +269,16 @@
     <string name="top">置顶</string>
     <string name="delete">delete</string>
     <string name="title_activity_func_list">FuncListActivity</string>
+    <string-array name="items">
+        <item>方案一</item>
+        <item>方案二</item>
+        <item>方案三</item>
+        <item>方案四</item>
+        <item>方案五</item>
+        <item>方案六</item>
+        <item>方案七</item>
+        <item>方案八</item>
+        <item>方案九</item>
+        <item>方案十</item>
+    </string-array>
 </resources>

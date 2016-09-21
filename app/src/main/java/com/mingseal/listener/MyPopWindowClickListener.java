@@ -9,15 +9,21 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.PopupWindow;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mingseal.activity.TaskActivity;
-import com.mingseal.activity.WeldBlowActivity;
-import com.mingseal.activity.WeldLineEndActivity;
-import com.mingseal.activity.WeldLineStartActivity;
-import com.mingseal.activity.WeldWorkActivity;
 import com.mingseal.adapter.TaskMainBaseAdapter;
+import com.mingseal.data.dao.WeldBlowDao;
+import com.mingseal.data.dao.WeldLineEndDao;
+import com.mingseal.data.dao.WeldLineStartDao;
+import com.mingseal.data.dao.WeldWorkDao;
 import com.mingseal.data.point.Point;
 import com.mingseal.data.point.PointType;
+import com.mingseal.data.point.weldparam.PointWeldBlowParam;
+import com.mingseal.data.point.weldparam.PointWeldLineEndParam;
+import com.mingseal.data.point.weldparam.PointWeldLineStartParam;
+import com.mingseal.data.point.weldparam.PointWeldWorkParam;
 import com.mingseal.dhp_500dh.R;
+import com.mingseal.utils.L;
 import com.mingseal.utils.ToastUtil;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -58,7 +64,36 @@ public class MyPopWindowClickListener implements OnClickListener {
     private int selectRadio = 0;
     private TaskMainBaseAdapter mAdapter;
     private String taskname;
+    private WeldWorkDao weldWorkDao;
+    private List<PointWeldWorkParam> weldWorkLists;
+    private PointWeldWorkParam weldWork;
+    //声明接口对象
+    public InterfacePoint mInterfacePoint;
+    private WeldLineStartDao weldStartDao;
+    private List<PointWeldLineStartParam> weldStartLists;
+    private PointWeldLineStartParam weldStart;
+    private WeldLineEndDao weldEndDao;
+    private List<PointWeldLineEndParam> weldEndLists;
+    private PointWeldLineEndParam weldEnd;
+    private WeldBlowDao weldBlowDao;
+    private List<PointWeldBlowParam> weldBlowLists;
+    private PointWeldBlowParam weldBlow;
 
+    /**
+     * 定义接口及方法
+     */
+    public interface InterfacePoint {
+        void listenEvent(Point point,int flag);
+    }
+
+    /**
+     * 注册回调接口的方法，供外部调用
+     *
+     * @param event
+     */
+    public void setOnINotifyServiceListener(InterfacePoint event) {
+        mInterfacePoint = event;
+    }
     public MyPopWindowClickListener(TaskActivity mParent) {
         this.mParent = mParent;
         View menu = initMenuView(mParent);
@@ -168,20 +203,52 @@ public class MyPopWindowClickListener implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.but_jieshu:// 结束点
-                intent = new Intent(mParent, WeldLineEndActivity.class);
-                saveToActivity(intent);
+                weldEndDao = new WeldLineEndDao(mParent);
+                weldEndLists = weldEndDao.findAllWeldLineEndParams(taskname);
+                if (weldEndLists == null || weldEndLists.isEmpty()) {
+                    weldEnd = new PointWeldLineEndParam();
+                    for (int i=1;i<=10;i++){
+                        // 插入主键id
+                        weldEnd.set_id(i);
+                        weldEndDao.insertWeldLineEnd(weldEnd, taskname);
+                    }
+                }
+                CreateMaterialDialog(1);
+//                intent = new Intent(mParent, WeldLineEndActivity.class);
+//                saveToActivity(intent);
 
                 break;
             case R.id.but_qishi:// 起始点
-
-                intent = new Intent(mParent, WeldLineStartActivity.class);
-                saveToActivity(intent);
+                weldStartDao = new WeldLineStartDao(mParent);
+                weldStartLists = weldStartDao.findAllWeldLineStartParams(taskname);
+                if (weldStartLists == null || weldStartLists.isEmpty()) {
+                    weldStart = new PointWeldLineStartParam();
+                    for (int i=1;i<=10;i++){
+                        // 插入主键id
+                        weldStart.set_id(i);
+                        weldStartDao.insertWeldLineStart(weldStart,taskname);
+                    }
+                }
+                CreateMaterialDialog(2);
+//                intent = new Intent(mParent, WeldLineStartActivity.class);
+//                saveToActivity(intent);
 
                 break;
             case R.id.but_duli:// 作业点
 
-                intent = new Intent(mParent, WeldWorkActivity.class);
-                saveToActivity(intent);
+                weldWorkDao = new WeldWorkDao(mParent);
+                weldWorkLists = weldWorkDao.findAllWeldWorkParams(taskname);
+                if (weldWorkLists == null || weldWorkLists.isEmpty()) {
+                    weldWork = new PointWeldWorkParam();
+                    for (int i=1;i<=10;i++){
+                        // 插入主键id
+                        weldWork.set_id(i);
+                        weldWorkDao.insertWeldWork(weldWork,taskname);
+                    }
+                }
+                CreateMaterialDialog(3);
+//                intent = new Intent(mParent, WeldWorkActivity.class);
+//                saveToActivity(intent);
 
                 break;
             case R.id.but_jizhun:// 基准点
@@ -230,14 +297,60 @@ public class MyPopWindowClickListener implements OnClickListener {
 //
 //                break;
             case R.id.but_chuixi:// 吹锡点
-
-                intent = new Intent(mParent, WeldBlowActivity.class);
-                saveToActivity(intent);
+                weldBlowDao = new WeldBlowDao(mParent);
+                weldBlowLists = weldBlowDao.findAllWeldOutputParams(taskname);
+                if (weldBlowLists == null || weldBlowLists.isEmpty()) {
+                    weldBlow = new PointWeldBlowParam();
+                    for (int i=1;i<=10;i++){
+                        // 插入主键id
+                        weldBlow.set_id(i);
+                        weldBlowDao.insertWeldOutput(weldBlow, taskname);
+                    }
+                    // 插入主键id
+                }
+                CreateMaterialDialog(4);
+//                intent = new Intent(mParent, WeldBlowActivity.class);
+//                saveToActivity(intent);
 
                 break;
 
         }
 
+    }
+
+    /**
+     * 弹框选择方案
+     * @param i
+     */
+    private void CreateMaterialDialog(final int i) {
+        new MaterialDialog.Builder(mParent)
+                .title(R.string.title)
+                .items(R.array.items)
+                .alwaysCallSingleChoiceCallback()
+                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        /**
+                         * If you use alwaysCallSingleChoiceCallback(), which is discussed below,
+                         * returning false here won't allow the newly selected radio button to actually be selected.
+                         **/
+                        Point point=new Point();
+                        if (i==1){
+                            point.setPointParam(weldEndDao.getPointWeldLineEndParamByID(which+1,taskname));
+                        }else if (i==2){
+                            point.setPointParam(weldStartDao.getPointWeldLineStartParamByID(which+1,taskname));
+                        }else if (i==3){
+                            point.setPointParam(weldWorkDao.getPointWeldWorkParamById(which+1,taskname));
+                        }else if (i==4){
+                            point.setPointParam(weldBlowDao.getOutPutPointByID(which+1,taskname));
+                        }
+                        L.d("POINT=="+point.toString());
+                        mInterfacePoint.listenEvent(point,mFlag);
+                        return true;
+                    }
+                })
+                .widgetColor(mParent.getResources().getColor(R.color.button_pressed))
+                .show();
     }
 
     /**
@@ -258,4 +371,6 @@ public class MyPopWindowClickListener implements OnClickListener {
     {
         return popupWindow;
     }
+
+
 }
